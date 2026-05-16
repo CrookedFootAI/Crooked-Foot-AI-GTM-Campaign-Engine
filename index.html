@@ -1125,6 +1125,37 @@ const CE_TOPICS = [
 const CE_GOALS = ["Authority","Awareness","Conversion","Engagement","Launch"];
 const CE_PLATFORMS = ["X Thread","LinkedIn","TikTok Script","YouTube Outline","Newsletter"];
 
+const CE_VERTICALS = [
+  "SaaS / Technology",
+  "Financial Services",
+  "Healthcare & Life Sciences",
+  "Manufacturing & Industrial",
+  "Professional Services",
+];
+const CE_PERSONAS = [
+  "CRO / Chief Revenue",
+  "VP of Sales",
+  "RevOps Director",
+  "Sales Enablement",
+  "CFO / Finance",
+];
+
+const VERTICAL_CONTEXT = {
+  "SaaS / Technology":         { tag:"SaaS",          pain:"unpredictable ARR growth and NRR volatility",                  proof:"Series B–D SaaS and PLG companies",             metric:"NRR, expansion MRR, and logo churn" },
+  "Financial Services":        { tag:"FinServ",        pain:"complex multi-stakeholder deal cycles with compliance overhead", proof:"enterprise fintech and wealth management firms",  metric:"AUM-weighted pipeline and regulatory timelines" },
+  "Healthcare & Life Sciences": { tag:"Healthcare",    pain:"lengthy procurement cycles with clinical and IT sign-off",      proof:"medtech and health IT revenue organizations",    metric:"contract value and implementation timelines" },
+  "Manufacturing & Industrial": { tag:"Manufacturing", pain:"long-cycle capital deals with procurement gatekeepers",         proof:"industrial B2B and OEM sales organizations",     metric:"deal velocity and channel partner pipeline" },
+  "Professional Services":     { tag:"Pro Services",   pain:"relationship-driven deals with diffuse buying committees",      proof:"consulting, legal, and managed services firms",  metric:"project pipeline value and renewal rates" },
+};
+
+const PERSONA_CONTEXT = {
+  "CRO / Chief Revenue": { tag:"CRO",         priority:"board-level forecast confidence and revenue predictability",     hook:"Your board wants a number you'll stand behind. Here's how to give them one.",              cta:"Book a CRO intelligence briefing →" },
+  "VP of Sales":         { tag:"VP Sales",     priority:"rep performance visibility and deal-level pipeline health",      hook:"Your reps have the calls. You need the signals behind which ones actually close.",         cta:"See a VP Sales pipeline walkthrough →" },
+  "RevOps Director":     { tag:"RevOps",       priority:"forecast process integrity and CRM signal quality",              hook:"RevOps owns the forecast process. Crooked Foot AI gives it a backbone.",                  cta:"Get a RevOps architecture walkthrough →" },
+  "Sales Enablement":    { tag:"Enablement",   priority:"rep coaching leverage and early deal-risk identification",       hook:"Coaching to outcomes is impossible without deal-level signal. Here's what that looks like.", cta:"See deal signal coaching in action →" },
+  "CFO / Finance":       { tag:"CFO",          priority:"revenue predictability and forecast variance reduction",         hook:"Finance needs a revenue number it can plan around. Not a range — a number.",               cta:"Request a forecast accuracy briefing →" },
+};
+
 const CE_CONTENT = {
 
   /* ── 94% FORECAST ACCURACY ── */
@@ -1710,6 +1741,31 @@ For 40% of the market, that shouldn't be a differentiator. But here we are.`,
   },
 };
 
+function personalizeCopy(content, vertical, persona) {
+  if (!content) return content;
+  const v = VERTICAL_CONTEXT[vertical];
+  const p = PERSONA_CONTEXT[persona];
+  if (!v || !p) return content;
+
+  // 1. Persona-specific opener prepended to the topic hook
+  const hook = `${p.hook}\n\n${content.hook}`;
+
+  // 2. Inject vertical language into body + append vertical proof point
+  const body = content.body
+    .replace(/enterprise B2B( SaaS)?/gi, `enterprise ${v.tag}`)
+    .replace(/\brevenue teams\b/gi, `${v.tag} revenue teams`)
+    .replace(/\bB2B SaaS\b/gi, `${v.tag}`)
+    + `\n\nValidated with ${v.proof} — focused on ${v.metric}.`;
+
+  // 3. Persona-specific CTA replaces generic one
+  const cta = p.cta;
+
+  // 4. Tag the meta line
+  const meta = `[${p.tag} · ${v.tag}] ${content.meta || ""}`.trim();
+
+  return { ...content, hook, body, cta, meta };
+}
+
 function getContentEngine(topic, platform, goal) {
   const key = `${topic}|${platform}|${goal}`;
   if (CE_CONTENT[key]) return CE_CONTENT[key];
@@ -1738,6 +1794,8 @@ function ContentEngineSection() {
   const [topic,    setTopic]    = useState("94% Forecast Accuracy");
   const [platform, setPlatform] = useState("LinkedIn");
   const [goal,     setGoal]     = useState("Authority");
+  const [vertical, setVertical] = useState("SaaS / Technology");
+  const [persona,  setPersona]  = useState("CRO / Chief Revenue");
   const [result,   setResult]   = useState(null);
   const [loading,  setLoading]  = useState(false);
   const [copied,   setCopied]   = useState({});
@@ -1746,7 +1804,8 @@ function ContentEngineSection() {
   const handleGenerate = () => {
     setLoading(true);
     setTimeout(() => {
-      setResult(getContentEngine(topic, platform, goal));
+      const base = getContentEngine(topic, platform, goal);
+      setResult(personalizeCopy(base, vertical, persona));
       setLoading(false);
       setTimeout(() => { if (outputRef.current) outputRef.current.scrollIntoView({ behavior:"smooth", block:"nearest" }); }, 100);
     }, 500);
@@ -1798,8 +1857,10 @@ function ContentEngineSection() {
       <div className="studio-layout" style={{minHeight:620}}>
         {/* Left panel */}
         <div className="studio-left-panel" style={{width:280,flexShrink:0,padding:"28px 24px",borderRight:`1px solid ${S.border}`,background:S.surface,overflowY:"auto"}}>
-          <SelectorGroup label="Topic Anchor" options={CE_TOPICS} value={topic} onChange={v => { setTopic(v); setResult(null); }} />
-          <SelectorGroup label="Goal"         options={CE_GOALS}  value={goal}  onChange={v => { setGoal(v);  setResult(null); }} />
+          <SelectorGroup label="Topic Anchor"    options={CE_TOPICS}    value={topic}    onChange={v => { setTopic(v);    setResult(null); }} />
+          <SelectorGroup label="Goal"            options={CE_GOALS}     value={goal}     onChange={v => { setGoal(v);     setResult(null); }} />
+          <SelectorGroup label="Target Vertical" options={CE_VERTICALS} value={vertical} onChange={v => { setVertical(v); setResult(null); }} />
+          <SelectorGroup label="Buyer Persona"   options={CE_PERSONAS}  value={persona}  onChange={v => { setPersona(v);  setResult(null); }} />
 
           <button onClick={handleGenerate} disabled={loading} className={loading ? "" : "pulse-btn"} style={{
             width:"100%", background:S.cyan, color:"#fff", border:"none",
@@ -1816,8 +1877,9 @@ function ContentEngineSection() {
               fontWeight:600, letterSpacing:"0.06em", marginTop:8,
             }}>↺ RESET</button>
           )}
-          <div style={{marginTop:18, fontSize:11, color:S.light, textAlign:"center"}}>
-            {Object.keys(CE_CONTENT).length} fully written variants · {CE_PLATFORMS.length} platforms
+          <div style={{marginTop:18, fontSize:11, color:S.light, textAlign:"center", lineHeight:1.7}}>
+            {Object.keys(CE_CONTENT).length} base variants · {CE_PLATFORMS.length} platforms<br/>
+            <span style={{color:S.cyan, fontWeight:600}}>{CE_VERTICALS.length} verticals × {CE_PERSONAS.length} personas</span>
           </div>
         </div>
 
@@ -1828,10 +1890,10 @@ function ContentEngineSection() {
               <div style={{width:72,height:72,background:S.cyanDim,border:`1px solid ${S.cyanBorder}`,borderRadius:18,display:"flex",alignItems:"center",justifyContent:"center",fontSize:28,marginBottom:20}}>✍</div>
               <div style={{fontSize:20,fontWeight:700,color:S.text,marginBottom:10}}>Select a topic and goal</div>
               <div style={{fontSize:14,color:S.muted,maxWidth:400,lineHeight:1.65}}>
-                Pick a <span style={{color:S.cyan,fontWeight:600}}>topic anchor</span> and <span style={{color:S.cyan,fontWeight:600}}>goal</span> on the left, choose a platform above, then click <span style={{color:S.cyan,fontWeight:600}}>GENERATE CONTENT</span> to get platform-native copy ready to post.
+                Pick a <span style={{color:S.cyan,fontWeight:600}}>topic</span>, <span style={{color:S.cyan,fontWeight:600}}>goal</span>, <span style={{color:S.green,fontWeight:600}}>vertical</span>, and <span style={{color:S.amber,fontWeight:600}}>persona</span> on the left, choose a platform above, then click <span style={{color:S.cyan,fontWeight:600}}>GENERATE CONTENT</span> — the engine tailors every output to your ICP.
               </div>
               <div style={{display:"flex",gap:8,marginTop:24,flexWrap:"wrap",justifyContent:"center"}}>
-                {["Platform-Native Drafts","Hook + Body + CTA","Copy to Clipboard","Platform Format Notes"].map(f => (
+                {["Platform-Native Drafts","Vertical-Tailored Copy","Persona-Specific CTAs","Hook + Body + CTA","Copy to Clipboard"].map(f => (
                   <span key={f} style={{fontSize:11,fontWeight:600,color:S.muted,background:S.surface,border:`1px solid ${S.border}`,padding:"6px 14px",borderRadius:100}}>{f}</span>
                 ))}
               </div>
@@ -1841,11 +1903,18 @@ function ContentEngineSection() {
               {/* Output header */}
               <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:24,flexWrap:"wrap",gap:12}}>
                 <div>
-                  <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:6}}>
+                  <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:8,flexWrap:"wrap"}}>
                     <span style={{fontSize:10,fontWeight:800,letterSpacing:"0.12em",textTransform:"uppercase",background:S.cyanDim,border:`1px solid ${S.cyanBorder}`,color:S.cyan,padding:"3px 12px",borderRadius:100}}>
                       {pm.label}
                     </span>
                     <span style={{fontSize:10,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",color:S.muted}}>{goal.toUpperCase()}</span>
+                    <span style={{fontSize:10,color:S.border}}>·</span>
+                    <span style={{fontSize:10,fontWeight:700,background:"rgba(5,150,105,0.08)",border:"1px solid rgba(5,150,105,0.25)",color:S.green,padding:"3px 10px",borderRadius:100,letterSpacing:"0.08em",textTransform:"uppercase"}}>
+                      {VERTICAL_CONTEXT[vertical]?.tag}
+                    </span>
+                    <span style={{fontSize:10,fontWeight:700,background:"rgba(217,119,6,0.08)",border:"1px solid rgba(217,119,6,0.25)",color:S.amber,padding:"3px 10px",borderRadius:100,letterSpacing:"0.08em",textTransform:"uppercase"}}>
+                      {PERSONA_CONTEXT[persona]?.tag}
+                    </span>
                   </div>
                   <div style={{fontSize:17,fontWeight:700,color:S.text}}>{topic}</div>
                 </div>
