@@ -40,6 +40,71 @@
   .card-hover:hover { box-shadow: 0 4px 24px rgba(0,168,216,0.12); border-color: rgba(0,168,216,0.35) !important; transform: translateY(-1px); }
   .bar-animate { transition: width 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
   .section-divider { height: 1px; background: linear-gradient(90deg, transparent, #E5E7EB 20%, #E5E7EB 80%, transparent); margin: 0; }
+
+  /* ── Mobile Nav ── */
+  .nav-links { display: flex; gap: 4px; align-items: center; }
+  .nav-hamburger { display: none; flex-direction: column; justify-content: center; gap: 5px; cursor: pointer; background: transparent; border: none; padding: 6px; }
+  .nav-hamburger span { display: block; width: 22px; height: 2px; background: #0A0A1A; border-radius: 2px; transition: all 0.2s; }
+  .mobile-nav-menu { display: none; position: fixed; top: 58px; left: 0; right: 0; background: rgba(255,255,255,0.98); backdrop-filter: blur(12px); border-bottom: 1px solid #E5E7EB; padding: 16px 20px; z-index: 99; flex-direction: column; gap: 4px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+  .mobile-nav-menu.open { display: flex; }
+  .mobile-nav-btn { background: transparent; border: none; padding: 12px 16px; text-align: left; font-size: 14px; font-weight: 600; color: #6B7280; border-radius: 8px; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.15s; }
+  .mobile-nav-btn.nav-active { background: rgba(0,153,204,0.08); color: #0099CC; }
+
+  /* ── Section header ── */
+  .section-h2 { font-size: 34px; }
+
+  /* ── SubTab scroll wrapper ── */
+  .subtab-scroll-wrap { overflow-x: auto; max-width: 100%; padding-bottom: 4px; margin-bottom: 28px; }
+  .subtab-scroll-wrap > div { margin-bottom: 0 !important; }
+
+  /* ── Studio two-panel layout ── */
+  .studio-layout { display: flex; }
+
+  /* ── Platform strip hint ── */
+  .platform-hint { display: flex; align-items: center; }
+
+  /* ── Mobile responsive breakpoint ── */
+  @media (max-width: 768px) {
+    /* Nav */
+    .nav-links { display: none !important; }
+    .nav-hamburger { display: flex !important; }
+
+    /* Studio panels stack vertically */
+    .studio-layout { flex-direction: column !important; min-height: unset !important; }
+    .studio-left-panel { width: 100% !important; border-right: none !important; border-bottom: 1px solid #E5E7EB !important; overflow-y: visible !important; padding: 20px 16px !important; }
+    .studio-right-panel { padding: 20px 16px !important; overflow-y: visible !important; }
+
+    /* Section padding overrides */
+    #pipeline-intelligence { padding: 40px 16px !important; }
+    #channel-pulse { padding: 40px 16px !important; }
+    #channel-pulse > div { padding: 0 !important; }
+    #gtm-blueprint { padding: 40px 16px !important; }
+    #marketing-assets { padding: 40px 16px !important; }
+    #marketing-assets > div { padding: 0 !important; }
+    #content-engine > div:first-child { padding: 40px 16px 0 !important; }
+    #campaign-studio > div:first-child { padding-left: 16px !important; padding-right: 16px !important; }
+
+    /* Hero */
+    .hero-section { padding: 40px 16px 40px !important; }
+    .ticker-wrap { margin-left: -16px !important; margin-right: -16px !important; margin-bottom: -40px !important; }
+
+    /* Typography */
+    .section-h2 { font-size: 24px !important; line-height: 1.2 !important; }
+
+    /* Platform strip */
+    .platform-strip { padding: 12px 16px !important; }
+    .platform-hint { display: none !important; }
+
+    /* CTA grid */
+    .cta-row { flex-direction: column !important; align-items: stretch !important; }
+    .cta-row a { text-align: center !important; }
+  }
+
+  @media (max-width: 480px) {
+    .section-h2 { font-size: 20px !important; }
+    .studio-left-panel { padding: 16px 14px !important; }
+    .studio-right-panel { padding: 16px 14px !important; }
+  }
 </style>
 </head>
 <body>
@@ -337,16 +402,18 @@ function OutputCard({ badge, badgeColor, children }) {
 
 function SubTab({ tabs, active, onSelect }) {
   return (
-    <div style={{display:"inline-flex",gap:4,marginBottom:28,background:S.surface,border:`1px solid ${S.border}`,borderRadius:8,padding:4,boxShadow:"0 1px 3px rgba(0,0,0,0.05)"}}>
-      {tabs.map(t=>(
-        <button key={t} onClick={()=>onSelect(t)} style={{
-          background: active===t?S.cyan:"transparent",
-          color: active===t?"#09090F":S.muted,
-          border:"none",borderRadius:6,padding:"8px 20px",
-          fontSize:11,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",
-          transition:"all 0.15s",
-        }}>{t}</button>
-      ))}
+    <div className="subtab-scroll-wrap">
+      <div style={{display:"inline-flex",gap:4,background:S.surface,border:`1px solid ${S.border}`,borderRadius:8,padding:4,boxShadow:"0 1px 3px rgba(0,0,0,0.05)"}}>
+        {tabs.map(t=>(
+          <button key={t} onClick={()=>onSelect(t)} style={{
+            background: active===t?S.cyan:"transparent",
+            color: active===t?"#09090F":S.muted,
+            border:"none",borderRadius:6,padding:"8px 20px",
+            fontSize:11,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",
+            transition:"all 0.15s",whiteSpace:"nowrap",
+          }}>{t}</button>
+        ))}
+      </div>
     </div>
   );
 }
@@ -358,7 +425,7 @@ function SectionHeader({ number, title, sub, accent }) {
         <div style={{width:32,height:32,background:S.cyanDim,border:`1px solid ${S.cyanBorder}`,borderRadius:8,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,fontWeight:800,color:S.cyan}}>{number}</div>
         <div style={{fontSize:10,fontWeight:700,letterSpacing:"0.14em",textTransform:"uppercase",color:S.cyan}}>{accent}</div>
       </div>
-      <h2 style={{fontSize:34,fontWeight:900,letterSpacing:"-0.02em",lineHeight:1.1,marginBottom:10,color:S.text}}>{title}</h2>
+      <h2 className="section-h2" style={{fontSize:34,fontWeight:900,letterSpacing:"-0.02em",lineHeight:1.1,marginBottom:10,color:S.text}}>{title}</h2>
       {sub && <p style={{fontSize:15,color:S.muted,maxWidth:640,lineHeight:1.65}}>{sub}</p>}
     </div>
   );
@@ -967,11 +1034,11 @@ function CampaignStudioSection() {
   return (
     <div id="campaign-studio" style={{background:S.surface,borderTop:`1px solid ${S.border}`}}>
       <div style={{maxWidth:1200,margin:"0 auto",padding:"0 36px"}}>
-        <SectionHeader number="01" accent="ICP CAMPAIGN STUDIO" title="Generate Campaign Briefs Instantly" sub="Select a target vertical, buyer persona, and campaign trigger — get a LinkedIn ad, cold email, and landing page brief ready to deploy in 10 seconds." />
+        <SectionHeader number="01" accent="GTM DESIGN STUDIO" title="Generate Campaign Briefs Instantly" sub="Select a target vertical, buyer persona, and campaign trigger — get a LinkedIn ad, cold email, and landing page brief ready to deploy in 10 seconds." />
       </div>
-      <div style={{display:"flex",minHeight:600,borderTop:`1px solid ${S.border}`}}>
+      <div className="studio-layout" style={{minHeight:600,borderTop:`1px solid ${S.border}`}}>
         {/* Left panel */}
-        <div style={{width:280,flexShrink:0,padding:"28px 24px",borderRight:`1px solid ${S.border}`,background:S.bg,overflowY:"auto"}}>
+        <div className="studio-left-panel" style={{width:280,flexShrink:0,padding:"28px 24px",borderRight:`1px solid ${S.border}`,background:S.bg,overflowY:"auto"}}>
           <SelectorGroup label="Target Vertical" options={VERTICALS} value={vertical} onChange={setVertical} />
           <SelectorGroup label="Buyer Persona"   options={PERSONAS}  value={persona}  onChange={setPersona}  />
           <SelectorGroup label="Campaign Trigger" options={TRIGGERS}  value={trigger}  onChange={setTrigger}  />
@@ -993,7 +1060,7 @@ function CampaignStudioSection() {
         </div>
 
         {/* Right panel */}
-        <div ref={outputRef} style={{flex:1,padding:"28px 36px",overflowY:"auto"}}>
+        <div ref={outputRef} className="studio-right-panel" style={{flex:1,padding:"28px 36px",overflowY:"auto"}}>
           {!result ? (
             <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",minHeight:480,textAlign:"center"}}>
               <div style={{width:72,height:72,background:S.cyanDim,border:`1px solid ${S.cyanBorder}`,borderRadius:18,display:"flex",alignItems:"center",justifyContent:"center",fontSize:28,marginBottom:20}}>⚡</div>
@@ -1706,7 +1773,7 @@ function ContentEngineSection() {
       </div>
 
       {/* Platform pill strip */}
-      <div style={{borderTop:`1px solid ${S.border}`,borderBottom:`1px solid ${S.border}`,background:S.surface,padding:"14px 36px",display:"flex",gap:8,overflowX:"auto"}}>
+      <div className="platform-strip" style={{borderTop:`1px solid ${S.border}`,borderBottom:`1px solid ${S.border}`,background:S.surface,padding:"14px 36px",display:"flex",gap:8,overflowX:"auto"}}>
         {CE_PLATFORMS.map(p => {
           const m = PLATFORM_META[p];
           const active = platform === p;
@@ -1723,14 +1790,14 @@ function ContentEngineSection() {
             </button>
           );
         })}
-        <div style={{marginLeft:"auto",display:"flex",alignItems:"center",fontSize:11,color:S.light,whiteSpace:"nowrap",flexShrink:0}}>
+        <div className="platform-hint" style={{marginLeft:"auto",display:"flex",alignItems:"center",fontSize:11,color:S.light,whiteSpace:"nowrap",flexShrink:0}}>
           {pm.hint}
         </div>
       </div>
 
-      <div style={{display:"flex",minHeight:620}}>
+      <div className="studio-layout" style={{minHeight:620}}>
         {/* Left panel */}
-        <div style={{width:280,flexShrink:0,padding:"28px 24px",borderRight:`1px solid ${S.border}`,background:S.surface,overflowY:"auto"}}>
+        <div className="studio-left-panel" style={{width:280,flexShrink:0,padding:"28px 24px",borderRight:`1px solid ${S.border}`,background:S.surface,overflowY:"auto"}}>
           <SelectorGroup label="Topic Anchor" options={CE_TOPICS} value={topic} onChange={v => { setTopic(v); setResult(null); }} />
           <SelectorGroup label="Goal"         options={CE_GOALS}  value={goal}  onChange={v => { setGoal(v);  setResult(null); }} />
 
@@ -1755,7 +1822,7 @@ function ContentEngineSection() {
         </div>
 
         {/* Right panel */}
-        <div ref={outputRef} style={{flex:1, padding:"28px 36px", overflowY:"auto", background:S.bg}}>
+        <div ref={outputRef} className="studio-right-panel" style={{flex:1, padding:"28px 36px", overflowY:"auto", background:S.bg}}>
           {!result ? (
             <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",minHeight:500,textAlign:"center"}}>
               <div style={{width:72,height:72,background:S.cyanDim,border:`1px solid ${S.cyanBorder}`,borderRadius:18,display:"flex",alignItems:"center",justifyContent:"center",fontSize:28,marginBottom:20}}>✍</div>
@@ -1859,9 +1926,10 @@ function ContentEngineSection() {
 /* ── NAV ── */
 function Nav() {
   const [active, setActive] = useState("campaign-studio");
+  const [menuOpen, setMenuOpen] = useState(false);
   const links = [
-    { id:"campaign-studio", label:"Campaign Studio" },
-    { id:"pipeline-intelligence", label:"Pipeline Intelligence" },
+    { id:"campaign-studio", label:"Design Studio" },
+    { id:"pipeline-intelligence", label:"Pipeline Intel" },
     { id:"channel-pulse", label:"Channel Pulse" },
     { id:"gtm-blueprint", label:"GTM Blueprint" },
     { id:"marketing-assets", label:"Marketing Assets" },
@@ -1869,28 +1937,38 @@ function Nav() {
   ];
   const scrollTo = id => {
     const el = document.getElementById(id);
-    if (el) { el.scrollIntoView({ behavior:"smooth" }); setActive(id); }
+    if (el) { el.scrollIntoView({ behavior:"smooth" }); setActive(id); setMenuOpen(false); }
   };
   return (
-    <nav style={{position:"sticky",top:0,zIndex:100,background:"rgba(255,255,255,0.96)",backdropFilter:"blur(12px)",borderBottom:`1px solid ${S.border}`,padding:"0 32px",display:"flex",alignItems:"center",justifyContent:"space-between",height:58,boxShadow:"0 1px 0 rgba(0,0,0,0.06)"}}>
-      <div style={{display:"flex",alignItems:"center",gap:10}}>
-        <img src="./logo.png" alt="Crooked Foot AI" style={{width:36,height:36,borderRadius:8,objectFit:"cover",flexShrink:0}} />
-        <div>
-          <span style={{fontSize:14,fontWeight:800,color:S.text,letterSpacing:"-0.01em"}}>Crooked Foot AI</span>
-          <span style={{fontSize:10,fontWeight:600,color:S.muted,marginLeft:8,letterSpacing:"0.06em",textTransform:"uppercase"}}>GTM Campaign Engine</span>
+    <>
+      <nav style={{position:"sticky",top:0,zIndex:100,background:"rgba(255,255,255,0.96)",backdropFilter:"blur(12px)",borderBottom:`1px solid ${S.border}`,padding:"0 20px",display:"flex",alignItems:"center",justifyContent:"space-between",height:58,boxShadow:"0 1px 0 rgba(0,0,0,0.06)"}}>
+        <div style={{display:"flex",alignItems:"center",gap:10,flexShrink:0}}>
+          <img src="./logo.png" alt="Crooked Foot AI" style={{width:36,height:36,borderRadius:8,objectFit:"cover",flexShrink:0}} />
+          <div>
+            <span style={{fontSize:14,fontWeight:800,color:S.text,letterSpacing:"-0.01em"}}>Crooked Foot AI</span>
+            <span style={{fontSize:10,fontWeight:600,color:S.muted,marginLeft:8,letterSpacing:"0.06em",textTransform:"uppercase"}}>GTM Engine</span>
+          </div>
         </div>
-      </div>
-      <div style={{display:"flex",gap:4,alignItems:"center"}}>
+        <div className="nav-links">
+          {links.map(l=>(
+            <button key={l.id} onClick={()=>scrollTo(l.id)} style={{
+              background:active===l.id?S.cyanDim:"transparent",
+              border:`1px solid ${active===l.id?S.cyanBorder:"transparent"}`,
+              color:active===l.id?S.cyan:S.muted,
+              borderRadius:6,padding:"5px 14px",fontSize:11,fontWeight:600,letterSpacing:"0.04em",transition:"all 0.15s",
+            }}>{l.label}</button>
+          ))}
+        </div>
+        <button className="nav-hamburger" onClick={()=>setMenuOpen(o=>!o)} aria-label="Open menu">
+          <span /><span /><span />
+        </button>
+      </nav>
+      <div className={`mobile-nav-menu${menuOpen?" open":""}`}>
         {links.map(l=>(
-          <button key={l.id} onClick={()=>scrollTo(l.id)} style={{
-            background:active===l.id?S.cyanDim:"transparent",
-            border:`1px solid ${active===l.id?S.cyanBorder:"transparent"}`,
-            color:active===l.id?S.cyan:S.muted,
-            borderRadius:6,padding:"5px 14px",fontSize:11,fontWeight:600,letterSpacing:"0.04em",transition:"all 0.15s",
-          }}>{l.label}</button>
+          <button key={l.id} className={`mobile-nav-btn${active===l.id?" nav-active":""}`} onClick={()=>scrollTo(l.id)}>{l.label}</button>
         ))}
       </div>
-    </nav>
+    </>
   );
 }
 
@@ -1908,7 +1986,7 @@ function Hero() {
   const tickerText = [...ticker, ...ticker].join("   ◆   ");
 
   return (
-    <div style={{background:S.bg,padding:"80px 36px 60px",textAlign:"center",position:"relative",overflow:"hidden"}}>
+    <div className="hero-section" style={{background:S.bg,padding:"80px 36px 60px",textAlign:"center",position:"relative",overflow:"hidden"}}>
       {/* Subtle light orb */}
       <div style={{position:"absolute",top:-100,left:"50%",transform:"translateX(-50%)",width:700,height:400,background:`radial-gradient(ellipse, rgba(0,153,204,0.06) 0%, transparent 70%)`,pointerEvents:"none"}} />
 
@@ -1931,9 +2009,9 @@ function Hero() {
         Crooked Foot AI replaces gut-check forecasting with 14-signal deal intelligence — 94% forecast accuracy, 45 days before close, zero black box. While your competition is still reviewing last week's call recordings, you're closing next quarter's pipeline.
       </p>
 
-      <div className="fade-in-2" style={{display:"flex",gap:12,justifyContent:"center",flexWrap:"wrap",marginBottom:52}}>
+      <div className="fade-in-2 cta-row" style={{display:"flex",gap:12,justifyContent:"center",flexWrap:"wrap",marginBottom:52}}>
         <a href="#campaign-studio" onClick={e=>{e.preventDefault();document.getElementById("campaign-studio")?.scrollIntoView({behavior:"smooth"});}} className="pulse-btn" style={{background:S.cyan,color:"#09090F",border:"none",borderRadius:8,padding:"14px 32px",fontSize:13,fontWeight:800,letterSpacing:"0.06em",textTransform:"uppercase",textDecoration:"none",display:"inline-block",transition:"background 0.15s"}}>
-          ⚡ LAUNCH CAMPAIGN STUDIO
+          ⚡ LAUNCH DESIGN STUDIO
         </a>
         <a href="#gtm-blueprint" onClick={e=>{e.preventDefault();document.getElementById("gtm-blueprint")?.scrollIntoView({behavior:"smooth"});}} style={{background:"transparent",color:S.text,border:`1px solid ${S.border}`,borderRadius:8,padding:"14px 32px",fontSize:13,fontWeight:700,letterSpacing:"0.06em",textTransform:"uppercase",textDecoration:"none",display:"inline-block",transition:"all 0.15s"}}>
           VIEW GTM BLUEPRINT →
@@ -1956,7 +2034,7 @@ function Hero() {
       </div>
 
       {/* Ticker */}
-      <div style={{overflow:"hidden",borderTop:`1px solid ${S.border}`,borderBottom:`1px solid ${S.border}`,padding:"10px 0",background:S.surface,marginLeft:-36,marginRight:-36,marginBottom:-60}}>
+      <div className="ticker-wrap" style={{overflow:"hidden",borderTop:`1px solid ${S.border}`,borderBottom:`1px solid ${S.border}`,padding:"10px 0",background:S.surface,marginLeft:-36,marginRight:-36,marginBottom:-60}}>
         <div style={{whiteSpace:"nowrap",animation:"ticker 32s linear infinite",display:"inline-block",fontSize:10,fontWeight:700,letterSpacing:"0.15em",color:S.cyan}}>
           {tickerText}
         </div>
