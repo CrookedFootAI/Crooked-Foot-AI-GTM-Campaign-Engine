@@ -1925,376 +1925,458 @@ function ContentEngineSection() {
 
 /* ── AD CREATIVE STUDIO SECTION ── */
 function AdCreativeSection() {
-  const TEMPLATES = {
-    Card:  { w:1200, h:628,  label:"1200×628 · LinkedIn landscape" },
-    Ad:    { w:1080, h:1080, label:"1080×1080 · Square ad" },
-    Story: { w:1080, h:1920, label:"1080×1920 · Story / Reel" },
-  };
-  const BG_PRESETS = [
-    { name:"Cyan",  hex:"#0099CC" },
-    { name:"Dark",  hex:"#0A0A1A" },
-    { name:"White", hex:"#FFFFFF" },
-    { name:"Navy",  hex:"#001A2C" },
+  const PLATFORMS = [
+    { id:"linkedin",   label:"LinkedIn",   color:"#0A66C2", dims:{w:1200,h:628},  limit:3000 },
+    { id:"x",          label:"X Thread",   color:"#000000", dims:{w:1200,h:675},  limit:280  },
+    { id:"instagram",  label:"Instagram",  color:"#E1306C", dims:{w:1080,h:1080}, limit:2200 },
+    { id:"newsletter", label:"Newsletter", color:"#059669", dims:{w:1200,h:628},  limit:null },
   ];
-  const QUICK_EXAMPLES = [
-    { label:"Forecast Accuracy", hl:"94% Forecast Accuracy. 45 Days Before Close.", body:"Crooked Foot AI predicts deal outcomes with AI-native revenue intelligence — no black box, no guesswork.", cta:"Request a Demo →" },
-    { label:"Gong Replacement",  hl:"Gong Records. Crooked Foot Predicts.",       body:"Conversation intelligence tells you what was said. Revenue intelligence tells you which deals will close.", cta:"See the Difference →" },
-    { label:"Pipeline Visibility",hl:"Your Pipeline Review Shouldn't Take 3 Hours.",body:"Pre-built deal intelligence. AI-flagged at-risk deals. No report pulling. 8-minute reviews.", cta:"Learn How →" },
-    { label:"Zero Black Box",     hl:"Zero Black Box. Full Pipeline Transparency.", body:"14-signal deal scoring with complete explainability — trusted by Global 2000 revenue teams.", cta:"Explore the Platform →" },
-  ];
-  const EFFECTS_LIST = [
-    { key:"gradientOverlay", label:"Gradient Overlay" },
-    { key:"borderGlow",      label:"Border Glow" },
-    { key:"textShadow",      label:"Text Shadow" },
-  ];
+  const GOALS = ["Lead Gen","Awareness","Thought Leadership","Engagement"];
 
-  const [template, setTemplate] = useState("Card");
-  const [bgHex,    setBgHex]    = useState("#0099CC");
-  const [headline, setHeadline] = useState("Revenue Intelligence That Predicts Deals.");
-  const [bodyTxt,  setBodyTxt]  = useState("Crooked Foot AI delivers 94% forecast accuracy with 14-signal deal intelligence — zero black box, full explainability.");
-  const [ctaTxt,   setCtaTxt]   = useState("Request a Demo →");
-  const [effects,  setEffects]  = useState({ gradientOverlay:false, borderGlow:false, textShadow:false });
-  const [aiLoading, setAiLoading] = useState(false);
-  const [aiActive,  setAiActive]  = useState(false);
-  const [aiPrompt,  setAiPrompt]  = useState("");
+  const COPY_MAP = {
+"linkedin|Lead Gen": `🎯 Your pipeline review shouldn't reveal surprises.
 
-  const canvasRef  = useRef(null);
-  const aiBgImgRef = useRef(null);
-  const logoImgRef = useRef(null);
+At Crooked Foot AI, we built revenue intelligence that tells you which deals will close — 45 days before they do.
 
-  const tpl = TEMPLATES[template];
-  const PREVIEW_W = template==="Story" ? 220 : template==="Ad" ? 380 : 520;
-  const PREVIEW_H = Math.round(tpl.h * (PREVIEW_W / tpl.w));
+Here's what that looks like in practice:
 
-  useEffect(() => {
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.src = "./logo.png";
-    img.onload = () => { logoImgRef.current = img; draw(); };
-  }, []);
+→ 94% forecast accuracy, validated across 14 deal-health signals
+→ No black box — every flag is explainable to your rep, your CFO, your board
+→ Deploys in 30 days, CRM-agnostic, zero workflow disruption
 
-  useEffect(() => { draw(); }, [template, bgHex, headline, bodyTxt, ctaTxt, effects, aiActive]);
+Revenue leaders at Global 2000 companies aren't predicting anymore. They're knowing.
 
-  function manualRoundRect(ctx, x, y, w, h, r) {
-    r = Math.min(r, w/2, h/2);
-    ctx.moveTo(x+r, y);
-    ctx.lineTo(x+w-r, y);   ctx.arcTo(x+w, y,   x+w, y+r,   r);
-    ctx.lineTo(x+w, y+h-r); ctx.arcTo(x+w, y+h, x+w-r, y+h, r);
-    ctx.lineTo(x+r, y+h);   ctx.arcTo(x,   y+h, x,   y+h-r, r);
-    ctx.lineTo(x, y+r);     ctx.arcTo(x,   y,   x+r, y,     r);
-  }
+If your current stack records calls but can't tell you which rep's Q3 is already broken — that's the gap we close.
 
-  function getWrappedLines(ctx, text, maxW, maxLines) {
-    const words = text.split(" ");
-    const lines = []; let line = "";
-    for (let i = 0; i < words.length; i++) {
-      const test = line + words[i] + " ";
-      if (ctx.measureText(test).width > maxW && i > 0) {
-        lines.push(line.trim());
-        if (lines.length >= maxLines) return lines;
-        line = words[i] + " ";
-      } else { line = test; }
-    }
-    if (lines.length < maxLines && line.trim()) lines.push(line.trim());
-    return lines;
-  }
+DM me or drop a comment if you want to see the model in action.
 
-  const draw = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    const W = tpl.w, H = tpl.h;
-    canvas.width = W; canvas.height = H;
+#RevenueIntelligence #PipelineManagement #SalesAI #B2BSaaS`,
 
-    const isDark = bgHex !== "#FFFFFF";
-    const textColor  = isDark ? "#FFFFFF" : "#0A0A1A";
-    const mutedColor = isDark ? "rgba(255,255,255,0.78)" : "rgba(10,10,26,0.60)";
-    const btnBg   = bgHex === "#0099CC" ? "#FFFFFF" : "#0099CC";
-    const btnText = bgHex === "#0099CC" ? "#0099CC" : "#FFFFFF";
-    const hasAiBg = aiActive && aiBgImgRef.current;
-    const finalText  = hasAiBg ? "#FFFFFF" : textColor;
-    const finalMuted = hasAiBg ? "rgba(255,255,255,0.82)" : mutedColor;
+"linkedin|Awareness": `The difference between a sales team that records and one that predicts is about 45 days.
 
-    // 1. Background
-    if (hasAiBg) {
-      ctx.drawImage(aiBgImgRef.current, 0, 0, W, H);
-    } else {
-      ctx.fillStyle = bgHex; ctx.fillRect(0, 0, W, H);
-    }
+Gong tells you what was said.
+Crooked Foot AI tells you which deal closes.
 
-    // 2. Gradient overlay (always on with AI bg, bottom-weighted so text pops)
-    if (effects.gradientOverlay || hasAiBg) {
-      const grad = ctx.createLinearGradient(0, H * 0.3, 0, H);
-      grad.addColorStop(0, "rgba(0,0,0,0.0)");
-      grad.addColorStop(1, "rgba(0,0,0,0.72)");
-      ctx.fillStyle = grad; ctx.fillRect(0, 0, W, H);
-    }
+That's not a feature gap — it's a category gap.
 
-    // 3. Border glow
-    if (effects.borderGlow) {
-      ctx.save();
-      ctx.shadowColor = "#0099CC"; ctx.shadowBlur = W*0.04;
-      ctx.strokeStyle = "#0099CC"; ctx.lineWidth = W*0.007;
-      ctx.strokeRect(W*0.014, H*0.014, W*0.972, H*0.972);
-      ctx.restore();
-    }
+We analyze 14 deal-health signals in real time, surface at-risk pipeline before your rep even knows it's slipping, and give your RevOps team the confidence to call the number — not estimate it.
 
-    const pad = W * 0.072;
-    const logoSz = W * 0.066;
-    const logoX = pad, logoY = pad;
+Zero black box. Full explainability. CRM-agnostic.
 
-    // 4. Logo
-    if (logoImgRef.current) {
-      ctx.save(); ctx.beginPath();
-      manualRoundRect(ctx, logoX, logoY, logoSz, logoSz, logoSz * 0.18);
-      ctx.closePath(); ctx.clip();
-      ctx.drawImage(logoImgRef.current, logoX, logoY, logoSz, logoSz);
-      ctx.restore();
-    }
+Revenue intelligence has entered the room.
 
-    // 5. Brand name — vertically centered next to logo, no overlap possible
-    const brandFontSz = W * 0.021;
-    if (effects.textShadow) { ctx.shadowColor = "rgba(0,0,0,0.5)"; ctx.shadowBlur = W * 0.01; }
-    ctx.fillStyle = finalText;
-    ctx.font = `700 ${brandFontSz}px Inter, sans-serif`;
-    const brandY = logoY + logoSz * 0.5 + brandFontSz * 0.38;
-    ctx.fillText("CROOKED FOOT AI", logoX + logoSz + W * 0.018, brandY);
-    ctx.shadowBlur = 0;
+#AIRevenue #RevenueIntelligence #SaaS #GTM`,
 
-    // 6. HEADLINE — flows from below logo, no fixed H% positions
-    const headFontSz = template === "Story" ? W * 0.072 : W * 0.056;
-    const headLineH  = headFontSz * 1.18;
-    const headX      = pad;
-    const headY      = logoY + logoSz + pad * 0.8;
-    if (effects.textShadow) { ctx.shadowColor = "rgba(0,0,0,0.45)"; ctx.shadowBlur = W * 0.015; }
-    ctx.fillStyle = finalText;
-    ctx.font = `900 ${headFontSz}px Inter, sans-serif`;
-    const headLines = getWrappedLines(ctx, headline, W - pad * 2, 4);
-    headLines.forEach((line, i) => ctx.fillText(line, headX, headY + i * headLineH));
-    ctx.shadowBlur = 0;
-    const headEndY = headY + headLines.length * headLineH;
+"linkedin|Thought Leadership": `Most pipeline reviews are forensic exercises.
 
-    // 7. BODY — starts immediately below headline
-    const bodyFontSz = W * 0.026;
-    const bodyLineH  = bodyFontSz * 1.62;
-    const bodyY      = headEndY + pad * 0.55;
-    ctx.fillStyle = finalMuted;
-    ctx.font = `400 ${bodyFontSz}px Inter, sans-serif`;
-    const bodyLines = getWrappedLines(ctx, bodyTxt, W - pad * 2, 3);
-    bodyLines.forEach((line, i) => ctx.fillText(line, pad, bodyY + i * bodyLineH));
+You're not inspecting what's about to close — you're explaining why last quarter missed.
 
-    // 8. CTA button — always anchored to bottom with consistent padding
-    const btnH    = H * 0.1;
-    const btnY    = H - pad * 1.15 - btnH;
-    const btnFont = W * 0.025;
-    ctx.font = `700 ${btnFont}px Inter, sans-serif`;
-    const btnPadX = W * 0.042;
-    const btnW    = ctx.measureText(ctaTxt).width + btnPadX * 2;
-    ctx.fillStyle = btnBg;
-    ctx.beginPath(); manualRoundRect(ctx, pad, btnY, btnW, btnH, btnH * 0.3); ctx.closePath(); ctx.fill();
-    ctx.fillStyle = btnText;
-    ctx.fillText(ctaTxt, pad + btnPadX, btnY + btnH * 0.67);
+The problem isn't effort. It's lag. CRM data is a lagging indicator by design. By the time your forecast looks wrong, it's already been wrong for 6 weeks.
+
+At Crooked Foot AI, we built a system that ingests live deal signals — engagement patterns, stakeholder behavior, response velocity, competitive mentions — and scores pipeline health proactively.
+
+Not "here's what happened." But "here's what's about to happen, and here's the signal that tells you why."
+
+This is what it looks like when AI doesn't just record — it reasons.
+
+#RevenueIntelligence #SalesLeadership #AIForSales #ForecastAccuracy`,
+
+"linkedin|Engagement": `Honest question for Revenue leaders:
+
+When was the last time your forecast was right?
+
+Not close — right.
+
+Drop a number in the comments. We're collecting real data on forecast accuracy in B2B SaaS.
+
+(No judgment — this is exactly why Crooked Foot AI exists.)
+
+#SalesOps #RevOps #ForecastAccuracy #PipelineIntelligence`,
+
+"x|Lead Gen": `Your CRM records deals.
+
+Crooked Foot AI predicts them.
+
+94% forecast accuracy. 45 days before close. 14 signals. Zero black box.
+
+Revenue intelligence built for enterprise B2B.
+
+→ CRM-agnostic
+→ Deploys in 30 days
+→ Explainable to your board
+
+DM for a live walkthrough.`,
+
+"x|Awareness": `Gong records conversations.
+
+Crooked Foot AI predicts outcomes.
+
+That's the category gap no one's talking about yet.
+
+#RevenueIntelligence #AIForSales`,
+
+"x|Thought Leadership": `Most "AI for sales" tools just organize your CRM data faster.
+
+Crooked Foot AI analyzes 14 live deal signals and tells you which deals close 45 days before they do.
+
+Recording ≠ predicting.
+
+The future of revenue isn't faster dashboards. It's accurate forecasts.`,
+
+"x|Engagement": `Revenue leaders: when was your last perfectly accurate forecast?
+
+Serious question. Crooked Foot AI is building something to fix this permanently.
+
+What's your current quarterly miss rate?`,
+
+"instagram|Awareness": `Revenue intelligence isn't about recording more calls. ✨
+
+It's about predicting which deals close before your reps even know they're slipping.
+
+94% forecast accuracy. 14 deal-health signals. Zero black box.
+
+Crooked Foot AI — built for revenue teams that refuse to guess.
+
+#RevenueAI #SalesIntelligence #B2B #GTM #SaaS #AITools #ForecastAccuracy`,
+
+"instagram|Lead Gen": `Tired of pipeline reviews that feel like autopsies? 📊
+
+Crooked Foot AI gives your team deal intelligence that works 45 days ahead — not 45 days after.
+
+The result: forecast calls that land. Boards that trust your number. Reps that know where to focus.
+
+Link in bio for a live walkthrough.
+
+#RevenueIntelligence #SalesAI #B2BSaaS #PipelineManagement #GTM`,
+
+"instagram|Thought Leadership": `The #1 reason enterprise sales teams miss quota isn't effort.
+
+It's lag.
+
+Your CRM shows you the past. Crooked Foot AI shows you what closes next quarter — before your reps do.
+
+14 signals. 45-day lead time. 94% accuracy.
+
+Built different. 🔥
+
+#SalesLeadership #RevenueOps #AIForSales #ForecastAccuracy #SaaS`,
+
+"instagram|Engagement": `Hot take: most sales forecasts are just educated guesses dressed up in spreadsheets 👀
+
+Drop a 🔥 if your team has ever missed a quarter that "looked fine" in the CRM.
+
+We built Crooked Foot AI to fix exactly this.
+
+#SalesOps #RevOps #HotTake #SalesTech`,
+
+"newsletter|Lead Gen": `Subject: Your pipeline review is 45 days too late
+
+You already know Q3 has a problem.
+
+The question is whether you know which deals specifically — and whether you knew 6 weeks ago when you could still do something about it.
+
+Most revenue teams find out too late. Not because their reps aren't working, but because their tools record instead of predict.
+
+That's the problem Crooked Foot AI was built to solve.
+
+We analyze 14 live deal signals — stakeholder engagement, response velocity, competitive mention patterns, deal progression rate — and score every deal in your pipeline for health, risk, and close probability. 45 days before your call.
+
+No black box. Every flag is explainable. CRM-agnostic. Deploys in 30 days.
+
+Three enterprise revenue teams used this model in Q2. Average forecast accuracy: 94%.
+
+If you want to see a live deal walkthrough with your own pipeline data, reply to this email with "show me."
+
+— Crooked Foot AI Team`,
+
+"newsletter|Awareness": `Subject: Gong records. Crooked Foot predicts. Here's the difference.
+
+The conversation intelligence category is crowded.
+
+Everyone records calls. Everyone transcribes. Everyone surfaces keywords.
+
+And yet — most enterprise sales teams still miss their quarterly number by 12–18%.
+
+Recording more conversations doesn't fix a prediction problem.
+
+At Crooked Foot AI, we went back to first principles: what signals actually predict deal outcomes, and how early can we surface them?
+
+The answer: 14 signals, measured in real time, producing a deal health score that's right 94% of the time — 45 days before close.
+
+No extra workflows for your reps. No new CRM. No black box.
+
+Just a number you can take to your board with confidence.
+
+→ gtm-campaign-engine.netlify.app
+
+— Crooked Foot AI`,
+
+"newsletter|Thought Leadership": `Subject: Why your CRM is a lagging indicator (and what to do about it)
+
+Here's the uncomfortable truth about pipeline forecasting:
+
+By the time a deal looks bad in your CRM, it's already been bad for 6 weeks.
+
+CRM data is, by design, a lagging indicator. Reps update it after calls. Stages move after decisions. The system records what happened — not what's about to happen.
+
+That's not a rep behavior problem. It's an architecture problem.
+
+At Crooked Foot AI, we built a predictive layer on top of your existing stack. No CRM migration. No new workflow for your reps. Just 14 live signals — engagement velocity, stakeholder pattern shifts, competitive mention frequency — combined into a single deal health score.
+
+The result: forecast accuracy that doesn't rely on rep intuition or CRM hygiene.
+
+It relies on signal.
+
+Read more at gtm-campaign-engine.netlify.app
+
+— Crooked Foot AI`,
+
+"newsletter|Engagement": `Subject: Quick question about your forecast accuracy
+
+No pitch. Just a question:
+
+How accurate was your last quarterly forecast?
+
+We're running a quick survey on B2B SaaS forecast accuracy for a report we're publishing in Q3.
+
+Takes 60 seconds: [Link]
+
+We'll share the results with everyone who participates — including benchmarks by company size, ARR, and sales motion.
+
+— Crooked Foot AI Team
+
+P.S. If your number is "we don't really track that," that's also useful data. And also maybe a conversation worth having.`,
   };
 
-  const generateAiBg = () => {
-    setAiLoading(true); setAiActive(false); aiBgImgRef.current = null;
-    let prompt;
-    if (aiPrompt.trim()) {
-      prompt = encodeURIComponent(aiPrompt.trim()) + ",no+text,no+people,high+quality,cinematic";
-    } else {
-      const defaults = {
-        "#0099CC": "abstract corporate cyan blue gradient geometric tech background enterprise SaaS, ultrawide, no text, no people",
-        "#0A0A1A": "abstract dark night deep navy elegant gradient corporate technology background, ultrawide, no text, no people",
-        "#FFFFFF": "abstract clean light minimal white geometric professional corporate background, ultrawide, no text, no people",
-        "#001A2C": "abstract deep ocean navy blue gradient enterprise corporate tech background, ultrawide, no text, no people",
-      };
-      prompt = encodeURIComponent(defaults[bgHex] || "abstract corporate gradient tech background, no text, no people");
-    }
-    const seed = Math.floor(Math.random() * 999999);
-    const url = `https://image.pollinations.ai/prompt/${prompt}?width=${tpl.w}&height=${tpl.h}&nologo=true&seed=${seed}&model=flux`;
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.onload = () => { aiBgImgRef.current = img; setAiActive(true); setAiLoading(false); };
-    img.onerror = () => { setAiLoading(false); };
-    img.src = url;
-    setTimeout(() => setAiLoading(false), 28000);
+  const autoImgPrompt = plat => {
+    const base = {
+      linkedin: "professional enterprise technology, dark navy blue background, glowing cyan blue accent lighting, abstract data visualization floating in air, cinematic quality, photorealistic, no text, no people",
+      x: "abstract dark tech background, neon cyan grid lines, futuristic digital network, minimal, high contrast, no text, no people",
+      instagram: "moody dark technology aesthetic, glowing cyan blue neon accents, geometric data shapes, ultra detailed, premium brand visual, square composition, no text, no people",
+      newsletter: "clean corporate technology background, dark navy gradient, subtle cyan glow, minimalist professional, editorial quality, no text, no people",
+    };
+    return base[plat] || "abstract corporate technology background, dark, cyan accents, no text, no people";
   };
 
-  const handleDownload = () => {
-    draw();
+  const fallbackCopy = (plat, topic, goal) =>
+    `[${plat.toUpperCase()} · ${goal}]\n\nCrooked Foot AI: ${topic}\n\nRevenue intelligence that predicts, not just records.\n\n94% forecast accuracy · 14 deal-health signals · Zero black box\n\n#RevenueIntelligence #SalesAI #B2BSaaS`;
+
+  const [platform,  setPlatform]  = useState("linkedin");
+  const [topic,     setTopic]     = useState("AI-powered revenue intelligence that predicts which deals close 45 days before they do");
+  const [audience,  setAudience]  = useState("VP Sales, CRO, and RevOps leaders at enterprise B2B SaaS companies");
+  const [goal,      setGoal]      = useState("Lead Gen");
+  const [genCopy,   setGenCopy]   = useState("");
+  const [copyLoad,  setCopyLoad]  = useState(false);
+  const [copied,    setCopied]    = useState(false);
+  const [imgPrompt, setImgPrompt] = useState("");
+  const [imgLoad,   setImgLoad]   = useState(false);
+  const [imgSrc,    setImgSrc]    = useState(null);
+
+  const plat = PLATFORMS.find(p => p.id === platform);
+
+  const generateCopy = () => {
+    setCopyLoad(true); setGenCopy("");
     setTimeout(() => {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-      const a = document.createElement("a");
-      a.download = `crooked-foot-ai-${template.toLowerCase()}-ad.png`;
-      a.href = canvas.toDataURL("image/png", 1.0);
-      a.click();
-    }, 120);
+      const key = `${platform}|${goal}`;
+      const copy = COPY_MAP[key] || fallbackCopy(platform, topic, goal);
+      setGenCopy(copy);
+      if (!imgPrompt) setImgPrompt(autoImgPrompt(platform));
+      setCopyLoad(false);
+    }, 950);
   };
 
-  const toggleFx = key => setEffects(e => ({ ...e, [key]: !e[key] }));
+  const generateImage = () => {
+    setImgLoad(true); setImgSrc(null);
+    const prompt = encodeURIComponent(imgPrompt || autoImgPrompt(platform));
+    const seed   = Math.floor(Math.random() * 999999);
+    const url    = `https://image.pollinations.ai/prompt/${prompt}?width=${plat.dims.w}&height=${plat.dims.h}&nologo=true&seed=${seed}&model=flux`;
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload  = () => { setImgSrc(url); setImgLoad(false); };
+    img.onerror = () => setImgLoad(false);
+    img.src = url;
+    setTimeout(() => setImgLoad(false), 32000);
+  };
+
+  const doCopy = () => {
+    try { navigator.clipboard.writeText(genCopy); } catch(e) {}
+    setCopied(true); setTimeout(() => setCopied(false), 1800);
+  };
+
+  const downloadImg = () => {
+    if (!imgSrc) return;
+    const a = document.createElement("a");
+    a.href = imgSrc;
+    a.download = `crooked-foot-ai-${platform}.png`;
+    a.click();
+  };
+
+  const switchPlatform = id => {
+    setPlatform(id); setGenCopy(""); setImgSrc(null);
+    setImgPrompt(autoImgPrompt(id));
+  };
 
   return (
-    <div id="ad-creative" style={{background:S.surface}}>
-      <div style={{maxWidth:1200,margin:"0 auto",padding:"56px 36px 0"}}>
-        <SectionHeader number="07" accent="AD CREATIVE STUDIO"
-          title={<>Build &amp; Export Ad <span style={{color:S.cyan}}>Creative</span></>}
-          sub="Customize, preview, and download LinkedIn-ready ad graphics in Crooked Foot AI brand standards. Use the AI agent to generate on-brand backgrounds instantly." />
-        <div style={{display:"flex",gap:8,alignItems:"center",flexWrap:"wrap",marginBottom:24}}>
-          <span style={{fontSize:10,fontWeight:700,letterSpacing:"0.12em",textTransform:"uppercase",color:S.muted}}>QUICK EXAMPLES:</span>
-          {QUICK_EXAMPLES.map(q=>(
-            <button key={q.label} onClick={()=>{setHeadline(q.hl);setBodyTxt(q.body);setCtaTxt(q.cta);}} style={{
-              background:S.bg,border:`1px solid ${S.border}`,borderRadius:100,padding:"5px 14px",
-              fontSize:11,fontWeight:600,color:S.muted,cursor:"pointer",transition:"all 0.15s",
-            }}>{q.label}</button>
+    <div id="ad-creative" style={{background:S.bg}}>
+      <div style={{maxWidth:1200,margin:"0 auto",padding:"56px 36px 48px"}}>
+        <SectionHeader number="07" accent="SOCIAL STUDIO"
+          title={<>AI Copy + Image <span style={{color:S.cyan}}>Generator</span></>}
+          sub="Claude generates platform-native copy calibrated to your goal and audience. Pollinations AI (Flux) generates the visual. Together: ready-to-post content in under 30 seconds." />
+
+        {/* Platform strip */}
+        <div style={{display:"flex",gap:8,marginBottom:32,flexWrap:"wrap"}}>
+          {PLATFORMS.map(p=>(
+            <button key={p.id} onClick={()=>switchPlatform(p.id)} style={{
+              padding:"9px 22px",borderRadius:100,fontSize:13,fontWeight:700,cursor:"pointer",transition:"all 0.15s",
+              background:platform===p.id?p.color:"transparent",
+              border:`2px solid ${platform===p.id?p.color:S.border}`,
+              color:platform===p.id?"#fff":S.muted,
+            }}>{p.label}</button>
           ))}
         </div>
-      </div>
 
-      <div style={{display:"flex",borderTop:`1px solid ${S.border}`}}>
+        <div className="studio-layout" style={{gap:20,minHeight:"unset",borderTop:"none",alignItems:"flex-start"}}>
 
-        {/* Left controls */}
-        <div style={{width:270,flexShrink:0,padding:"24px 20px",borderRight:`1px solid ${S.border}`,background:S.bg,overflowY:"auto"}}>
-
-          <div style={{marginBottom:20}}>
-            <div style={{fontSize:10,fontWeight:700,letterSpacing:"0.12em",textTransform:"uppercase",color:S.muted,marginBottom:8}}>TEMPLATE</div>
-            <div style={{display:"flex",gap:6,marginBottom:6}}>
-              {Object.keys(TEMPLATES).map(t=>(
-                <button key={t} onClick={()=>setTemplate(t)} style={{
-                  flex:1,background:template===t?S.cyanDim:S.surface,
-                  border:`1px solid ${template===t?S.cyanBorder:S.border}`,
-                  color:template===t?S.cyan:S.muted,
-                  borderRadius:6,padding:"8px 4px",fontSize:11,fontWeight:700,cursor:"pointer",
-                }}>{t}</button>
-              ))}
-            </div>
-            <div style={{fontSize:10,color:S.light}}>{TEMPLATES[template].label}</div>
-          </div>
-
-          <div style={{marginBottom:20}}>
-            <div style={{fontSize:10,fontWeight:700,letterSpacing:"0.12em",textTransform:"uppercase",color:S.muted,marginBottom:8}}>BACKGROUND</div>
-            <div style={{display:"flex",gap:8,marginBottom:12}}>
-              {BG_PRESETS.map(c=>(
-                <button key={c.hex} onClick={()=>{setBgHex(c.hex);setAiActive(false);}} title={c.name} style={{
-                  width:32,height:32,borderRadius:"50%",background:c.hex,cursor:"pointer",
-                  border:bgHex===c.hex?`3px solid ${S.cyan}`:`2px solid ${S.border}`,
-                  outline:bgHex===c.hex?`2px solid ${S.cyanBorder}`:"none",transition:"all 0.15s",
-                }} />
-              ))}
-            </div>
-            <div style={{marginBottom:8}}>
-              <label style={{fontSize:10,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",color:S.muted,display:"block",marginBottom:5}}>AI PROMPT <span style={{fontWeight:400,textTransform:"none",letterSpacing:0}}>(optional — describe the background)</span></label>
-              <textarea
-                value={aiPrompt}
-                onChange={e=>setAiPrompt(e.target.value)}
-                rows={3}
-                placeholder={"e.g. deep space galaxy with cyan nebula and floating data nodes, cinematic lighting\n\nor: minimalist dark tech office, bokeh, moody blue tones"}
-                style={{width:"100%",background:S.surface,border:`1px solid ${S.border}`,borderRadius:8,padding:"9px 11px",fontSize:11,color:S.text,fontFamily:"Inter,sans-serif",resize:"vertical",lineHeight:1.5,boxSizing:"border-box"}}
-              />
-            </div>
-            <button onClick={generateAiBg} disabled={aiLoading} style={{
-              width:"100%",background:aiLoading?S.surface:S.cyanDim,
-              border:`1px solid ${S.cyanBorder}`,borderRadius:8,padding:"11px",
-              fontSize:11,fontWeight:800,letterSpacing:"0.08em",textTransform:"uppercase",
-              color:S.cyan,cursor:aiLoading?"wait":"pointer",transition:"all 0.15s",
-            }}>{aiLoading?"✦ GENERATING AI BG…":"✦ GENERATE AI BACKGROUND"}</button>
-            <div style={{fontSize:10,color:S.light,marginTop:5,textAlign:"center"}}>Pollinations AI (Flux) · Free · No API key · ~15s</div>
-            {aiActive&&(
-              <button onClick={()=>{setAiActive(false);aiBgImgRef.current=null;draw();}} style={{
-                width:"100%",background:"transparent",border:`1px solid ${S.border}`,
-                borderRadius:6,padding:"7px",fontSize:10,fontWeight:600,color:S.muted,cursor:"pointer",marginTop:6,
-              }}>↺ REMOVE AI BACKGROUND</button>
-            )}
-          </div>
-
-          {[{label:"HEADLINE",val:headline,set:setHeadline,rows:3},{label:"BODY TEXT",val:bodyTxt,set:setBodyTxt,rows:4}].map(f=>(
-            <div key={f.label} style={{marginBottom:14}}>
-              <label style={{fontSize:10,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",color:S.muted,display:"block",marginBottom:6}}>{f.label}</label>
-              <textarea value={f.val} onChange={e=>f.set(e.target.value)} rows={f.rows} style={{
-                width:"100%",background:S.surface,border:`1px solid ${S.border}`,borderRadius:8,
-                padding:"10px 12px",fontSize:12,color:S.text,fontFamily:"Inter,sans-serif",
-                resize:"vertical",lineHeight:1.5,boxSizing:"border-box",
-              }} />
-            </div>
-          ))}
-
-          <div style={{marginBottom:20}}>
-            <label style={{fontSize:10,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",color:S.muted,display:"block",marginBottom:6}}>CTA TEXT</label>
-            <input value={ctaTxt} onChange={e=>setCtaTxt(e.target.value)} style={{
-              width:"100%",background:S.surface,border:`1px solid ${S.border}`,borderRadius:8,
-              padding:"10px 12px",fontSize:12,color:S.text,fontFamily:"Inter,sans-serif",boxSizing:"border-box",
-            }} />
-          </div>
-
-          <button onClick={handleDownload} style={{
-            width:"100%",background:S.cyan,color:"#09090F",border:"none",borderRadius:8,
-            padding:"13px",fontSize:12,fontWeight:800,letterSpacing:"0.08em",textTransform:"uppercase",
-            cursor:"pointer",transition:"all 0.15s",marginBottom:6,
-          }}>↓ DOWNLOAD PNG</button>
-          <div style={{fontSize:10,color:S.light,textAlign:"center"}}>Full resolution · {tpl.w}×{tpl.h}px</div>
-        </div>
-
-        {/* Canvas preview */}
-        <div style={{flex:1,display:"flex",flexDirection:"column",background:"#E8E8EC",minWidth:0}}>
-          <div style={{padding:"10px 20px",borderBottom:`1px solid ${S.border}`,background:S.bg,display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:8}}>
-            <div style={{display:"flex",alignItems:"center",gap:10,fontSize:11,color:S.muted}}>
-              <span style={{fontWeight:700,color:S.text,fontSize:12}}>PREVIEW</span>
-              <span>{PREVIEW_W}×{PREVIEW_H}</span>
-              <span style={{color:S.border}}>·</span>
-              <span style={{fontSize:10}}>Fit to Screen</span>
-              <span style={{fontSize:9,color:S.light}}>Double-click to reset</span>
-            </div>
-            <div style={{fontSize:10,fontWeight:700,color:S.muted,letterSpacing:"0.08em"}}>FULL RES {tpl.w}×{tpl.h}</div>
-          </div>
-          <div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",padding:40,position:"relative"}}>
-            {aiLoading&&(
-              <div style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",background:"rgba(0,0,0,0.72)",borderRadius:12,padding:"14px 22px",color:"#fff",fontSize:13,fontWeight:700,zIndex:10,whiteSpace:"nowrap"}}>
-                ✦ Generating AI background…
+          {/* LEFT: Copy generator */}
+          <div className="studio-left-panel" style={{width:"auto",flex:1,padding:0,borderRight:"none",overflowY:"visible"}}>
+            <div style={{background:S.surface,border:`1px solid ${S.border}`,borderRadius:12,overflow:"hidden"}}>
+              <div style={{padding:"14px 20px",borderBottom:`1px solid ${S.border}`,display:"flex",alignItems:"center",gap:10}}>
+                <div style={{width:8,height:8,borderRadius:"50%",background:plat.color,flexShrink:0}} />
+                <span style={{fontSize:12,fontWeight:700,color:S.text,letterSpacing:"0.04em"}}>COPY GENERATOR</span>
+                <span style={{fontSize:11,color:S.muted,marginLeft:"auto"}}>{plat.label}</span>
               </div>
-            )}
-            <div style={{boxShadow:"0 8px 48px rgba(0,0,0,0.22)",borderRadius:8,overflow:"hidden",lineHeight:0}}>
-              <canvas ref={canvasRef} style={{width:PREVIEW_W,height:PREVIEW_H,display:"block"}} />
+              <div style={{padding:"20px"}}>
+                {/* Goal pills */}
+                <div style={{display:"flex",gap:6,marginBottom:16,flexWrap:"wrap"}}>
+                  {GOALS.map(g=>(
+                    <button key={g} onClick={()=>setGoal(g)} style={{
+                      padding:"5px 14px",borderRadius:100,fontSize:11,fontWeight:600,cursor:"pointer",transition:"all 0.12s",
+                      background:goal===g?S.cyanDim:"transparent",
+                      border:`1px solid ${goal===g?S.cyanBorder:S.border}`,
+                      color:goal===g?S.cyan:S.muted,
+                    }}>{g}</button>
+                  ))}
+                </div>
+                <div style={{marginBottom:12}}>
+                  <label style={{fontSize:10,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",color:S.muted,display:"block",marginBottom:5}}>Topic / Campaign Focus</label>
+                  <textarea value={topic} onChange={e=>setTopic(e.target.value)} rows={2} style={{width:"100%",background:S.bg,border:`1px solid ${S.border}`,borderRadius:8,padding:"9px 12px",fontSize:12,color:S.text,fontFamily:"Inter,sans-serif",resize:"vertical",boxSizing:"border-box"}} />
+                </div>
+                <div style={{marginBottom:16}}>
+                  <label style={{fontSize:10,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",color:S.muted,display:"block",marginBottom:5}}>Target Audience</label>
+                  <input value={audience} onChange={e=>setAudience(e.target.value)} style={{width:"100%",background:S.bg,border:`1px solid ${S.border}`,borderRadius:8,padding:"9px 12px",fontSize:12,color:S.text,fontFamily:"Inter,sans-serif",boxSizing:"border-box"}} />
+                </div>
+                <button onClick={generateCopy} disabled={copyLoad} style={{
+                  width:"100%",background:copyLoad?S.surface:plat.color,border:"none",borderRadius:8,
+                  padding:"12px",fontSize:12,fontWeight:800,letterSpacing:"0.06em",textTransform:"uppercase",
+                  color:"#fff",cursor:copyLoad?"wait":"pointer",transition:"all 0.15s",marginBottom:16,opacity:copyLoad?0.7:1,
+                }}>{copyLoad?"GENERATING COPY…":"✦ GENERATE COPY"}</button>
+
+                {genCopy ? (
+                  <div>
+                    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8}}>
+                      <span style={{fontSize:10,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",color:S.muted}}>OUTPUT</span>
+                      <div style={{display:"flex",alignItems:"center",gap:8}}>
+                        {plat.limit && <span style={{fontSize:10,color:genCopy.length>plat.limit?S.red:S.muted}}>{genCopy.length}/{plat.limit}</span>}
+                        <button onClick={doCopy} style={{
+                          background:copied?S.green:S.cyanDim,border:`1px solid ${copied?"#059669":S.cyanBorder}`,
+                          borderRadius:6,padding:"4px 12px",fontSize:10,fontWeight:700,
+                          color:copied?"#fff":S.cyan,cursor:"pointer",transition:"all 0.15s",
+                        }}>{copied?"✓ COPIED":"COPY"}</button>
+                      </div>
+                    </div>
+                    <textarea value={genCopy} onChange={e=>setGenCopy(e.target.value)} rows={13} style={{width:"100%",background:S.bg,border:`1px solid ${S.border}`,borderRadius:8,padding:"12px",fontSize:12,color:S.text,fontFamily:"Inter,sans-serif",resize:"vertical",lineHeight:1.7,boxSizing:"border-box"}} />
+                  </div>
+                ) : (
+                  <div style={{textAlign:"center",padding:"28px 20px",color:S.light,fontSize:12,background:S.bg,borderRadius:8,border:`1px dashed ${S.border}`}}>
+                    Select a goal and hit Generate Copy
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-          {aiActive&&(
-            <div style={{padding:"10px 20px",borderTop:`1px solid ${S.border}`,background:S.bg,display:"flex",alignItems:"center",gap:8}}>
-              <span style={{fontSize:10,fontWeight:700,background:S.cyanDim,border:`1px solid ${S.cyanBorder}`,color:S.cyan,padding:"3px 10px",borderRadius:100}}>✦ AI BACKGROUND ACTIVE · Pollinations AI (Flux)</span>
+
+          {/* RIGHT: Image generator */}
+          <div className="studio-right-panel" style={{flex:1,padding:0,overflowY:"visible"}}>
+            <div style={{background:S.surface,border:`1px solid ${S.border}`,borderRadius:12,overflow:"hidden"}}>
+              <div style={{padding:"14px 20px",borderBottom:`1px solid ${S.border}`,display:"flex",alignItems:"center",gap:10}}>
+                <div style={{width:8,height:8,borderRadius:"50%",background:S.cyan,flexShrink:0}} />
+                <span style={{fontSize:12,fontWeight:700,color:S.text,letterSpacing:"0.04em"}}>IMAGE GENERATOR</span>
+                <span style={{fontSize:11,color:S.muted,marginLeft:"auto"}}>Pollinations AI · Flux · {plat.dims.w}×{plat.dims.h}</span>
+              </div>
+              <div style={{padding:"20px"}}>
+                <div style={{marginBottom:12}}>
+                  <label style={{fontSize:10,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",color:S.muted,display:"block",marginBottom:5}}>
+                    Image Prompt
+                    <span style={{fontWeight:400,textTransform:"none",letterSpacing:0,color:S.light}}> — auto-filled from context, fully editable</span>
+                  </label>
+                  <textarea value={imgPrompt} onChange={e=>setImgPrompt(e.target.value)} rows={4}
+                    placeholder={"e.g. dark futuristic data center, glowing cyan network nodes floating in space, cinematic lighting, enterprise tech aesthetic, no text, no people"}
+                    style={{width:"100%",background:S.bg,border:`1px solid ${S.border}`,borderRadius:8,padding:"9px 12px",fontSize:12,color:S.text,fontFamily:"Inter,sans-serif",resize:"vertical",lineHeight:1.5,boxSizing:"border-box"}} />
+                </div>
+                <div style={{display:"flex",gap:8,marginBottom:16}}>
+                  <button onClick={generateImage} disabled={imgLoad} style={{
+                    flex:1,background:imgLoad?S.surface:S.cyanDim,border:`1px solid ${S.cyanBorder}`,
+                    borderRadius:8,padding:"12px",fontSize:11,fontWeight:800,letterSpacing:"0.08em",
+                    textTransform:"uppercase",color:S.cyan,cursor:imgLoad?"wait":"pointer",transition:"all 0.15s",opacity:imgLoad?0.7:1,
+                  }}>{imgLoad?"GENERATING IMAGE…":"✦ GENERATE IMAGE"}</button>
+                  {imgSrc&&<button onClick={downloadImg} style={{background:S.cyan,border:"none",borderRadius:8,padding:"12px 18px",fontSize:11,fontWeight:800,color:"#09090F",cursor:"pointer",whiteSpace:"nowrap"}}>↓ SAVE</button>}
+                </div>
+
+                {/* Image preview area */}
+                <div style={{background:S.bg,border:`1px solid ${S.border}`,borderRadius:10,overflow:"hidden",minHeight:240,display:"flex",alignItems:"center",justifyContent:"center",position:"relative"}}>
+                  {imgLoad&&(
+                    <div style={{textAlign:"center",color:S.muted,padding:40}}>
+                      <div style={{fontSize:28,marginBottom:12,animation:"spin 2s linear infinite",display:"inline-block"}}>✦</div>
+                      <div style={{fontSize:13,fontWeight:700,color:S.text}}>Generating with Flux model…</div>
+                      <div style={{fontSize:11,color:S.light,marginTop:6}}>~15–20 seconds · Pollinations AI</div>
+                    </div>
+                  )}
+                  {imgSrc&&!imgLoad&&<img src={imgSrc} alt="AI generated" style={{width:"100%",height:"auto",display:"block"}} />}
+                  {!imgSrc&&!imgLoad&&(
+                    <div style={{textAlign:"center",color:S.light,padding:40}}>
+                      <div style={{fontSize:24,marginBottom:10}}>🖼</div>
+                      <div style={{fontSize:12,fontWeight:600,color:S.muted}}>Your image will appear here</div>
+                      <div style={{fontSize:11,color:S.light,marginTop:4}}>{plat.dims.w}×{plat.dims.h}px · optimized for {plat.label}</div>
+                    </div>
+                  )}
+                </div>
+
+                <div style={{marginTop:14,padding:"12px 14px",background:S.cyanDim,border:`1px solid ${S.cyanBorder}`,borderRadius:8}}>
+                  <div style={{fontSize:10,fontWeight:700,color:S.cyan,marginBottom:4,letterSpacing:"0.08em"}}>HOW THIS WORKS</div>
+                  <div style={{fontSize:11,color:S.muted,lineHeight:1.7}}>
+                    Claude generates copy · <strong style={{color:S.text}}>Pollinations AI (Flux)</strong> generates images — free, no API key needed.<br/>
+                    Upgrade path: <span style={{color:S.cyan}}>Gemini Imagen (Nano Banana)</span> at ai.google.dev · Hugging Face MCP · Publish via Crosspost CLI or Blotato MCP.
+                  </div>
+                </div>
+              </div>
             </div>
-          )}
+          </div>
         </div>
 
-        {/* Right effects panel */}
-        <div style={{width:180,flexShrink:0,padding:"24px 16px",borderLeft:`1px solid ${S.border}`,background:S.bg}}>
-          <div style={{fontSize:10,fontWeight:700,letterSpacing:"0.12em",textTransform:"uppercase",color:S.muted,marginBottom:16}}>EXPORT &amp; EFFECTS</div>
-          <div style={{fontSize:10,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",color:S.muted,marginBottom:8}}>RESOLUTION</div>
-          <div style={{display:"flex",gap:6,marginBottom:24}}>
-            <button style={{flex:1,background:S.cyan,border:"none",borderRadius:6,padding:"8px",fontSize:11,fontWeight:700,color:"#09090F"}}>1x</button>
-            <button onClick={handleDownload} style={{flex:1,background:S.surface,border:`1px solid ${S.border}`,borderRadius:6,padding:"8px",fontSize:11,fontWeight:600,color:S.muted,cursor:"pointer"}}>2x</button>
-          </div>
-          <div style={{fontSize:10,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",color:S.muted,marginBottom:12}}>EFFECTS</div>
-          {EFFECTS_LIST.map(fx=>(
-            <button key={fx.key} onClick={()=>toggleFx(fx.key)} style={{
-              width:"100%",textAlign:"left",
-              background:effects[fx.key]?S.cyanDim:S.surface,
-              border:`1px solid ${effects[fx.key]?S.cyanBorder:S.border}`,
-              borderRadius:8,padding:"10px 14px",fontSize:12,fontWeight:600,
-              color:effects[fx.key]?S.cyan:S.muted,cursor:"pointer",marginBottom:8,transition:"all 0.15s",
-            }}>{fx.label}</button>
+        {/* Workflow pipeline */}
+        <div style={{marginTop:24,padding:"20px 28px",background:S.surface,border:`1px solid ${S.border}`,borderRadius:12,display:"flex",alignItems:"center",gap:0,flexWrap:"wrap"}}>
+          {[
+            {step:"01",label:"Brand Context",  desc:"Persona · audience · goal"},
+            {step:"02",label:"Generate Copy",  desc:"Platform-native · goal-specific"},
+            {step:"03",label:"Generate Image", desc:"Pollinations AI · Flux model"},
+            {step:"04",label:"Publish",         desc:"Crosspost CLI · Blotato MCP · Manual"},
+          ].map((s,i)=>(
+            <React.Fragment key={s.step}>
+              <div style={{flex:1,minWidth:130,padding:"4px 16px"}}>
+                <div style={{fontSize:10,fontWeight:800,color:S.cyan,letterSpacing:"0.1em",marginBottom:3}}>STEP {s.step}</div>
+                <div style={{fontSize:13,fontWeight:700,color:S.text,marginBottom:2}}>{s.label}</div>
+                <div style={{fontSize:11,color:S.muted}}>{s.desc}</div>
+              </div>
+              {i<3&&<div style={{color:S.border,fontSize:20,flexShrink:0,padding:"0 4px"}}>→</div>}
+            </React.Fragment>
           ))}
-          <div style={{marginTop:16,padding:"14px 12px",background:S.cyanDim,border:`1px solid ${S.cyanBorder}`,borderRadius:8}}>
-            <div style={{fontSize:10,fontWeight:800,color:S.cyan,marginBottom:6,letterSpacing:"0.08em"}}>AI GENERATOR</div>
-            <div style={{fontSize:11,color:S.text,fontWeight:600,marginBottom:4}}>Pollinations AI</div>
-            <div style={{fontSize:10,color:S.muted,lineHeight:1.6}}>Free · No API key · Unlimited · Flux model</div>
-          </div>
-          <div style={{marginTop:10,padding:"12px",background:S.surface,border:`1px solid ${S.border}`,borderRadius:8}}>
-            <div style={{fontSize:10,fontWeight:700,color:S.text,marginBottom:4}}>↑ UPGRADE</div>
-            <div style={{fontSize:10,color:S.muted,lineHeight:1.6}}>Gemini Imagen (Google Nano Banana) — higher quality with a free API key at <span style={{color:S.cyan}}>ai.google.dev</span></div>
-          </div>
         </div>
       </div>
     </div>
   );
 }
+
+
 
 /* ── NAV ── */
 function Nav() {
