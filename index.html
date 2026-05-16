@@ -2148,14 +2148,63 @@ We'll share the results with everyone who participates — including benchmarks 
 P.S. If your number is "we don't really track that," that's also useful data. And also maybe a conversation worth having.`,
   };
 
-  const autoImgPrompt = plat => {
-    const base = {
-      linkedin: "professional enterprise technology, dark navy blue background, glowing cyan blue accent lighting, abstract data visualization floating in air, cinematic quality, photorealistic, no text, no people",
-      x: "abstract dark tech background, neon cyan grid lines, futuristic digital network, minimal, high contrast, no text, no people",
-      instagram: "moody dark technology aesthetic, glowing cyan blue neon accents, geometric data shapes, ultra detailed, premium brand visual, square composition, no text, no people",
-      newsletter: "clean corporate technology background, dark navy gradient, subtle cyan glow, minimalist professional, editorial quality, no text, no people",
+  const autoImgPrompt = (plat, goalStr) => {
+    // FLUX-optimized prompts: 3-part natural language structure
+    // Part 1: Aspect ratio + composition framing (negative space for text overlay)
+    // Part 2: Material textures (matte, frosted glass, vector grids — no generic "corporate background")
+    // Part 3: Lighting + camera direction + safety constraints
+    const map = {
+"linkedin|Lead Gen":
+  "A wide 16:9 abstract B2B corporate digital landscape with deliberate negative space occupying the upper-left third for text overlay. A deep matte navy blue smooth surface texture anchors the lower half, with a continuous clean glowing cyan network vector grid receding into the background. A focused light source in the lower-right corner creates soft volumetric cyan glow that fades upward into a clean dark-field vignette. Architectural 3D rendering style, commercial graphic design quality, clean backdrop layout, no text strings, no gibberish lettering, no human characters.",
+
+"linkedin|Awareness":
+  "A wide landscape corporate technology banner with a dramatic dark obsidian base and the left two-thirds open as intentional negative space for copy overlay. Sleek flowing abstract light streaks in neon cyan and deep sapphire blue sweep from right to left across the lower third. High-contrast ambient illumination creates a subtle cybernetic glow against a premium matte dark background. Crisp vector-like edges, cinematic commercial lighting, clean backdrop layout, no text elements, no human characters, no gibberish lettering.",
+
+"linkedin|Thought Leadership":
+  "A minimalist wide editorial composition with soft layered geometric shapes occupying the right edge, leaving the center and left two-thirds as a clean dark negative field for text overlay. Smooth frosted glass plates with subtle edge-lit highlights in muted electric blue overlap over a deep slate-teal gradient. Directional studio softbox lighting from the upper right creates elegant three-dimensional shadow depth. Ultra-high resolution commercial banner quality, no text elements, no human figures, no gibberish.",
+
+"linkedin|Engagement":
+  "A striking wide B2B technology composition in 16:9 format with an open dark upper half reserved as negative space for text. Layered translucent geometric planes in deep navy and charcoal float above a faint illuminated data grid receding into the lower third. Soft volumetric studio light from above grazes the glass-like planes, creating premium depth and a sense of analytical precision. Clean architectural 3D rendering, commercial digital art quality, no text strings, no characters, no lettering.",
+
+"x|Lead Gen":
+  "A square-format abstract B2B tech graphic with clean dark negative space dominating the upper half for text overlay. A deep matte obsidian base fills the lower half with a continuous neon cyan circuit-board vector grid rising from the bottom edge. A sharp focused light source at the lower center emits hard-edged volumetric glow that diffuses upward against the dark field. High-contrast corporate aesthetic, vector illustration style, commercial quality, no text, no people, no lettering.",
+
+"x|Awareness":
+  "A high-energy square digital banner with a near-black background. A single dominant diagonal sweep of neon cyan and electric blue light streaks cuts from the lower-left to upper-right, creating dramatic motion energy. The center and upper-left remain intentionally dark as open negative space. Cinematic commercial lighting, sharp vector edges, premium social card aesthetic, clean backdrop, no text, no human characters, no gibberish.",
+
+"x|Thought Leadership":
+  "A clean square editorial composition with three minimalist frosted glass rectangular panels arranged in the lower-right corner over a deep charcoal and cool slate gradient background. A studio softbox from the left casts elegant directional shadow across the glass surfaces. The upper-left two-thirds is an intentionally empty dark negative field. Premium editorial magazine quality, architectural rendering style, no text, no characters, no gibberish.",
+
+"x|Engagement":
+  "A bold square social visual set in deep space darkness with scattered glowing data nodes in cyan and white forming an abstract constellation network across the right edge. Thin luminous connection lines trace between nodes. The center is an open dark void. Subtle radial glow from the node cluster illuminates the surrounding black field softly. Corporate sci-fi aesthetic, clean vector quality, no text elements, no human figures, no lettering.",
+
+"instagram|Lead Gen":
+  "A square-format premium B2B technology visual with a deep matte navy center field as open negative space for text overlay. A continuous glowing cyan vector network grid wraps around the lower and side edges of the composition, curving inward. Soft volumetric studio lighting creates a warm cyan glow emanating from both lower corners, fading to dark at the center. Architectural 3D rendering aesthetic, commercial Instagram card quality, no text, no people, no lettering.",
+
+"instagram|Awareness":
+  "A bold square social media asset with a dramatic flowing abstract obsidian wave shape in the lower half. Sharp neon light streaks in cyan and electric blue erupt from behind the wave edge. The upper two-thirds remains intentionally dark and open for text overlay. Premium cinematic lighting, high-contrast modern brand energy, clean digital art, no text elements, no characters, no gibberish.",
+
+"instagram|Thought Leadership":
+  "An elegant square editorial composition with layered frosted glass geometric panels floating in the lower-right corner over a deep dark teal and charcoal gradient background. Soft studio rim lighting in cool white highlights the translucent glass panel edges. The center and upper-left quadrant are clean dark negative space. Premium luxury brand visual quality, minimalist modern design, no text, no human figures, clean background.",
+
+"instagram|Engagement":
+  "A vibrant square graphic featuring an abstract radial burst of particle light in cyan and electric blue emanating from the center of a near-black background. Fine glowing lines extend outward from the burst, creating a sense of dynamic network energy. The outer edges fade to solid black as natural framing. High-energy corporate technology aesthetic, premium digital art, no text strings, no characters, no lettering.",
+
+"newsletter|Lead Gen":
+  "A wide editorial email header in 16:9 format with the left two-thirds as a clean deep navy negative field for text overlay. The right third features smooth matte frosted glass geometric shapes with subtle cyan edge-lit highlights casting soft reflections on the dark surface below. Directional studio lighting from the upper-right creates elegant depth and premium finish. Professional email header aesthetic, editorial graphic design quality, no text, no human characters, no lettering.",
+
+"newsletter|Awareness":
+  "A wide landscape email banner with a sweeping gradient from deep obsidian on the left to rich corporate navy on the right. A single sharp volumetric light streak in neon cyan runs horizontally across the lower quarter of the composition like a horizon line. The upper three-quarters is clean dark negative space. Cinematic commercial banner quality, premium newsletter design, no text elements, no people, no gibberish.",
+
+"newsletter|Thought Leadership":
+  "A wide editorial newsletter header featuring three minimalist frosted glass panels arranged flush against the right edge of a deep charcoal and cool slate gradient background. Soft studio directional lighting from the left side creates clean shadow gradients across the panels. The left two-thirds of the composition is an intentionally clean dark negative field. Premium editorial magazine standard, architectural rendering style, no text, no characters, no gibberish.",
+
+"newsletter|Engagement":
+  "A wide corporate newsletter banner with a clean solid dark background and subtle glowing edge treatment — thin arcs of electric blue and cyan light wrap gently around the lower and right edges of the frame. The large central area remains open dark space as intentional negative field. Premium understated corporate editorial aesthetic, clean digital design, no text elements, no human figures, no lettering.",
     };
-    return base[plat] || "abstract corporate technology background, dark, cyan accents, no text, no people";
+    const key = `${plat}|${goalStr}`;
+    return map[key] || map[`${plat}|Lead Gen`] ||
+      "An abstract B2B corporate digital landscape with a deep matte navy blue smooth surface texture. A continuous clean glowing cyan network vector grid spans the lower half. Clean dark negative space in the upper region for text overlay. Minimalist corporate aesthetic, architectural 3D rendering style, commercial graphic design quality, no text elements, no human characters, no gibberish lettering.";
   };
 
   const fallbackCopy = (plat, topic, goal) =>
@@ -2180,14 +2229,14 @@ P.S. If your number is "we don't really track that," that's also useful data. An
       const key = `${platform}|${goal}`;
       const copy = COPY_MAP[key] || fallbackCopy(platform, topic, goal);
       setGenCopy(copy);
-      if (!imgPrompt) setImgPrompt(autoImgPrompt(platform));
+      if (!imgPrompt) setImgPrompt(autoImgPrompt(platform, goal));
       setCopyLoad(false);
     }, 950);
   };
 
   const generateImage = () => {
     setImgLoad(true); setImgSrc(null);
-    const prompt = encodeURIComponent(imgPrompt || autoImgPrompt(platform));
+    const prompt = encodeURIComponent(imgPrompt || autoImgPrompt(platform, goal));
     const seed   = Math.floor(Math.random() * 999999);
     const url    = `https://image.pollinations.ai/prompt/${prompt}?width=${plat.dims.w}&height=${plat.dims.h}&nologo=true&seed=${seed}&model=flux`;
     const img = new Image();
@@ -2213,7 +2262,7 @@ P.S. If your number is "we don't really track that," that's also useful data. An
 
   const switchPlatform = id => {
     setPlatform(id); setGenCopy(""); setImgSrc(null);
-    setImgPrompt(autoImgPrompt(id));
+    setImgPrompt(autoImgPrompt(id, goal));
   };
 
   return (
@@ -2249,7 +2298,7 @@ P.S. If your number is "we don't really track that," that's also useful data. An
                 {/* Goal pills */}
                 <div style={{display:"flex",gap:6,marginBottom:16,flexWrap:"wrap"}}>
                   {GOALS.map(g=>(
-                    <button key={g} onClick={()=>setGoal(g)} style={{
+                    <button key={g} onClick={()=>{ setGoal(g); setImgPrompt(autoImgPrompt(platform, g)); }} style={{
                       padding:"5px 14px",borderRadius:100,fontSize:11,fontWeight:600,cursor:"pointer",transition:"all 0.12s",
                       background:goal===g?S.cyanDim:"transparent",
                       border:`1px solid ${goal===g?S.cyanBorder:S.border}`,
