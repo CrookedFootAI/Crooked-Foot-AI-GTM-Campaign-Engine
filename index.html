@@ -1956,6 +1956,7 @@ function AdCreativeSection() {
   const [effects,  setEffects]  = useState({ gradientOverlay:false, borderGlow:false, textShadow:false });
   const [aiLoading, setAiLoading] = useState(false);
   const [aiActive,  setAiActive]  = useState(false);
+  const [aiPrompt,  setAiPrompt]  = useState("");
 
   const canvasRef  = useRef(null);
   const aiBgImgRef = useRef(null);
@@ -1983,18 +1984,19 @@ function AdCreativeSection() {
     ctx.lineTo(x, y+r);     ctx.arcTo(x,   y,   x+r, y,     r);
   }
 
-  function wrapText(ctx, text, x, y, maxW, lineH, maxLines) {
+  function getWrappedLines(ctx, text, maxW, maxLines) {
     const words = text.split(" ");
-    let line = "", curY = y, count = 0;
+    const lines = []; let line = "";
     for (let i = 0; i < words.length; i++) {
       const test = line + words[i] + " ";
       if (ctx.measureText(test).width > maxW && i > 0) {
-        if (count >= maxLines - 1) { ctx.fillText(line.trim() + "…", x, curY); return; }
-        ctx.fillText(line.trim(), x, curY);
-        line = words[i] + " "; curY += lineH; count++;
+        lines.push(line.trim());
+        if (lines.length >= maxLines) return lines;
+        line = words[i] + " ";
       } else { line = test; }
     }
-    if (count < maxLines) ctx.fillText(line.trim(), x, curY);
+    if (lines.length < maxLines && line.trim()) lines.push(line.trim());
+    return lines;
   }
 
   const draw = () => {
@@ -2006,7 +2008,7 @@ function AdCreativeSection() {
 
     const isDark = bgHex !== "#FFFFFF";
     const textColor  = isDark ? "#FFFFFF" : "#0A0A1A";
-    const mutedColor = isDark ? "rgba(255,255,255,0.75)" : "rgba(10,10,26,0.60)";
+    const mutedColor = isDark ? "rgba(255,255,255,0.78)" : "rgba(10,10,26,0.60)";
     const btnBg   = bgHex === "#0099CC" ? "#FFFFFF" : "#0099CC";
     const btnText = bgHex === "#0099CC" ? "#0099CC" : "#FFFFFF";
     const hasAiBg = aiActive && aiBgImgRef.current;
@@ -2020,11 +2022,11 @@ function AdCreativeSection() {
       ctx.fillStyle = bgHex; ctx.fillRect(0, 0, W, H);
     }
 
-    // 2. Gradient overlay
+    // 2. Gradient overlay (always on with AI bg, bottom-weighted so text pops)
     if (effects.gradientOverlay || hasAiBg) {
-      const grad = ctx.createLinearGradient(0, 0, 0, H);
-      grad.addColorStop(0, "rgba(0,0,0,0.08)");
-      grad.addColorStop(1, "rgba(0,0,0,0.62)");
+      const grad = ctx.createLinearGradient(0, H * 0.3, 0, H);
+      grad.addColorStop(0, "rgba(0,0,0,0.0)");
+      grad.addColorStop(1, "rgba(0,0,0,0.72)");
       ctx.fillStyle = grad; ctx.fillRect(0, 0, W, H);
     }
 
@@ -2037,66 +2039,85 @@ function AdCreativeSection() {
       ctx.restore();
     }
 
-    const pad = W*0.07, logoSz = W*0.06;
+    const pad = W * 0.072;
+    const logoSz = W * 0.066;
+    const logoX = pad, logoY = pad;
 
     // 4. Logo
     if (logoImgRef.current) {
       ctx.save(); ctx.beginPath();
-      manualRoundRect(ctx, pad, pad, logoSz, logoSz, logoSz*0.18);
+      manualRoundRect(ctx, logoX, logoY, logoSz, logoSz, logoSz * 0.18);
       ctx.closePath(); ctx.clip();
-      ctx.drawImage(logoImgRef.current, pad, pad, logoSz, logoSz);
+      ctx.drawImage(logoImgRef.current, logoX, logoY, logoSz, logoSz);
       ctx.restore();
     }
 
-    // 5. Brand name
-    if (effects.textShadow) { ctx.shadowColor="rgba(0,0,0,0.5)"; ctx.shadowBlur=W*0.01; }
+    // 5. Brand name — vertically centered next to logo, no overlap possible
+    const brandFontSz = W * 0.021;
+    if (effects.textShadow) { ctx.shadowColor = "rgba(0,0,0,0.5)"; ctx.shadowBlur = W * 0.01; }
     ctx.fillStyle = finalText;
-    ctx.font = `700 ${W*0.021}px Inter, sans-serif`;
-    ctx.fillText("CROOKED FOOT AI", pad + logoSz + W*0.016, pad + logoSz*0.68);
+    ctx.font = `700 ${brandFontSz}px Inter, sans-serif`;
+    const brandY = logoY + logoSz * 0.5 + brandFontSz * 0.38;
+    ctx.fillText("CROOKED FOOT AI", logoX + logoSz + W * 0.018, brandY);
     ctx.shadowBlur = 0;
 
-    // 6. Headline
-    const headSz = template==="Story" ? W*0.074 : W*0.058;
-    const headY  = template==="Story" ? H*0.30  : H*0.285;
-    if (effects.textShadow) { ctx.shadowColor="rgba(0,0,0,0.45)"; ctx.shadowBlur=W*0.015; }
+    // 6. HEADLINE — flows from below logo, no fixed H% positions
+    const headFontSz = template === "Story" ? W * 0.072 : W * 0.056;
+    const headLineH  = headFontSz * 1.18;
+    const headX      = pad;
+    const headY      = logoY + logoSz + pad * 0.8;
+    if (effects.textShadow) { ctx.shadowColor = "rgba(0,0,0,0.45)"; ctx.shadowBlur = W * 0.015; }
     ctx.fillStyle = finalText;
-    ctx.font = `900 ${headSz}px Inter, sans-serif`;
-    wrapText(ctx, headline, pad, headY, W - pad*2, headSz*1.2, 4);
+    ctx.font = `900 ${headFontSz}px Inter, sans-serif`;
+    const headLines = getWrappedLines(ctx, headline, W - pad * 2, 4);
+    headLines.forEach((line, i) => ctx.fillText(line, headX, headY + i * headLineH));
     ctx.shadowBlur = 0;
+    const headEndY = headY + headLines.length * headLineH;
 
-    // 7. Body
-    const bodySz = W*0.027, bodyY = template==="Story" ? H*0.60 : H*0.61;
+    // 7. BODY — starts immediately below headline
+    const bodyFontSz = W * 0.026;
+    const bodyLineH  = bodyFontSz * 1.62;
+    const bodyY      = headEndY + pad * 0.55;
     ctx.fillStyle = finalMuted;
-    ctx.font = `400 ${bodySz}px Inter, sans-serif`;
-    wrapText(ctx, bodyTxt, pad, bodyY, W - pad*2, bodySz*1.6, 3);
+    ctx.font = `400 ${bodyFontSz}px Inter, sans-serif`;
+    const bodyLines = getWrappedLines(ctx, bodyTxt, W - pad * 2, 3);
+    bodyLines.forEach((line, i) => ctx.fillText(line, pad, bodyY + i * bodyLineH));
 
-    // 8. CTA button
-    const btnH  = H*0.088, btnY = H - pad*(template==="Story" ? 1.9 : 1.85);
-    ctx.font = `700 ${W*0.025}px Inter, sans-serif`;
-    const btnPadX = W*0.045, btnW = ctx.measureText(ctaTxt).width + btnPadX*2;
+    // 8. CTA button — always anchored to bottom with consistent padding
+    const btnH    = H * 0.1;
+    const btnY    = H - pad * 1.15 - btnH;
+    const btnFont = W * 0.025;
+    ctx.font = `700 ${btnFont}px Inter, sans-serif`;
+    const btnPadX = W * 0.042;
+    const btnW    = ctx.measureText(ctaTxt).width + btnPadX * 2;
     ctx.fillStyle = btnBg;
-    ctx.beginPath(); manualRoundRect(ctx, pad, btnY, btnW, btnH, btnH*0.28); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); manualRoundRect(ctx, pad, btnY, btnW, btnH, btnH * 0.3); ctx.closePath(); ctx.fill();
     ctx.fillStyle = btnText;
-    ctx.fillText(ctaTxt, pad + btnPadX, btnY + btnH*0.67);
+    ctx.fillText(ctaTxt, pad + btnPadX, btnY + btnH * 0.67);
   };
 
   const generateAiBg = () => {
     setAiLoading(true); setAiActive(false); aiBgImgRef.current = null;
-    const prompts = {
-      "#0099CC": "abstract+corporate+cyan+blue+gradient+geometric+tech+background+enterprise+SaaS,no+text,no+people",
-      "#0A0A1A": "abstract+dark+night+deep+navy+elegant+gradient+corporate+technology+background,no+text,no+people",
-      "#FFFFFF": "abstract+clean+light+minimal+white+geometric+professional+corporate+background,no+text,no+people",
-      "#001A2C": "abstract+deep+ocean+navy+blue+gradient+enterprise+corporate+tech+background,no+text,no+people",
-    };
-    const prompt = prompts[bgHex] || "abstract+corporate+gradient+tech+background,no+text,no+people";
-    const seed = Math.floor(Math.random()*999999);
+    let prompt;
+    if (aiPrompt.trim()) {
+      prompt = encodeURIComponent(aiPrompt.trim()) + ",no+text,no+people,high+quality,cinematic";
+    } else {
+      const defaults = {
+        "#0099CC": "abstract corporate cyan blue gradient geometric tech background enterprise SaaS, ultrawide, no text, no people",
+        "#0A0A1A": "abstract dark night deep navy elegant gradient corporate technology background, ultrawide, no text, no people",
+        "#FFFFFF": "abstract clean light minimal white geometric professional corporate background, ultrawide, no text, no people",
+        "#001A2C": "abstract deep ocean navy blue gradient enterprise corporate tech background, ultrawide, no text, no people",
+      };
+      prompt = encodeURIComponent(defaults[bgHex] || "abstract corporate gradient tech background, no text, no people");
+    }
+    const seed = Math.floor(Math.random() * 999999);
     const url = `https://image.pollinations.ai/prompt/${prompt}?width=${tpl.w}&height=${tpl.h}&nologo=true&seed=${seed}&model=flux`;
     const img = new Image();
     img.crossOrigin = "anonymous";
     img.onload = () => { aiBgImgRef.current = img; setAiActive(true); setAiLoading(false); };
     img.onerror = () => { setAiLoading(false); };
     img.src = url;
-    setTimeout(() => setAiLoading(false), 22000);
+    setTimeout(() => setAiLoading(false), 28000);
   };
 
   const handleDownload = () => {
@@ -2161,13 +2182,23 @@ function AdCreativeSection() {
                 }} />
               ))}
             </div>
+            <div style={{marginBottom:8}}>
+              <label style={{fontSize:10,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",color:S.muted,display:"block",marginBottom:5}}>AI PROMPT <span style={{fontWeight:400,textTransform:"none",letterSpacing:0}}>(optional — describe the background)</span></label>
+              <textarea
+                value={aiPrompt}
+                onChange={e=>setAiPrompt(e.target.value)}
+                rows={3}
+                placeholder={"e.g. deep space galaxy with cyan nebula and floating data nodes, cinematic lighting\n\nor: minimalist dark tech office, bokeh, moody blue tones"}
+                style={{width:"100%",background:S.surface,border:`1px solid ${S.border}`,borderRadius:8,padding:"9px 11px",fontSize:11,color:S.text,fontFamily:"Inter,sans-serif",resize:"vertical",lineHeight:1.5,boxSizing:"border-box"}}
+              />
+            </div>
             <button onClick={generateAiBg} disabled={aiLoading} style={{
               width:"100%",background:aiLoading?S.surface:S.cyanDim,
               border:`1px solid ${S.cyanBorder}`,borderRadius:8,padding:"11px",
               fontSize:11,fontWeight:800,letterSpacing:"0.08em",textTransform:"uppercase",
               color:S.cyan,cursor:aiLoading?"wait":"pointer",transition:"all 0.15s",
             }}>{aiLoading?"✦ GENERATING AI BG…":"✦ GENERATE AI BACKGROUND"}</button>
-            <div style={{fontSize:10,color:S.light,marginTop:5,textAlign:"center"}}>Pollinations AI (Flux) · Free · No API key</div>
+            <div style={{fontSize:10,color:S.light,marginTop:5,textAlign:"center"}}>Pollinations AI (Flux) · Free · No API key · ~15s</div>
             {aiActive&&(
               <button onClick={()=>{setAiActive(false);aiBgImgRef.current=null;draw();}} style={{
                 width:"100%",background:"transparent",border:`1px solid ${S.border}`,
@@ -2291,7 +2322,7 @@ function Nav() {
             <span style={{fontSize:10,fontWeight:600,color:S.muted,marginLeft:8,letterSpacing:"0.06em",textTransform:"uppercase"}}>GTM Engine</span>
           </div>
         </div>
-        <div className="nav-links">
+        <div className="nav-links" style={{position:"absolute",left:"50%",transform:"translateX(-50%)"}}>
           {links.map(l=>(
             <button key={l.id} onClick={()=>scrollTo(l.id)} style={{
               background:active===l.id?S.cyanDim:"transparent",
