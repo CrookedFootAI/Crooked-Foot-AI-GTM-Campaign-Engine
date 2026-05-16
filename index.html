@@ -1923,16 +1923,358 @@ function ContentEngineSection() {
   );
 }
 
+/* ── AD CREATIVE STUDIO SECTION ── */
+function AdCreativeSection() {
+  const TEMPLATES = {
+    Card:  { w:1200, h:628,  label:"1200×628 · LinkedIn landscape" },
+    Ad:    { w:1080, h:1080, label:"1080×1080 · Square ad" },
+    Story: { w:1080, h:1920, label:"1080×1920 · Story / Reel" },
+  };
+  const BG_PRESETS = [
+    { name:"Cyan",  hex:"#0099CC" },
+    { name:"Dark",  hex:"#0A0A1A" },
+    { name:"White", hex:"#FFFFFF" },
+    { name:"Navy",  hex:"#001A2C" },
+  ];
+  const QUICK_EXAMPLES = [
+    { label:"Forecast Accuracy", hl:"94% Forecast Accuracy. 45 Days Before Close.", body:"Crooked Foot AI predicts deal outcomes with AI-native revenue intelligence — no black box, no guesswork.", cta:"Request a Demo →" },
+    { label:"Gong Replacement",  hl:"Gong Records. Crooked Foot Predicts.",       body:"Conversation intelligence tells you what was said. Revenue intelligence tells you which deals will close.", cta:"See the Difference →" },
+    { label:"Pipeline Visibility",hl:"Your Pipeline Review Shouldn't Take 3 Hours.",body:"Pre-built deal intelligence. AI-flagged at-risk deals. No report pulling. 8-minute reviews.", cta:"Learn How →" },
+    { label:"Zero Black Box",     hl:"Zero Black Box. Full Pipeline Transparency.", body:"14-signal deal scoring with complete explainability — trusted by Global 2000 revenue teams.", cta:"Explore the Platform →" },
+  ];
+  const EFFECTS_LIST = [
+    { key:"gradientOverlay", label:"Gradient Overlay" },
+    { key:"borderGlow",      label:"Border Glow" },
+    { key:"textShadow",      label:"Text Shadow" },
+  ];
+
+  const [template, setTemplate] = useState("Card");
+  const [bgHex,    setBgHex]    = useState("#0099CC");
+  const [headline, setHeadline] = useState("Revenue Intelligence That Predicts Deals.");
+  const [bodyTxt,  setBodyTxt]  = useState("Crooked Foot AI delivers 94% forecast accuracy with 14-signal deal intelligence — zero black box, full explainability.");
+  const [ctaTxt,   setCtaTxt]   = useState("Request a Demo →");
+  const [effects,  setEffects]  = useState({ gradientOverlay:false, borderGlow:false, textShadow:false });
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiActive,  setAiActive]  = useState(false);
+
+  const canvasRef  = useRef(null);
+  const aiBgImgRef = useRef(null);
+  const logoImgRef = useRef(null);
+
+  const tpl = TEMPLATES[template];
+  const PREVIEW_W = template==="Story" ? 220 : template==="Ad" ? 380 : 520;
+  const PREVIEW_H = Math.round(tpl.h * (PREVIEW_W / tpl.w));
+
+  useEffect(() => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.src = "./logo.png";
+    img.onload = () => { logoImgRef.current = img; draw(); };
+  }, []);
+
+  useEffect(() => { draw(); }, [template, bgHex, headline, bodyTxt, ctaTxt, effects, aiActive]);
+
+  function manualRoundRect(ctx, x, y, w, h, r) {
+    r = Math.min(r, w/2, h/2);
+    ctx.moveTo(x+r, y);
+    ctx.lineTo(x+w-r, y);   ctx.arcTo(x+w, y,   x+w, y+r,   r);
+    ctx.lineTo(x+w, y+h-r); ctx.arcTo(x+w, y+h, x+w-r, y+h, r);
+    ctx.lineTo(x+r, y+h);   ctx.arcTo(x,   y+h, x,   y+h-r, r);
+    ctx.lineTo(x, y+r);     ctx.arcTo(x,   y,   x+r, y,     r);
+  }
+
+  function wrapText(ctx, text, x, y, maxW, lineH, maxLines) {
+    const words = text.split(" ");
+    let line = "", curY = y, count = 0;
+    for (let i = 0; i < words.length; i++) {
+      const test = line + words[i] + " ";
+      if (ctx.measureText(test).width > maxW && i > 0) {
+        if (count >= maxLines - 1) { ctx.fillText(line.trim() + "…", x, curY); return; }
+        ctx.fillText(line.trim(), x, curY);
+        line = words[i] + " "; curY += lineH; count++;
+      } else { line = test; }
+    }
+    if (count < maxLines) ctx.fillText(line.trim(), x, curY);
+  }
+
+  const draw = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    const W = tpl.w, H = tpl.h;
+    canvas.width = W; canvas.height = H;
+
+    const isDark = bgHex !== "#FFFFFF";
+    const textColor  = isDark ? "#FFFFFF" : "#0A0A1A";
+    const mutedColor = isDark ? "rgba(255,255,255,0.75)" : "rgba(10,10,26,0.60)";
+    const btnBg   = bgHex === "#0099CC" ? "#FFFFFF" : "#0099CC";
+    const btnText = bgHex === "#0099CC" ? "#0099CC" : "#FFFFFF";
+    const hasAiBg = aiActive && aiBgImgRef.current;
+    const finalText  = hasAiBg ? "#FFFFFF" : textColor;
+    const finalMuted = hasAiBg ? "rgba(255,255,255,0.82)" : mutedColor;
+
+    // 1. Background
+    if (hasAiBg) {
+      ctx.drawImage(aiBgImgRef.current, 0, 0, W, H);
+    } else {
+      ctx.fillStyle = bgHex; ctx.fillRect(0, 0, W, H);
+    }
+
+    // 2. Gradient overlay
+    if (effects.gradientOverlay || hasAiBg) {
+      const grad = ctx.createLinearGradient(0, 0, 0, H);
+      grad.addColorStop(0, "rgba(0,0,0,0.08)");
+      grad.addColorStop(1, "rgba(0,0,0,0.62)");
+      ctx.fillStyle = grad; ctx.fillRect(0, 0, W, H);
+    }
+
+    // 3. Border glow
+    if (effects.borderGlow) {
+      ctx.save();
+      ctx.shadowColor = "#0099CC"; ctx.shadowBlur = W*0.04;
+      ctx.strokeStyle = "#0099CC"; ctx.lineWidth = W*0.007;
+      ctx.strokeRect(W*0.014, H*0.014, W*0.972, H*0.972);
+      ctx.restore();
+    }
+
+    const pad = W*0.07, logoSz = W*0.06;
+
+    // 4. Logo
+    if (logoImgRef.current) {
+      ctx.save(); ctx.beginPath();
+      manualRoundRect(ctx, pad, pad, logoSz, logoSz, logoSz*0.18);
+      ctx.closePath(); ctx.clip();
+      ctx.drawImage(logoImgRef.current, pad, pad, logoSz, logoSz);
+      ctx.restore();
+    }
+
+    // 5. Brand name
+    if (effects.textShadow) { ctx.shadowColor="rgba(0,0,0,0.5)"; ctx.shadowBlur=W*0.01; }
+    ctx.fillStyle = finalText;
+    ctx.font = `700 ${W*0.021}px Inter, sans-serif`;
+    ctx.fillText("CROOKED FOOT AI", pad + logoSz + W*0.016, pad + logoSz*0.68);
+    ctx.shadowBlur = 0;
+
+    // 6. Headline
+    const headSz = template==="Story" ? W*0.074 : W*0.058;
+    const headY  = template==="Story" ? H*0.30  : H*0.285;
+    if (effects.textShadow) { ctx.shadowColor="rgba(0,0,0,0.45)"; ctx.shadowBlur=W*0.015; }
+    ctx.fillStyle = finalText;
+    ctx.font = `900 ${headSz}px Inter, sans-serif`;
+    wrapText(ctx, headline, pad, headY, W - pad*2, headSz*1.2, 4);
+    ctx.shadowBlur = 0;
+
+    // 7. Body
+    const bodySz = W*0.027, bodyY = template==="Story" ? H*0.60 : H*0.61;
+    ctx.fillStyle = finalMuted;
+    ctx.font = `400 ${bodySz}px Inter, sans-serif`;
+    wrapText(ctx, bodyTxt, pad, bodyY, W - pad*2, bodySz*1.6, 3);
+
+    // 8. CTA button
+    const btnH  = H*0.088, btnY = H - pad*(template==="Story" ? 1.9 : 1.85);
+    ctx.font = `700 ${W*0.025}px Inter, sans-serif`;
+    const btnPadX = W*0.045, btnW = ctx.measureText(ctaTxt).width + btnPadX*2;
+    ctx.fillStyle = btnBg;
+    ctx.beginPath(); manualRoundRect(ctx, pad, btnY, btnW, btnH, btnH*0.28); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = btnText;
+    ctx.fillText(ctaTxt, pad + btnPadX, btnY + btnH*0.67);
+  };
+
+  const generateAiBg = () => {
+    setAiLoading(true); setAiActive(false); aiBgImgRef.current = null;
+    const prompts = {
+      "#0099CC": "abstract+corporate+cyan+blue+gradient+geometric+tech+background+enterprise+SaaS,no+text,no+people",
+      "#0A0A1A": "abstract+dark+night+deep+navy+elegant+gradient+corporate+technology+background,no+text,no+people",
+      "#FFFFFF": "abstract+clean+light+minimal+white+geometric+professional+corporate+background,no+text,no+people",
+      "#001A2C": "abstract+deep+ocean+navy+blue+gradient+enterprise+corporate+tech+background,no+text,no+people",
+    };
+    const prompt = prompts[bgHex] || "abstract+corporate+gradient+tech+background,no+text,no+people";
+    const seed = Math.floor(Math.random()*999999);
+    const url = `https://image.pollinations.ai/prompt/${prompt}?width=${tpl.w}&height=${tpl.h}&nologo=true&seed=${seed}&model=flux`;
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => { aiBgImgRef.current = img; setAiActive(true); setAiLoading(false); };
+    img.onerror = () => { setAiLoading(false); };
+    img.src = url;
+    setTimeout(() => setAiLoading(false), 22000);
+  };
+
+  const handleDownload = () => {
+    draw();
+    setTimeout(() => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const a = document.createElement("a");
+      a.download = `crooked-foot-ai-${template.toLowerCase()}-ad.png`;
+      a.href = canvas.toDataURL("image/png", 1.0);
+      a.click();
+    }, 120);
+  };
+
+  const toggleFx = key => setEffects(e => ({ ...e, [key]: !e[key] }));
+
+  return (
+    <div id="ad-creative" style={{background:S.surface}}>
+      <div style={{maxWidth:1200,margin:"0 auto",padding:"56px 36px 0"}}>
+        <SectionHeader number="07" accent="AD CREATIVE STUDIO"
+          title={<>Build &amp; Export Ad <span style={{color:S.cyan}}>Creative</span></>}
+          sub="Customize, preview, and download LinkedIn-ready ad graphics in Crooked Foot AI brand standards. Use the AI agent to generate on-brand backgrounds instantly." />
+        <div style={{display:"flex",gap:8,alignItems:"center",flexWrap:"wrap",marginBottom:24}}>
+          <span style={{fontSize:10,fontWeight:700,letterSpacing:"0.12em",textTransform:"uppercase",color:S.muted}}>QUICK EXAMPLES:</span>
+          {QUICK_EXAMPLES.map(q=>(
+            <button key={q.label} onClick={()=>{setHeadline(q.hl);setBodyTxt(q.body);setCtaTxt(q.cta);}} style={{
+              background:S.bg,border:`1px solid ${S.border}`,borderRadius:100,padding:"5px 14px",
+              fontSize:11,fontWeight:600,color:S.muted,cursor:"pointer",transition:"all 0.15s",
+            }}>{q.label}</button>
+          ))}
+        </div>
+      </div>
+
+      <div style={{display:"flex",borderTop:`1px solid ${S.border}`}}>
+
+        {/* Left controls */}
+        <div style={{width:270,flexShrink:0,padding:"24px 20px",borderRight:`1px solid ${S.border}`,background:S.bg,overflowY:"auto"}}>
+
+          <div style={{marginBottom:20}}>
+            <div style={{fontSize:10,fontWeight:700,letterSpacing:"0.12em",textTransform:"uppercase",color:S.muted,marginBottom:8}}>TEMPLATE</div>
+            <div style={{display:"flex",gap:6,marginBottom:6}}>
+              {Object.keys(TEMPLATES).map(t=>(
+                <button key={t} onClick={()=>setTemplate(t)} style={{
+                  flex:1,background:template===t?S.cyanDim:S.surface,
+                  border:`1px solid ${template===t?S.cyanBorder:S.border}`,
+                  color:template===t?S.cyan:S.muted,
+                  borderRadius:6,padding:"8px 4px",fontSize:11,fontWeight:700,cursor:"pointer",
+                }}>{t}</button>
+              ))}
+            </div>
+            <div style={{fontSize:10,color:S.light}}>{TEMPLATES[template].label}</div>
+          </div>
+
+          <div style={{marginBottom:20}}>
+            <div style={{fontSize:10,fontWeight:700,letterSpacing:"0.12em",textTransform:"uppercase",color:S.muted,marginBottom:8}}>BACKGROUND</div>
+            <div style={{display:"flex",gap:8,marginBottom:12}}>
+              {BG_PRESETS.map(c=>(
+                <button key={c.hex} onClick={()=>{setBgHex(c.hex);setAiActive(false);}} title={c.name} style={{
+                  width:32,height:32,borderRadius:"50%",background:c.hex,cursor:"pointer",
+                  border:bgHex===c.hex?`3px solid ${S.cyan}`:`2px solid ${S.border}`,
+                  outline:bgHex===c.hex?`2px solid ${S.cyanBorder}`:"none",transition:"all 0.15s",
+                }} />
+              ))}
+            </div>
+            <button onClick={generateAiBg} disabled={aiLoading} style={{
+              width:"100%",background:aiLoading?S.surface:S.cyanDim,
+              border:`1px solid ${S.cyanBorder}`,borderRadius:8,padding:"11px",
+              fontSize:11,fontWeight:800,letterSpacing:"0.08em",textTransform:"uppercase",
+              color:S.cyan,cursor:aiLoading?"wait":"pointer",transition:"all 0.15s",
+            }}>{aiLoading?"✦ GENERATING AI BG…":"✦ GENERATE AI BACKGROUND"}</button>
+            <div style={{fontSize:10,color:S.light,marginTop:5,textAlign:"center"}}>Pollinations AI (Flux) · Free · No API key</div>
+            {aiActive&&(
+              <button onClick={()=>{setAiActive(false);aiBgImgRef.current=null;draw();}} style={{
+                width:"100%",background:"transparent",border:`1px solid ${S.border}`,
+                borderRadius:6,padding:"7px",fontSize:10,fontWeight:600,color:S.muted,cursor:"pointer",marginTop:6,
+              }}>↺ REMOVE AI BACKGROUND</button>
+            )}
+          </div>
+
+          {[{label:"HEADLINE",val:headline,set:setHeadline,rows:3},{label:"BODY TEXT",val:bodyTxt,set:setBodyTxt,rows:4}].map(f=>(
+            <div key={f.label} style={{marginBottom:14}}>
+              <label style={{fontSize:10,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",color:S.muted,display:"block",marginBottom:6}}>{f.label}</label>
+              <textarea value={f.val} onChange={e=>f.set(e.target.value)} rows={f.rows} style={{
+                width:"100%",background:S.surface,border:`1px solid ${S.border}`,borderRadius:8,
+                padding:"10px 12px",fontSize:12,color:S.text,fontFamily:"Inter,sans-serif",
+                resize:"vertical",lineHeight:1.5,boxSizing:"border-box",
+              }} />
+            </div>
+          ))}
+
+          <div style={{marginBottom:20}}>
+            <label style={{fontSize:10,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",color:S.muted,display:"block",marginBottom:6}}>CTA TEXT</label>
+            <input value={ctaTxt} onChange={e=>setCtaTxt(e.target.value)} style={{
+              width:"100%",background:S.surface,border:`1px solid ${S.border}`,borderRadius:8,
+              padding:"10px 12px",fontSize:12,color:S.text,fontFamily:"Inter,sans-serif",boxSizing:"border-box",
+            }} />
+          </div>
+
+          <button onClick={handleDownload} style={{
+            width:"100%",background:S.cyan,color:"#09090F",border:"none",borderRadius:8,
+            padding:"13px",fontSize:12,fontWeight:800,letterSpacing:"0.08em",textTransform:"uppercase",
+            cursor:"pointer",transition:"all 0.15s",marginBottom:6,
+          }}>↓ DOWNLOAD PNG</button>
+          <div style={{fontSize:10,color:S.light,textAlign:"center"}}>Full resolution · {tpl.w}×{tpl.h}px</div>
+        </div>
+
+        {/* Canvas preview */}
+        <div style={{flex:1,display:"flex",flexDirection:"column",background:"#E8E8EC",minWidth:0}}>
+          <div style={{padding:"10px 20px",borderBottom:`1px solid ${S.border}`,background:S.bg,display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:8}}>
+            <div style={{display:"flex",alignItems:"center",gap:10,fontSize:11,color:S.muted}}>
+              <span style={{fontWeight:700,color:S.text,fontSize:12}}>PREVIEW</span>
+              <span>{PREVIEW_W}×{PREVIEW_H}</span>
+              <span style={{color:S.border}}>·</span>
+              <span style={{fontSize:10}}>Fit to Screen</span>
+              <span style={{fontSize:9,color:S.light}}>Double-click to reset</span>
+            </div>
+            <div style={{fontSize:10,fontWeight:700,color:S.muted,letterSpacing:"0.08em"}}>FULL RES {tpl.w}×{tpl.h}</div>
+          </div>
+          <div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",padding:40,position:"relative"}}>
+            {aiLoading&&(
+              <div style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",background:"rgba(0,0,0,0.72)",borderRadius:12,padding:"14px 22px",color:"#fff",fontSize:13,fontWeight:700,zIndex:10,whiteSpace:"nowrap"}}>
+                ✦ Generating AI background…
+              </div>
+            )}
+            <div style={{boxShadow:"0 8px 48px rgba(0,0,0,0.22)",borderRadius:8,overflow:"hidden",lineHeight:0}}>
+              <canvas ref={canvasRef} style={{width:PREVIEW_W,height:PREVIEW_H,display:"block"}} />
+            </div>
+          </div>
+          {aiActive&&(
+            <div style={{padding:"10px 20px",borderTop:`1px solid ${S.border}`,background:S.bg,display:"flex",alignItems:"center",gap:8}}>
+              <span style={{fontSize:10,fontWeight:700,background:S.cyanDim,border:`1px solid ${S.cyanBorder}`,color:S.cyan,padding:"3px 10px",borderRadius:100}}>✦ AI BACKGROUND ACTIVE · Pollinations AI (Flux)</span>
+            </div>
+          )}
+        </div>
+
+        {/* Right effects panel */}
+        <div style={{width:180,flexShrink:0,padding:"24px 16px",borderLeft:`1px solid ${S.border}`,background:S.bg}}>
+          <div style={{fontSize:10,fontWeight:700,letterSpacing:"0.12em",textTransform:"uppercase",color:S.muted,marginBottom:16}}>EXPORT &amp; EFFECTS</div>
+          <div style={{fontSize:10,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",color:S.muted,marginBottom:8}}>RESOLUTION</div>
+          <div style={{display:"flex",gap:6,marginBottom:24}}>
+            <button style={{flex:1,background:S.cyan,border:"none",borderRadius:6,padding:"8px",fontSize:11,fontWeight:700,color:"#09090F"}}>1x</button>
+            <button onClick={handleDownload} style={{flex:1,background:S.surface,border:`1px solid ${S.border}`,borderRadius:6,padding:"8px",fontSize:11,fontWeight:600,color:S.muted,cursor:"pointer"}}>2x</button>
+          </div>
+          <div style={{fontSize:10,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",color:S.muted,marginBottom:12}}>EFFECTS</div>
+          {EFFECTS_LIST.map(fx=>(
+            <button key={fx.key} onClick={()=>toggleFx(fx.key)} style={{
+              width:"100%",textAlign:"left",
+              background:effects[fx.key]?S.cyanDim:S.surface,
+              border:`1px solid ${effects[fx.key]?S.cyanBorder:S.border}`,
+              borderRadius:8,padding:"10px 14px",fontSize:12,fontWeight:600,
+              color:effects[fx.key]?S.cyan:S.muted,cursor:"pointer",marginBottom:8,transition:"all 0.15s",
+            }}>{fx.label}</button>
+          ))}
+          <div style={{marginTop:16,padding:"14px 12px",background:S.cyanDim,border:`1px solid ${S.cyanBorder}`,borderRadius:8}}>
+            <div style={{fontSize:10,fontWeight:800,color:S.cyan,marginBottom:6,letterSpacing:"0.08em"}}>AI GENERATOR</div>
+            <div style={{fontSize:11,color:S.text,fontWeight:600,marginBottom:4}}>Pollinations AI</div>
+            <div style={{fontSize:10,color:S.muted,lineHeight:1.6}}>Free · No API key · Unlimited · Flux model</div>
+          </div>
+          <div style={{marginTop:10,padding:"12px",background:S.surface,border:`1px solid ${S.border}`,borderRadius:8}}>
+            <div style={{fontSize:10,fontWeight:700,color:S.text,marginBottom:4}}>↑ UPGRADE</div>
+            <div style={{fontSize:10,color:S.muted,lineHeight:1.6}}>Gemini Imagen (Google Nano Banana) — higher quality with a free API key at <span style={{color:S.cyan}}>ai.google.dev</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ── NAV ── */
 function Nav() {
   const [active, setActive] = useState("campaign-studio");
   const [menuOpen, setMenuOpen] = useState(false);
   const links = [
     { id:"campaign-studio", label:"Design Studio" },
+    { id:"ad-creative", label:"Ad Creative" },
     { id:"pipeline-intelligence", label:"Pipeline Intel" },
     { id:"channel-pulse", label:"Channel Pulse" },
     { id:"gtm-blueprint", label:"GTM Blueprint" },
-    { id:"marketing-assets", label:"Marketing Assets" },
     { id:"content-engine", label:"Content Engine" },
   ];
   const scrollTo = id => {
@@ -2051,6 +2393,8 @@ function App() {
       <Hero />
       <div className="section-divider" />
       <CampaignStudioSection />
+      <div className="section-divider" />
+      <AdCreativeSection />
       <div className="section-divider" />
       <PipelineIntelligenceSection />
       <div className="section-divider" />
