@@ -433,7 +433,7 @@ function SectionHeader({ number, title, sub, accent }) {
 
 /* ── CHANNEL PULSE SECTION ── */
 function ChannelPulseSection() {
-  const [subTab, setSubTab] = useState("COMPETITOR GRID");
+  const [subTab, setSubTab] = useState("LIVE SIGNALS");
   const barRef = useRef(null);
   const [barsVisible, setBarsVisible] = useState(false);
   const [hnStories,   setHnStories]   = useState([]);
@@ -464,16 +464,18 @@ function ChannelPulseSection() {
       .catch(() => { setHnError(true); setHnLoading(false); });
   };
 
+  // Auto-fetch HN signals on mount
+  useEffect(() => { fetchHNSignals(); }, []);
+
   useEffect(() => {
     if (subTab === "CHANNEL MIX") {
       const t = setTimeout(() => setBarsVisible(true), 60);
       return () => clearTimeout(t);
     }
-    if (subTab === "LIVE SIGNALS" && !hnFetched) fetchHNSignals();
   }, [subTab]);
 
   const competitors = [
-    { name:"CROOKED FOOT AI", scores:[10,10,9,10,9,9], highlight:true },
+    { name:"CROOKED FOOT AI", scores:[10,10,9,10,8,8], highlight:true },
     { name:"Gong", scores:[8,5,7,7,8,6], warning:false, badge:"⚠ Records, doesn't predict" },
     { name:"Clari", scores:[7,8,8,7,6,6] },
     { name:"Salesforce Einstein", scores:[6,7,9,5,7,5], badge:"⚠ Ecosystem lock-in risk" },
@@ -535,9 +537,9 @@ function ChannelPulseSection() {
   return (
     <div id="channel-pulse" style={{background:S.surface,padding:"72px 36px"}}>
       <div style={{maxWidth:1200,margin:"0 auto"}}>
-        <SectionHeader number="03" accent="CHANNEL PULSE" title="Market Intelligence Dashboard" sub="Competitive positioning, channel allocation, and thought leader mapping — illustrated with simulated H2 2026 data. In production this section would pull live from HackerNews API, SparkToro, SimilarWeb, or your CRM. All data shown is for demonstration." />
+        <SectionHeader number="03" accent="CHANNEL PULSE" title="Market Intelligence Dashboard" sub="Live B2B and AI market signals via Hacker News API — no key required. Plus: simulated competitive positioning, channel allocation, and thought leader mapping to illustrate how this section would look with a real product." />
 
-        <SubTab tabs={["COMPETITOR GRID","CHANNEL MIX","THOUGHT LEADERS"]} active={subTab} onSelect={setSubTab} />
+        <SubTab tabs={["LIVE SIGNALS","COMPETITOR GRID","CHANNEL MIX","THOUGHT LEADERS"]} active={subTab} onSelect={setSubTab} />
 
         {subTab==="COMPETITOR GRID" && (
           <div style={{background:S.elevated,border:`1px solid ${S.border}`,borderRadius:12,overflow:"hidden",boxShadow:"0 1px 4px rgba(0,0,0,0.05)"}}>
