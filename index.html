@@ -837,7 +837,54 @@ function CampaignStudioSection() {
   const [result,   setResult]   = useState(null);
   const [loading,  setLoading]  = useState(false);
   const [copied,   setCopied]   = useState({});
+  const [sourceContent,   setSourceContent]   = useState("");
+  const [sourceExtracted, setSourceExtracted] = useState(false);
   const outputRef = useRef(null);
+
+  const extractFromSource = () => {
+    if (!sourceContent.trim()) return;
+    const txt = sourceContent.toLowerCase();
+    const pick = (map) => {
+      let best=null, top=0;
+      map.forEach(({kws,val})=>{ const s=kws.filter(k=>txt.includes(k)).length; if(s>top){top=s;best=val;}});
+      return best;
+    };
+    const t = pick([
+      {kws:["forecast","accuracy","predict","94%","number"],         val:"94% Forecast Accuracy"},
+      {kws:["gong","conversation intelligence","records","vs"],       val:"Gong vs. Revenue Intelligence"},
+      {kws:["pipeline review","8 minute","meeting","report"],        val:"Pipeline Review in 8 Minutes"},
+      {kws:["deal velocity","28%","cycle","speed"],                  val:"28% Deal Velocity Gain"},
+      {kws:["crm","agnostic","architecture","integrat","stack"],     val:"CRM-Agnostic Architecture"},
+    ]);
+    const p = pick([
+      {kws:["cro","chief revenue","revenue leader","board"],         val:"CRO / Chief Revenue"},
+      {kws:["vp sales","vp of sales","sales leader","quota"],        val:"VP of Sales"},
+      {kws:["revops","revenue operations","forecast process"],       val:"RevOps Director"},
+      {kws:["enablement","coaching","training","rep"],               val:"Sales Enablement"},
+      {kws:["cfo","finance","budget","plan"],                        val:"CFO / Finance"},
+    ]);
+    const v = pick([
+      {kws:["saas","software","arr","nrr","churn"],                  val:"SaaS / Technology"},
+      {kws:["bank","fintech","wealth","aum","financial"],            val:"Financial Services"},
+      {kws:["health","clinical","medtech","pharma"],                 val:"Healthcare & Life Sciences"},
+      {kws:["manufactur","industrial","oem","supply chain"],         val:"Manufacturing & Industrial"},
+      {kws:["consulting","professional services","advisory"],        val:"Professional Services"},
+    ]);
+    const g = pick([
+      {kws:["authority","thought lead","expert","insight"],          val:"Authority"},
+      {kws:["aware","introduc","new","announc","reach"],             val:"Awareness"},
+      {kws:["convert","demo","sign up","trial"],                     val:"Conversion"},
+      {kws:["engag","comment","question","community"],               val:"Engagement"},
+      {kws:["launch","release","announc","new product"],             val:"Launch"},
+    ]);
+    if(t) setTopic(t);
+    if(p) setPersona(p);
+    if(v) setVertical(v);
+    if(g) setGoal(g);
+    setResult(null);
+    setSourceExtracted(true);
+    setTimeout(()=>setSourceExtracted(false), 3000);
+  };
 
   const handleGenerate = () => {
     setLoading(true);
@@ -1686,6 +1733,31 @@ function ContentEngineSection() {
       <div className="studio-layout" style={{minHeight:620}}>
         {/* Left panel */}
         <div className="studio-left-panel" style={{width:280,flexShrink:0,padding:"28px 24px",borderRight:`1px solid ${S.border}`,background:S.surface,overflowY:"auto"}}>
+          {/* Source Content Ingestion */}
+          <div style={{marginBottom:20}}>
+            <div style={{fontSize:10,fontWeight:700,letterSpacing:"0.12em",textTransform:"uppercase",color:S.cyan,marginBottom:6}}>SOURCE CONTENT</div>
+            <div style={{fontSize:10,color:S.muted,lineHeight:1.6,marginBottom:8}}>Paste a transcript, article, or talking points — engine auto-detects topic, persona, vertical &amp; goal.</div>
+            <textarea
+              value={sourceContent}
+              onChange={e=>{setSourceContent(e.target.value);setSourceExtracted(false);}}
+              rows={4}
+              placeholder={"Paste transcript, article, or talking points...
+
+e.g. "Our CRO saw forecast accuracy hit 94% in Q2 with zero CRM changes…""}
+              style={{width:"100%",background:S.surface,border:`1px solid ${S.border}`,borderRadius:8,padding:"9px 11px",fontSize:11,color:S.text,fontFamily:"Inter,sans-serif",resize:"vertical",lineHeight:1.5,boxSizing:"border-box"}}
+            />
+            <button onClick={extractFromSource} disabled={!sourceContent.trim()} style={{
+              width:"100%",marginTop:7,
+              background:sourceExtracted?"rgba(5,150,105,0.12)":sourceContent.trim()?S.cyanDim:S.surface,
+              border:`1px solid ${sourceExtracted?"rgba(5,150,105,0.4)":sourceContent.trim()?S.cyanBorder:S.border}`,
+              borderRadius:7,padding:"9px",fontSize:11,fontWeight:800,letterSpacing:"0.08em",textTransform:"uppercase",
+              color:sourceExtracted?S.green:sourceContent.trim()?S.cyan:S.light,
+              cursor:sourceContent.trim()?"pointer":"default",transition:"all 0.2s",
+            }}>{sourceExtracted?"✓ AUTO-CONFIGURED":"↳ EXTRACT & AUTO-CONFIGURE"}</button>
+            {sourceExtracted&&<div style={{marginTop:6,fontSize:10,color:S.green,textAlign:"center"}}>Topic · Persona · Vertical · Goal updated ↓</div>}
+          </div>
+          <div style={{height:1,background:S.border,margin:"4px 0 18px"}} />
+
           <SelectorGroup label="Topic Anchor"    options={CE_TOPICS}    value={topic}    onChange={v => { setTopic(v);    setResult(null); }} />
           <SelectorGroup label="Goal"            options={CE_GOALS}     value={goal}     onChange={v => { setGoal(v);     setResult(null); }} />
           <SelectorGroup label="Target Vertical" options={CE_VERTICALS} value={vertical} onChange={v => { setVertical(v); setResult(null); }} />
@@ -1717,12 +1789,12 @@ function ContentEngineSection() {
           {!result ? (
             <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",minHeight:500,textAlign:"center"}}>
               <div style={{width:72,height:72,background:S.cyanDim,border:`1px solid ${S.cyanBorder}`,borderRadius:18,display:"flex",alignItems:"center",justifyContent:"center",fontSize:28,marginBottom:20}}>✍</div>
-              <div style={{fontSize:20,fontWeight:700,color:S.text,marginBottom:10}}>Select a topic and goal</div>
-              <div style={{fontSize:14,color:S.muted,maxWidth:400,lineHeight:1.65}}>
-                Pick a <span style={{color:S.cyan,fontWeight:600}}>topic</span>, <span style={{color:S.cyan,fontWeight:600}}>goal</span>, <span style={{color:S.green,fontWeight:600}}>vertical</span>, and <span style={{color:S.amber,fontWeight:600}}>persona</span> on the left, choose a platform above, then click <span style={{color:S.cyan,fontWeight:600}}>GENERATE CONTENT</span> — the engine tailors every output to your ICP.
+              <div style={{fontSize:20,fontWeight:700,color:S.text,marginBottom:10}}>Configure your content machine</div>
+              <div style={{fontSize:14,color:S.muted,maxWidth:480,lineHeight:1.65}}>
+                Paste <span style={{color:S.cyan,fontWeight:600}}>source content</span> to auto-configure, or manually pick a <span style={{color:S.cyan,fontWeight:600}}>topic</span>, <span style={{color:S.cyan,fontWeight:600}}>goal</span>, <span style={{color:S.green,fontWeight:600}}>vertical</span>, and <span style={{color:S.amber,fontWeight:600}}>persona</span> — then click <span style={{color:S.cyan,fontWeight:600}}>GENERATE CONTENT</span> for ICP-tailored copy ready to post.
               </div>
               <div style={{display:"flex",gap:8,marginTop:24,flexWrap:"wrap",justifyContent:"center"}}>
-                {["Platform-Native Drafts","Vertical-Tailored Copy","Persona-Specific CTAs","Hook + Body + CTA","Copy to Clipboard"].map(f => (
+                {["Source Content Ingestion","Platform-Native Drafts","Vertical-Tailored Copy","Persona-Specific CTAs","Hook + Body + CTA"].map(f => (
                   <span key={f} style={{fontSize:11,fontWeight:600,color:S.muted,background:S.surface,border:`1px solid ${S.border}`,padding:"6px 14px",borderRadius:100}}>{f}</span>
                 ))}
               </div>
@@ -2119,6 +2191,11 @@ P.S. If your number is "we don't really track that," that's also useful data. An
   const [imgLoad,   setImgLoad]   = useState(false);
   const [imgSrc,    setImgSrc]    = useState(null);
   const [imgError,  setImgError]  = useState(false);
+  const [viewMode,   setViewMode]  = useState("single");
+  const [allResults, setAllResults] = useState(null);
+  const [allLoading, setAllLoading] = useState(false);
+  const [copiedAll,  setCopiedAll]  = useState({});
+  const [sessionCount, setSessionCount] = useState(0);
 
   const plat = PLATFORMS.find(p => p.id === platform);
 
@@ -2130,7 +2207,28 @@ P.S. If your number is "we don't really track that," that's also useful data. An
       setGenCopy(copy);
       if (!imgPrompt) setImgPrompt(autoImgPrompt(platform, goal));
       setCopyLoad(false);
+      setSessionCount(n => n + 1);
     }, 950);
+  };
+
+  const generateAll = () => {
+    setAllLoading(true); setAllResults(null); setCopiedAll({});
+    setTimeout(() => {
+      const results = {};
+      PLATFORMS.forEach(p => {
+        const key = `${p.id}|${goal}`;
+        results[p.id] = { copy: COPY_MAP[key] || fallbackCopy(p.id, topic, goal), platform: p };
+      });
+      setAllResults(results);
+      setAllLoading(false);
+      setSessionCount(n => n + PLATFORMS.length);
+    }, 1400);
+  };
+
+  const doCopyAll = (id, text) => {
+    try { navigator.clipboard.writeText(text); } catch(e) {}
+    setCopiedAll(p => ({...p, [id]: true}));
+    setTimeout(() => setCopiedAll(p => ({...p, [id]: false})), 1800);
   };
 
   const generateImage = () => {
@@ -2176,19 +2274,110 @@ P.S. If your number is "we don't really track that," that's also useful data. An
           title={<>AI Copy + Image <span style={{color:S.cyan}}>Generator</span></>}
           sub="Claude generates platform-native copy calibrated to your goal and audience. Pollinations AI (Flux) generates the visual. Together: ready-to-post content in under 30 seconds." />
 
-        {/* Platform strip */}
-        <div style={{display:"flex",gap:8,marginBottom:32,flexWrap:"wrap"}}>
-          {PLATFORMS.map(p=>(
-            <button key={p.id} onClick={()=>switchPlatform(p.id)} style={{
-              padding:"9px 22px",borderRadius:100,fontSize:13,fontWeight:700,cursor:"pointer",transition:"all 0.15s",
-              background:platform===p.id?p.color:"transparent",
-              border:`2px solid ${platform===p.id?p.color:S.border}`,
-              color:platform===p.id?"#fff":S.muted,
-            }}>{p.label}</button>
-          ))}
+        {/* Platform strip + mode toggle */}
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:20,flexWrap:"wrap",gap:12}}>
+          <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+            {PLATFORMS.map(p=>(
+              <button key={p.id} onClick={()=>{switchPlatform(p.id);setViewMode("single");}} style={{
+                padding:"9px 22px",borderRadius:100,fontSize:13,fontWeight:700,cursor:"pointer",transition:"all 0.15s",
+                background:viewMode==="single"&&platform===p.id?p.color:"transparent",
+                border:`2px solid ${viewMode==="single"&&platform===p.id?p.color:S.border}`,
+                color:viewMode==="single"&&platform===p.id?"#fff":S.muted,
+              }}>{p.label}</button>
+            ))}
+          </div>
+          <div style={{display:"flex",alignItems:"center",gap:10}}>
+            {sessionCount>0&&(
+              <span style={{fontSize:11,fontWeight:700,background:S.cyanDim,border:`1px solid ${S.cyanBorder}`,color:S.cyan,padding:"5px 12px",borderRadius:100}}>
+                ✦ {sessionCount} asset{sessionCount!==1?"s":""} generated
+              </span>
+            )}
+            <div style={{display:"flex",background:S.surface,border:`1px solid ${S.border}`,borderRadius:8,overflow:"hidden"}}>
+              {[{id:"single",label:"Single"},{id:"all",label:"⚡ All Platforms"}].map(v=>(
+                <button key={v.id} onClick={()=>setViewMode(v.id)} style={{
+                  padding:"7px 16px",fontSize:11,fontWeight:700,border:"none",cursor:"pointer",transition:"all 0.15s",
+                  background:viewMode===v.id?S.cyan:"transparent",
+                  color:viewMode===v.id?"#09090F":S.muted,
+                }}>{v.label}</button>
+              ))}
+            </div>
+          </div>
         </div>
 
-        <div className="studio-layout" style={{gap:20,minHeight:"unset",borderTop:"none",alignItems:"flex-start"}}>
+        {/* ── ALL PLATFORMS VIEW ── */}
+        {viewMode==="all" && (
+          <div>
+            <div style={{marginBottom:16,display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:12}}>
+              <div>
+                <div style={{fontSize:12,fontWeight:700,color:S.text,marginBottom:2}}>Content Multiplier — <span style={{color:S.cyan}}>{goal}</span></div>
+                <div style={{fontSize:11,color:S.muted}}>1 campaign brief → 4 platform-ready posts · {topic.slice(0,55)}{topic.length>55?"…":""}</div>
+              </div>
+              <button onClick={generateAll} disabled={allLoading} style={{
+                background:allLoading?S.surface:S.cyan,border:"none",borderRadius:8,padding:"11px 24px",
+                fontSize:12,fontWeight:800,letterSpacing:"0.06em",textTransform:"uppercase",
+                color:allLoading?S.muted:"#09090F",cursor:allLoading?"wait":"pointer",transition:"all 0.15s",
+              }}>{allLoading?"⚡ GENERATING ALL…":"⚡ GENERATE ALL PLATFORMS"}</button>
+            </div>
+
+            {/* Goal selector in all-platforms mode */}
+            <div style={{display:"flex",gap:6,marginBottom:20,flexWrap:"wrap"}}>
+              {GOALS.map(g=>(
+                <button key={g} onClick={()=>{setGoal(g);setAllResults(null);}} style={{
+                  padding:"5px 16px",borderRadius:100,fontSize:11,fontWeight:600,cursor:"pointer",transition:"all 0.12s",
+                  background:goal===g?S.cyanDim:"transparent",
+                  border:`1px solid ${goal===g?S.cyanBorder:S.border}`,
+                  color:goal===g?S.cyan:S.muted,
+                }}>{g}</button>
+              ))}
+            </div>
+
+            {allLoading&&(
+              <div style={{textAlign:"center",padding:"60px 20px",color:S.muted}}>
+                <div style={{fontSize:28,marginBottom:12}}>⚡</div>
+                <div style={{fontSize:14,fontWeight:700,color:S.text,marginBottom:6}}>Generating across all 4 platforms…</div>
+                <div style={{fontSize:12,color:S.muted}}>LinkedIn · X Thread · Instagram · Newsletter</div>
+              </div>
+            )}
+
+            {allResults&&!allLoading&&(
+              <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(420px,1fr))",gap:16}}>
+                {PLATFORMS.map(p=>{
+                  const r = allResults[p.id];
+                  if (!r) return null;
+                  return (
+                    <div key={p.id} style={{background:S.surface,border:`1px solid ${S.border}`,borderRadius:12,overflow:"hidden"}}>
+                      <div style={{padding:"12px 18px",background:p.color,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                        <span style={{fontSize:12,fontWeight:800,color:"#fff",letterSpacing:"0.06em"}}>{p.label.toUpperCase()}</span>
+                        <div style={{display:"flex",alignItems:"center",gap:8}}>
+                          {p.limit&&<span style={{fontSize:10,color:"rgba(255,255,255,0.7)"}}>{r.copy.length}/{p.limit}</span>}
+                          <button onClick={()=>doCopyAll(p.id, r.copy)} style={{
+                            background:"rgba(255,255,255,0.2)",border:"1px solid rgba(255,255,255,0.4)",
+                            borderRadius:6,padding:"4px 12px",fontSize:10,fontWeight:700,
+                            color:"#fff",cursor:"pointer",
+                          }}>{copiedAll[p.id]?"✓ COPIED":"COPY"}</button>
+                        </div>
+                      </div>
+                      <div style={{padding:"16px 18px",fontSize:12,color:S.text,lineHeight:1.75,whiteSpace:"pre-wrap",maxHeight:220,overflowY:"auto"}}>{r.copy}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {!allResults&&!allLoading&&(
+              <div style={{textAlign:"center",padding:"48px 20px",background:S.surface,border:`1px dashed ${S.border}`,borderRadius:12}}>
+                <div style={{fontSize:32,marginBottom:12}}>⚡</div>
+                <div style={{fontSize:15,fontWeight:700,color:S.text,marginBottom:8}}>Content Multiplication Machine</div>
+                <div style={{fontSize:13,color:S.muted,maxWidth:440,margin:"0 auto",lineHeight:1.65}}>
+                  Select a goal above and hit <strong style={{color:S.cyan}}>Generate All Platforms</strong> to produce LinkedIn, X, Instagram, and Newsletter copy simultaneously — the same way automated content machines work at scale.
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ── SINGLE PLATFORM VIEW ── */}
+        {viewMode==="single" && <div className="studio-layout" style={{gap:20,minHeight:"unset",borderTop:"none",alignItems:"flex-start"}}>
 
           {/* LEFT: Copy generator */}
           <div className="studio-left-panel" style={{width:"auto",flex:1,padding:0,borderRight:"none",overflowY:"visible"}}>
@@ -2312,25 +2501,41 @@ P.S. If your number is "we don't really track that," that's also useful data. An
               </div>
             </div>
           </div>
-        </div>
+        </div>}
 
-        {/* Workflow pipeline */}
-        <div style={{marginTop:24,padding:"20px 28px",background:S.surface,border:`1px solid ${S.border}`,borderRadius:12,display:"flex",alignItems:"center",gap:0,flexWrap:"wrap"}}>
-          {[
-            {step:"01",label:"Brand Context",  desc:"Persona · audience · goal"},
-            {step:"02",label:"Generate Copy",  desc:"Platform-native · goal-specific"},
-            {step:"03",label:"Generate Image", desc:"Pollinations AI · Flux model"},
-            {step:"04",label:"Publish",         desc:"Crosspost CLI · Blotato MCP · Manual"},
-          ].map((s,i)=>(
-            <React.Fragment key={s.step}>
-              <div style={{flex:1,minWidth:130,padding:"4px 16px"}}>
-                <div style={{fontSize:10,fontWeight:800,color:S.cyan,letterSpacing:"0.1em",marginBottom:3}}>STEP {s.step}</div>
-                <div style={{fontSize:13,fontWeight:700,color:S.text,marginBottom:2}}>{s.label}</div>
-                <div style={{fontSize:11,color:S.muted}}>{s.desc}</div>
-              </div>
-              {i<3&&<div style={{color:S.border,fontSize:20,flexShrink:0,padding:"0 4px"}}>→</div>}
-            </React.Fragment>
-          ))}
+        {/* Publishing Pipeline */}
+        <div style={{marginTop:24,background:S.surface,border:`1px solid ${S.border}`,borderRadius:12,overflow:"hidden"}}>
+          <div style={{padding:"14px 24px",borderBottom:`1px solid ${S.border}`,display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:8}}>
+            <div style={{fontSize:12,fontWeight:700,color:S.text,letterSpacing:"0.04em"}}>CONTENT PUBLISHING PIPELINE</div>
+            <span style={{fontSize:10,color:S.muted}}>From brief to scheduled post — full automation stack</span>
+          </div>
+          <div style={{padding:"20px 24px",display:"flex",alignItems:"flex-start",gap:0,flexWrap:"wrap"}}>
+            {[
+              {step:"01",label:"Source Content",  tool:"This Engine",   cost:"Free",     color:S.cyan,  desc:"Paste transcript, blog post, or talking points → auto-detect topic + persona"},
+              {step:"02",label:"Generate Copy",    tool:"Claude AI",     cost:"~$0.003",  color:"#7C3AED",desc:"Platform-native copy tailored by vertical, persona, and campaign goal"},
+              {step:"03",label:"Generate Visual",  tool:"Pollinations",  cost:"Free",     color:S.cyan,  desc:"FLUX model generates on-brand image at platform-correct dimensions"},
+              {step:"04",label:"Upload & Schedule",tool:"Blotato",       cost:"$0.05/post",color:S.green, desc:"API uploads video/image + copy, schedules across TikTok, LinkedIn, IG, X"},
+              {step:"05",label:"Analyze & Iterate",tool:"Native Analytics",cost:"Free",  color:S.amber, desc:"Platform analytics feed back into next campaign's topic and goal selection"},
+            ].map((s,i)=>(
+              <React.Fragment key={s.step}>
+                <div style={{flex:1,minWidth:150,padding:"0 16px 8px"}}>
+                  <div style={{fontSize:9,fontWeight:800,color:s.color,letterSpacing:"0.12em",textTransform:"uppercase",marginBottom:4}}>STEP {s.step}</div>
+                  <div style={{fontSize:13,fontWeight:700,color:S.text,marginBottom:3}}>{s.label}</div>
+                  <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:6}}>
+                    <span style={{fontSize:10,fontWeight:700,background:S.elevated,border:`1px solid ${S.border}`,color:S.muted,padding:"2px 8px",borderRadius:100}}>{s.tool}</span>
+                    <span style={{fontSize:10,fontWeight:700,color:s.color}}>{s.cost}</span>
+                  </div>
+                  <div style={{fontSize:11,color:S.muted,lineHeight:1.6}}>{s.desc}</div>
+                </div>
+                {i<4&&<div style={{color:S.border,fontSize:18,flexShrink:0,paddingTop:20,alignSelf:"flex-start"}}>→</div>}
+              </React.Fragment>
+            ))}
+          </div>
+          <div style={{padding:"12px 24px",borderTop:`1px solid ${S.border}`,background:S.cyanDim,display:"flex",alignItems:"center",gap:16,flexWrap:"wrap"}}>
+            <span style={{fontSize:11,color:S.text}}><strong>Bulk cost estimate:</strong> 5 posts across 4 platforms = 20 assets</span>
+            <span style={{fontSize:11,color:S.muted}}>Copy: ~$0.06 · Images: $0 · Scheduling: $1.00 · <strong style={{color:S.green}}>Total: ~$1.06</strong></span>
+            <span style={{fontSize:11,color:S.muted,marginLeft:"auto"}}>vs. $800–2,400 agency equivalent · <strong style={{color:S.cyan}}>97% cost reduction</strong></span>
+          </div>
         </div>
       </div>
     </div>
