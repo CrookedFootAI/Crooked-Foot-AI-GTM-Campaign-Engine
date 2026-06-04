@@ -10,14 +10,14 @@
 <meta property="og:url" content="https://gtm-campaign-engine.netlify.app/">
 <meta property="og:title" content="Crooked Foot AI — GTM Campaign Engine">
 <meta property="og:description" content="AI-native revenue intelligence for enterprise B2B teams. 94% forecast accuracy, 14-signal pipeline scoring, zero black box.">
-<meta property="og:image" content="https://gtm-campaign-engine.netlify.app/logo.png">
-<meta property="og:image:width" content="1024">
-<meta property="og:image:height" content="1024">
+<meta property="og:image" content="https://gtm-campaign-engine.netlify.app/linkedin-featured.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="628">
 <!-- Twitter / X Card -->
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Crooked Foot AI — GTM Campaign Engine">
 <meta name="twitter:description" content="AI-native revenue intelligence for enterprise B2B teams. 94% forecast accuracy, 14-signal pipeline scoring, zero black box.">
-<meta name="twitter:image" content="https://gtm-campaign-engine.netlify.app/logo.png">
+<meta name="twitter:image" content="https://gtm-campaign-engine.netlify.app/linkedin-featured.png">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -71,8 +71,8 @@
 
     /* Studio panels stack vertically */
     .studio-layout { flex-direction: column !important; min-height: unset !important; }
-    .studio-left-panel { width: 100% !important; border-right: none !important; border-bottom: 1px solid #E5E7EB !important; overflow-y: visible !important; padding: 20px 16px !important; }
-    .studio-right-panel { padding: 20px 16px !important; overflow-y: visible !important; }
+    .studio-left-panel { width: 100% !important; border-right: none !important; border-bottom: 1px solid #E5E7EB !important; overflow-y: visible !important; padding: 20px 16px !important; flex: unset !important; }
+    .studio-right-panel { padding: 20px 16px !important; overflow-y: visible !important; flex: unset !important; width: 100% !important; }
 
     /* Section padding overrides */
     #pipeline-intelligence { padding: 40px 16px !important; }
@@ -455,7 +455,7 @@ function PipelineIntelligenceSection() {
 
   return (
     <div id="pipeline-intelligence" style={{padding:"72px 36px",maxWidth:1200,margin:"0 auto"}}>
-      <SectionHeader number="02" accent="PIPELINE INTELLIGENCE PLAYBOOK" title="At-Risk Deal Recovery System" sub="A systematic framework for identifying deal health degradation, rebuilding stakeholder momentum, and recovering enterprise opportunities before they stall — built for B2B SaaS revenue teams targeting $25M+ annual pipeline." />
+      <SectionHeader number="03" accent="PIPELINE INTELLIGENCE PLAYBOOK" title="At-Risk Deal Recovery System" sub="A systematic framework for identifying deal health degradation, rebuilding stakeholder momentum, and recovering enterprise opportunities before they stall — built for B2B SaaS revenue teams targeting $25M+ annual pipeline." />
 
       <div ref={kpiRef} style={{display:"flex",gap:16,marginBottom:40,flexWrap:"wrap"}}>
         <KPICard value="94" label="Forecast Accuracy Rate" suffix="%" color={S.green} />
@@ -584,7 +584,7 @@ function ChannelPulseSection() {
   return (
     <div id="channel-pulse" style={{background:S.surface,padding:"72px 36px"}}>
       <div style={{maxWidth:1200,margin:"0 auto"}}>
-        <SectionHeader number="03" accent="CHANNEL PULSE" title="Market Intelligence Dashboard" sub="Competitive positioning, channel allocation, and thought leader mapping for Crooked Foot AI's H2 2026 GTM strategy — targeting B2B SaaS revenue leaders replacing reactive intelligence tools." />
+        <SectionHeader number="04" accent="CHANNEL PULSE" title="Market Intelligence Dashboard" sub="Competitive positioning, channel allocation, and thought leader mapping for Crooked Foot AI's H2 2026 GTM strategy — targeting B2B SaaS revenue leaders replacing reactive intelligence tools." />
 
         <SubTab tabs={["COMPETITOR GRID","CHANNEL MIX","THOUGHT LEADERS"]} active={subTab} onSelect={setSubTab} />
 
@@ -732,7 +732,7 @@ function GTMBlueprintSection() {
 
   return (
     <div id="gtm-blueprint" style={{padding:"72px 36px",maxWidth:1200,margin:"0 auto"}}>
-      <SectionHeader number="04" accent="GTM BLUEPRINT" title="Competitive GTM Blueprint" sub="A go-to-market strategy built on competitive intelligence — targeting where category leaders fall short, amplifying Crooked Foot AI's differentiated advantages, and building the pipeline velocity the market hasn't seen yet." />
+      <SectionHeader number="05" accent="GTM BLUEPRINT" title="Competitive GTM Blueprint" sub="A go-to-market strategy built on competitive intelligence — targeting where category leaders fall short, amplifying Crooked Foot AI's differentiated advantages, and building the pipeline velocity the market hasn't seen yet." />
 
       <SubTab tabs={["COMPETITOR GAPS","PRODUCT STRENGTHS","GTM PLAYS"]} active={subTab} onSelect={setSubTab} />
 
@@ -821,173 +821,6 @@ function GTMBlueprintSection() {
           </div>
         </div>
       )}
-    </div>
-  );
-}
-
-/* ── MARKETING ASSETS SECTION ── */
-function MarketingAssetsSection() {
-  const [copied, setCopied] = useState({});
-  const copyText = (key, text) => {
-    navigator.clipboard.writeText(text).catch(()=>{
-      const el=document.createElement("textarea");el.value=text;document.body.appendChild(el);el.select();document.execCommand("copy");document.body.removeChild(el);
-    });
-    setCopied(p=>({...p,[key]:true}));
-    setTimeout(()=>setCopied(p=>({...p,[key]:false})),1500);
-  };
-
-  const liPosts = [
-    {
-      headline: "Most enterprise forecast misses aren't a people problem. They're a signal problem.",
-      body: `After reviewing 400+ CRM instances across enterprise B2B teams, the same pattern emerges every time.\n\nThe forecast was wrong. But the signal was there — 45 days earlier.\n\nThe problem isn't that reps hide deals. It's that current intelligence tools surface signals after the decision is made, not before it.\n\nConversation intelligence tells you what was said on Tuesday's call.\nRevenue intelligence tells you which deals are at risk by next Friday.\n\nThose are not the same category.\n\nThe CROs hitting quota in 2026 know the difference. Do you?\n\nWhat's your team's current forecast accuracy? Drop it in the comments — would love to benchmark.`,
-      tags: ["#RevenueIntelligence","#ForecastAccuracy","#B2BSaaS","#CRO"],
-      likes: "1.4K", comments: "128", shares: "312",
-    },
-    {
-      headline: "The Gong vs. revenue intelligence debate is over. Here's who won.",
-      body: `Conversation intelligence had a great run.\n\nRecording calls. Surfacing keywords. Showing you which deals had 'risk language' on the last call.\n\nBut recording what happened isn't the same as predicting what will happen.\n\nThe enterprise revenue teams pulling ahead in 2026 are the ones who made the distinction early.\n\nThey're not using AI to review calls faster.\nThey're using AI to predict which deals close — 45 days before the quarter ends.\n\nThe accuracy gap between those two approaches at quarter-end isn't 5%.\nIt's 33 percentage points.\n\nConversation intelligence records. Revenue intelligence predicts.\nKnow which one your revenue org needs right now.`,
-      tags: ["#Gong","#RevenuePrediction","#SalesTech","#B2BSaaS"],
-      likes: "2.3K", comments: "201", shares: "487",
-    },
-    {
-      headline: "Your Q3 pipeline review is going to take 4 hours. It shouldn't.",
-      body: `Here's what most enterprise pipeline reviews actually look like:\n\n1. Someone spends 2 hours pulling reports no one fully trusts\n2. Every rep updates their CRM optimistically the night before\n3. The review takes 3 hours because every deal needs a verbal health check\n4. The forecast is still wrong by the 15th\n\nThis is a solved problem.\n\nRevenue intelligence platforms synthesize deal signals automatically — stakeholder engagement, email velocity, competitive mentions, CRM activity decay — and deliver the briefing before the meeting.\n\n8-minute pipeline reviews are real. BlackRock, Caterpillar, and McKinsey Digital are running them.\n\nThe question is whether your revenue team is still building the deck the night before.\n\nWhat does your current pipeline review process look like?`,
-      tags: ["#PipelineReview","#RevOps","#RevenueOperations","#SalesLeadership"],
-      likes: "987", comments: "94", shares: "223",
-    },
-  ];
-
-  const liAds = [
-    {
-      type: "LEAD GEN AD",
-      badge: "SPONSORED",
-      headline: "Free Benchmark: What Does 94% Forecast Accuracy Actually Look Like?",
-      body: "Most B2B revenue teams accept 60-65% forecast accuracy as normal. It isn't. Download the 2026 Revenue Intelligence Benchmark — industry-specific accuracy data for SaaS, Financial Services, and Healthcare revenue teams.",
-      cta: "Download Free Benchmark →",
-      proof: "Downloaded by 3,800+ revenue leaders across enterprise B2B",
-      color: S.cyan,
-      textColor: "#09090F",
-    },
-    {
-      type: "DEMO REQUEST AD",
-      badge: "SPONSORED",
-      headline: "See Why Salesforce Chose Crooked Foot AI Over Gong",
-      body: "Zero black box. 94% forecast accuracy. Deploys across Salesforce, HubSpot, and Pipedrive. Salesforce, BlackRock, and Caterpillar trust Crooked Foot AI for their most critical revenue predictions. Book a 20-minute demo.",
-      cta: "Request a Demo →",
-      proof: "Trusted by Global 2000 revenue teams across 28 verticals",
-      color: "#1A1A26",
-      textColor: S.text,
-    },
-    {
-      type: "RETARGETING AD",
-      badge: "SPONSORED",
-      headline: "Still Evaluating Revenue Intelligence Platforms?",
-      body: "If you've been comparing Gong, Clari, and Chorus, one question should define your decision: can your platform predict deal outcomes 45 days before close — or just record what happened? Crooked Foot AI can. Schedule a technical proof-of-concept.",
-      cta: "Book a Technical Review →",
-      proof: "94% forecast accuracy · CRM agnostic · 30-day ramp",
-      color: "#001A22",
-      textColor: S.text,
-    },
-  ];
-
-  return (
-    <div id="marketing-assets" style={{background:S.surface,padding:"72px 36px"}}>
-      <div style={{maxWidth:1200,margin:"0 auto"}}>
-        <SectionHeader number="05" accent="MARKETING ASSETS" title="Branded Content & Ad Creative" sub="LinkedIn post copy and ad creative built for Crooked Foot AI's H2 2026 GTM motion — targeting revenue leaders at enterprise B2B SaaS companies evaluating their intelligence stack." />
-
-        {/* LinkedIn Posts */}
-        <div style={{marginBottom:48}}>
-          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:20}}>
-            <div style={{width:28,height:28,background:"#0A66C2",borderRadius:6,display:"flex",alignItems:"center",justifyContent:"center"}}>
-              <span style={{color:"#fff",fontSize:14,fontWeight:900}}>in</span>
-            </div>
-            <div style={{fontSize:13,fontWeight:700,color:S.text}}>LinkedIn Post Templates</div>
-            <span style={{fontSize:10,fontWeight:600,background:S.cyanDim,border:`1px solid ${S.cyanBorder}`,color:S.cyan,padding:"3px 10px",borderRadius:100}}>THOUGHT LEADERSHIP</span>
-          </div>
-          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(360px,1fr))",gap:20}}>
-            {liPosts.map((post,i)=>(
-              <div key={i} className="card-hover" style={{background:S.elevated,border:`1px solid ${S.border}`,borderRadius:12,overflow:"hidden",boxShadow:"0 1px 4px rgba(0,0,0,0.05)"}}>
-                <div style={{padding:"16px 18px",borderBottom:`1px solid ${S.border}`,display:"flex",alignItems:"center",gap:12}}>
-                  <div style={{width:42,height:42,background:`linear-gradient(135deg,${S.cyan},#0090C0)`,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,fontWeight:900,color:"#09090F",flexShrink:0}}>AM</div>
-                  <div>
-                    <div style={{fontSize:13,fontWeight:700,color:S.text}}>Alex Maring</div>
-                    <div style={{fontSize:11,color:S.muted}}>Growth Marketing · Revenue Intelligence · B2B SaaS</div>
-                    <div style={{fontSize:10,color:S.light}}>3h · 🌐</div>
-                  </div>
-                </div>
-                <div style={{padding:"14px 18px"}}>
-                  <div style={{fontSize:13,fontWeight:700,color:S.text,marginBottom:8}}>{post.headline}</div>
-                  <div style={{fontSize:12,color:S.muted,lineHeight:1.7,whiteSpace:"pre-line",maxHeight:160,overflow:"hidden",position:"relative"}}>
-                    {post.body.slice(0,320)}...
-                    <div style={{position:"absolute",bottom:0,left:0,right:0,height:32,background:`linear-gradient(transparent,${S.elevated})`}} />
-                  </div>
-                  <div style={{display:"flex",gap:6,marginTop:10,flexWrap:"wrap"}}>
-                    {post.tags.map(tag=>(
-                      <span key={tag} style={{fontSize:11,color:"#0A66C2",fontWeight:500}}>{tag}</span>
-                    ))}
-                  </div>
-                </div>
-                <div style={{padding:"10px 18px",borderTop:`1px solid ${S.border}`,display:"flex",gap:20,fontSize:11,color:S.muted}}>
-                  <span>👍 {post.likes}</span>
-                  <span>💬 {post.comments}</span>
-                  <span>↗ {post.shares}</span>
-                </div>
-                <div style={{padding:"10px 18px",borderTop:`1px solid ${S.border}`,background:S.surface}}>
-                  <button onClick={()=>copyText(`post_${i}`,`${post.headline}\n\n${post.body}\n\n${post.tags.join(" ")}`)} style={{
-                    width:"100%",background:copied[`post_${i}`]?S.greenDim:S.cyanDim,
-                    border:`1px solid ${copied[`post_${i}`]?"rgba(0,229,138,0.35)":S.cyanBorder}`,
-                    borderRadius:6,padding:"8px",fontSize:11,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",
-                    color:copied[`post_${i}`]?S.green:S.cyan,transition:"all 0.15s",
-                  }}>{copied[`post_${i}`]?"✓ COPIED TO CLIPBOARD":"COPY FULL POST"}</button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* LinkedIn Ads */}
-        <div>
-          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:20}}>
-            <div style={{width:28,height:28,background:"#0A66C2",borderRadius:6,display:"flex",alignItems:"center",justifyContent:"center"}}>
-              <span style={{color:"#fff",fontSize:14,fontWeight:900}}>in</span>
-            </div>
-            <div style={{fontSize:13,fontWeight:700,color:S.text}}>LinkedIn Ad Creative</div>
-            <span style={{fontSize:10,fontWeight:600,background:S.amberDim,border:`1px solid rgba(255,184,0,0.35)`,color:S.amber,padding:"3px 10px",borderRadius:100}}>PAID MEDIA</span>
-          </div>
-          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(340px,1fr))",gap:20}}>
-            {liAds.map((ad,i)=>(
-              <div key={i} className="card-hover" style={{background:S.elevated,border:`1px solid ${S.border}`,borderRadius:12,overflow:"hidden",boxShadow:"0 1px 4px rgba(0,0,0,0.05)"}}>
-                <div style={{height:160,background:`linear-gradient(135deg, ${ad.color}30 0%, ${ad.color}10 100%)`,borderBottom:`1px solid ${S.border}`,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:8,padding:20,position:"relative"}}>
-                  <div style={{position:"absolute",top:10,right:12,fontSize:9,fontWeight:700,letterSpacing:"0.1em",color:S.muted,border:`1px solid ${S.border}`,background:S.surface,padding:"2px 8px",borderRadius:3}}>{ad.badge}</div>
-                  <div style={{width:48,height:48,background:`${ad.color}25`,border:`2px solid ${ad.color}50`,borderRadius:12,display:"flex",alignItems:"center",justifyContent:"center",fontSize:22}}>🦾</div>
-                  <div style={{fontSize:10,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",color:ad.color === S.cyan ? S.cyan : S.text,textAlign:"center"}}>{ad.type}</div>
-                </div>
-                <div style={{padding:"16px 18px"}}>
-                  <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
-                    <div style={{width:32,height:32,background:S.cyanDim,border:`1px solid ${S.cyanBorder}`,borderRadius:6,display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:900,color:S.cyan}}>CF</div>
-                    <div>
-                      <div style={{fontSize:12,fontWeight:700,color:S.text}}>Crooked Foot AI</div>
-                      <div style={{fontSize:10,color:S.muted}}>Software · Revenue Intelligence Platform</div>
-                    </div>
-                  </div>
-                  <div style={{fontSize:14,fontWeight:700,color:S.text,lineHeight:1.4,marginBottom:8}}>{ad.headline}</div>
-                  <div style={{fontSize:12,color:S.muted,lineHeight:1.65,marginBottom:12}}>{ad.body}</div>
-                  <div style={{fontSize:10,color:S.light,marginBottom:14}}>{ad.proof}</div>
-                  <button style={{width:"100%",background:ad.color === S.cyan ? S.cyan : S.elevated,color:ad.color === S.cyan ? "#09090F" : S.cyan,border:ad.color === S.cyan ? "none" : `1px solid ${S.cyanBorder}`,borderRadius:6,padding:"10px",fontSize:12,fontWeight:700,letterSpacing:"0.04em"}}>{ad.cta}</button>
-                </div>
-                <div style={{padding:"10px 18px",borderTop:`1px solid ${S.border}`,background:S.surface}}>
-                  <button onClick={()=>copyText(`ad_${i}`,`AD TYPE: ${ad.type}\nHEADLINE: ${ad.headline}\nBODY: ${ad.body}\nCTA: ${ad.cta}\nPROOF: ${ad.proof}`)} style={{
-                    width:"100%",background:copied[`ad_${i}`]?S.greenDim:S.cyanDim,
-                    border:`1px solid ${copied[`ad_${i}`]?"rgba(0,229,138,0.35)":S.cyanBorder}`,
-                    borderRadius:6,padding:"8px",fontSize:11,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",
-                    color:copied[`ad_${i}`]?S.green:S.cyan,transition:"all 0.15s",
-                  }}>{copied[`ad_${i}`]?"✓ COPIED":"COPY AD COPY"}</button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
@@ -1747,20 +1580,16 @@ function personalizeCopy(content, vertical, persona) {
   const p = PERSONA_CONTEXT[persona];
   if (!v || !p) return content;
 
-  // 1. Persona-specific opener prepended to the topic hook
+  // Prepend persona hook — no brittle mid-sentence replacements
   const hook = `${p.hook}\n\n${content.hook}`;
 
-  // 2. Inject vertical language into body + append vertical proof point
-  const body = content.body
-    .replace(/enterprise B2B( SaaS)?/gi, `enterprise ${v.tag}`)
-    .replace(/\brevenue teams\b/gi, `${v.tag} revenue teams`)
-    .replace(/\bB2B SaaS\b/gi, `${v.tag}`)
-    + `\n\nValidated with ${v.proof} — focused on ${v.metric}.`;
+  // Append vertical proof point after body copy
+  const body = `${content.body}\n\nValidated with ${v.proof} — focused on ${v.metric}.`;
 
-  // 3. Persona-specific CTA replaces generic one
+  // Persona-specific CTA
   const cta = p.cta;
 
-  // 4. Tag the meta line
+  // Tag the meta line
   const meta = `[${p.tag} · ${v.tag}] ${content.meta || ""}`.trim();
 
   return { ...content, hook, body, cta, meta };
@@ -2289,6 +2118,7 @@ P.S. If your number is "we don't really track that," that's also useful data. An
   const [imgPrompt, setImgPrompt] = useState("");
   const [imgLoad,   setImgLoad]   = useState(false);
   const [imgSrc,    setImgSrc]    = useState(null);
+  const [imgError,  setImgError]  = useState(false);
 
   const plat = PLATFORMS.find(p => p.id === platform);
 
@@ -2304,16 +2134,16 @@ P.S. If your number is "we don't really track that," that's also useful data. An
   };
 
   const generateImage = () => {
-    setImgLoad(true); setImgSrc(null);
+    setImgLoad(true); setImgSrc(null); setImgError(false);
     const prompt = encodeURIComponent(imgPrompt || autoImgPrompt(platform, goal));
     const seed   = Math.floor(Math.random() * 999999);
     const url    = `https://image.pollinations.ai/prompt/${prompt}?width=${plat.dims.w}&height=${plat.dims.h}&nologo=true&seed=${seed}&model=flux`;
     const img = new Image();
     img.crossOrigin = "anonymous";
-    img.onload  = () => { setImgSrc(url); setImgLoad(false); };
-    img.onerror = () => setImgLoad(false);
+    img.onload  = () => { setImgSrc(url); setImgLoad(false); setImgError(false); };
+    img.onerror = () => { setImgLoad(false); setImgError(true); };
     img.src = url;
-    setTimeout(() => setImgLoad(false), 32000);
+    setTimeout(() => { setImgLoad(false); if (!imgSrc) setImgError(true); }, 32000);
   };
 
   const doCopy = () => {
@@ -2323,10 +2153,15 @@ P.S. If your number is "we don't really track that," that's also useful data. An
 
   const downloadImg = () => {
     if (!imgSrc) return;
-    const a = document.createElement("a");
-    a.href = imgSrc;
-    a.download = `crooked-foot-ai-${platform}.png`;
-    a.click();
+    fetch(imgSrc)
+      .then(r => r.blob())
+      .then(blob => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url; a.download = `crooked-foot-ai-${platform}.png`;
+        a.click(); URL.revokeObjectURL(url);
+      })
+      .catch(() => window.open(imgSrc, "_blank"));
   };
 
   const switchPlatform = id => {
@@ -2337,7 +2172,7 @@ P.S. If your number is "we don't really track that," that's also useful data. An
   return (
     <div id="ad-creative" style={{background:S.bg}}>
       <div style={{maxWidth:1200,margin:"0 auto",padding:"56px 36px 48px"}}>
-        <SectionHeader number="07" accent="SOCIAL STUDIO"
+        <SectionHeader number="02" accent="SOCIAL STUDIO"
           title={<>AI Copy + Image <span style={{color:S.cyan}}>Generator</span></>}
           sub="Claude generates platform-native copy calibrated to your goal and audience. Pollinations AI (Flux) generates the visual. Together: ready-to-post content in under 30 seconds." />
 
@@ -2450,7 +2285,15 @@ P.S. If your number is "we don't really track that," that's also useful data. An
                     </div>
                   )}
                   {imgSrc&&!imgLoad&&<img src={imgSrc} alt="AI generated" style={{width:"100%",height:"auto",display:"block"}} />}
-                  {!imgSrc&&!imgLoad&&(
+                  {imgError&&!imgLoad&&(
+                    <div style={{textAlign:"center",color:S.muted,padding:40}}>
+                      <div style={{fontSize:24,marginBottom:10}}>⚠️</div>
+                      <div style={{fontSize:12,fontWeight:700,color:S.red}}>Generation failed or timed out</div>
+                      <div style={{fontSize:11,color:S.muted,marginTop:6,marginBottom:14,lineHeight:1.6}}>Pollinations AI may be busy. Try again or simplify your prompt.</div>
+                      <button onClick={generateImage} style={{background:S.cyanDim,border:`1px solid ${S.cyanBorder}`,borderRadius:8,padding:"8px 20px",fontSize:11,fontWeight:700,color:S.cyan,cursor:"pointer"}}>↺ RETRY</button>
+                    </div>
+                  )}
+                  {!imgSrc&&!imgLoad&&!imgError&&(
                     <div style={{textAlign:"center",color:S.light,padding:40}}>
                       <div style={{fontSize:24,marginBottom:10}}>🖼</div>
                       <div style={{fontSize:12,fontWeight:600,color:S.muted}}>Your image will appear here</div>
@@ -2502,7 +2345,7 @@ function Nav() {
   const [menuOpen, setMenuOpen] = useState(false);
   const links = [
     { id:"campaign-studio", label:"Design Studio" },
-    { id:"ad-creative", label:"Ad Creative" },
+    { id:"ad-creative", label:"Social Studio" },
     { id:"pipeline-intelligence", label:"Pipeline Intel" },
     { id:"channel-pulse", label:"Channel Pulse" },
     { id:"gtm-blueprint", label:"GTM Blueprint" },
@@ -2512,6 +2355,18 @@ function Nav() {
     const el = document.getElementById(id);
     if (el) { el.scrollIntoView({ behavior:"smooth" }); setActive(id); setMenuOpen(false); }
   };
+
+  // Update active nav item based on scroll position
+  React.useEffect(() => {
+    const sections = links.map(l => document.getElementById(l.id)).filter(Boolean);
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) setActive(entry.target.id);
+      });
+    }, { threshold: 0.3, rootMargin: "-58px 0px -40% 0px" });
+    sections.forEach(s => observer.observe(s));
+    return () => sections.forEach(s => observer.unobserve(s));
+  }, []);
   return (
     <>
       <nav style={{position:"sticky",top:0,zIndex:100,background:"rgba(255,255,255,0.96)",backdropFilter:"blur(12px)",borderBottom:`1px solid ${S.border}`,padding:"0 20px",display:"flex",alignItems:"center",justifyContent:"space-between",height:58,boxShadow:"0 1px 0 rgba(0,0,0,0.06)"}}>
@@ -2632,8 +2487,6 @@ function App() {
       <ChannelPulseSection />
       <div className="section-divider" />
       <GTMBlueprintSection />
-      <div className="section-divider" />
-      <MarketingAssetsSection />
       <div className="section-divider" />
       <ContentEngineSection />
 
