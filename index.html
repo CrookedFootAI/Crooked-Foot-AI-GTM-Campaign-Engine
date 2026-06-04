@@ -1675,7 +1675,54 @@ function ContentEngineSection() {
   const [result,   setResult]   = useState(null);
   const [loading,  setLoading]  = useState(false);
   const [copied,   setCopied]   = useState({});
+  const [sourceContent,   setSourceContent]   = useState("");
+  const [sourceExtracted, setSourceExtracted] = useState(false);
   const outputRef = useRef(null);
+
+  const extractFromSource = () => {
+    if (!sourceContent.trim()) return;
+    const txt = sourceContent.toLowerCase();
+    const pick = (arr) => {
+      let best=null, top=0;
+      arr.forEach(({kws,val})=>{ const sc=kws.filter(k=>txt.includes(k)).length; if(sc>top){top=sc;best=val;}});
+      return best;
+    };
+    const t = pick([
+      {kws:["forecast","accuracy","predict","94%","number"],         val:"94% Forecast Accuracy"},
+      {kws:["gong","conversation intelligence","records","vs"],       val:"Gong vs. Revenue Intelligence"},
+      {kws:["pipeline review","8 minute","meeting","report"],        val:"Pipeline Review in 8 Minutes"},
+      {kws:["deal velocity","28%","cycle","speed"],                  val:"28% Deal Velocity Gain"},
+      {kws:["crm","agnostic","architecture","integrat","stack"],     val:"CRM-Agnostic Architecture"},
+    ]);
+    const p = pick([
+      {kws:["cro","chief revenue","revenue leader","board"],         val:"CRO / Chief Revenue"},
+      {kws:["vp sales","vp of sales","sales leader","quota"],        val:"VP of Sales"},
+      {kws:["revops","revenue operations","forecast process"],       val:"RevOps Director"},
+      {kws:["enablement","coaching","training","rep"],               val:"Sales Enablement"},
+      {kws:["cfo","finance","budget","plan"],                        val:"CFO / Finance"},
+    ]);
+    const v = pick([
+      {kws:["saas","software","arr","nrr","churn"],                  val:"SaaS / Technology"},
+      {kws:["bank","fintech","wealth","aum","financial"],            val:"Financial Services"},
+      {kws:["health","clinical","medtech","pharma"],                 val:"Healthcare & Life Sciences"},
+      {kws:["manufactur","industrial","oem","supply chain"],         val:"Manufacturing & Industrial"},
+      {kws:["consulting","professional services","advisory"],        val:"Professional Services"},
+    ]);
+    const g = pick([
+      {kws:["authority","thought lead","expert","insight"],          val:"Authority"},
+      {kws:["aware","introduc","announc","reach"],                   val:"Awareness"},
+      {kws:["convert","demo","sign up","trial"],                     val:"Conversion"},
+      {kws:["engag","comment","question","community"],               val:"Engagement"},
+      {kws:["launch","release","new product"],                       val:"Launch"},
+    ]);
+    if(t) setTopic(t);
+    if(p) setPersona(p);
+    if(v) setVertical(v);
+    if(g) setGoal(g);
+    setResult(null);
+    setSourceExtracted(true);
+    setTimeout(()=>setSourceExtracted(false), 3000);
+  };
 
   const handleGenerate = () => {
     setLoading(true);
