@@ -440,6 +440,7 @@ function ChannelPulseSection() {
   const [hnLoading,   setHnLoading]   = useState(false);
   const [hnError,     setHnError]     = useState(false);
   const [hnFetched,   setHnFetched]   = useState(false);
+  const [hnFetchedAt, setHnFetchedAt] = useState(null);
 
   const B2B_KW = ["ai","saas","startup","sales","marketing","revenue","crm","automation","b2b","growth","enterprise","api","analytics","llm","agent","workflow","gtm","pipeline"];
   const hnRelevant = t => B2B_KW.some(k => t.toLowerCase().includes(k));
@@ -447,19 +448,25 @@ function ChannelPulseSection() {
 
   const fetchHNSignals = () => {
     setHnLoading(true); setHnError(false);
+    const now = Math.floor(Date.now() / 1000);
+    const cutoff24h = now - 86400; // stories posted within last 24 hours
+    // Fetch top 60 stories for a bigger pool to filter from
     fetch("https://hacker-news.firebaseio.com/v0/topstories.json")
       .then(r => r.json())
-      .then(ids => Promise.all(ids.slice(0,30).map(id =>
+      .then(ids => Promise.all(ids.slice(0,60).map(id =>
         fetch("https://hacker-news.firebaseio.com/v0/item/"+id+".json").then(r => r.json())
       )))
       .then(stories => {
-        const filtered = stories
-          .filter(s => s && s.title && s.type==="story" && hnRelevant(s.title))
-          .sort((a,b) => b.score - a.score)
-          .slice(0, 10);
-        setHnStories(filtered);
+        const recent = stories.filter(s => s && s.title && s.type==="story" && s.time >= cutoff24h);
+        const relevant = recent.filter(s => hnRelevant(s.title));
+        // If fewer than 5 relevant recent stories, fall back to last 48h
+        const pool = relevant.length >= 5 ? relevant :
+          stories.filter(s => s && s.title && s.type==="story" && s.time >= (now - 172800) && hnRelevant(s.title));
+        const final = pool.sort((a,b) => b.score - a.score).slice(0, 10);
+        setHnStories(final);
         setHnLoading(false);
         setHnFetched(true);
+        setHnFetchedAt(new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}));
       })
       .catch(() => { setHnError(true); setHnLoading(false); });
   };
@@ -657,11 +664,14 @@ function ChannelPulseSection() {
             <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:20,flexWrap:"wrap",gap:12}}>
               <div>
                 <div style={{fontSize:13,fontWeight:700,color:S.text,marginBottom:4}}>Live B2B &amp; AI Signals — Hacker News Top Stories</div>
-                <div style={{fontSize:11,color:S.muted}}>Filtered for AI, SaaS, marketing, and revenue relevance · Hacker News Firebase API · Free · No key required</div>
+                <div style={{fontSize:11,color:S.muted}}>Top B2B, AI &amp; SaaS stories from the last 24–48h · Hacker News API · Fetched live on page load · No API key</div>
               </div>
-              <button onClick={fetchHNSignals} disabled={hnLoading} style={{background:S.cyanDim,border:`1px solid ${S.cyanBorder}`,borderRadius:6,padding:"7px 16px",fontSize:11,fontWeight:700,color:S.cyan,cursor:hnLoading?"wait":"pointer"}}>
-                {hnLoading ? "Fetching…" : "↺ Refresh"}
-              </button>
+              <div style={{display:"flex",alignItems:"center",gap:10}}>
+                {hnFetchedAt && <span style={{fontSize:10,color:S.muted}}>Fetched at {hnFetchedAt} · last 24–48h</span>}
+                <button onClick={fetchHNSignals} disabled={hnLoading} style={{background:S.cyanDim,border:`1px solid ${S.cyanBorder}`,borderRadius:6,padding:"7px 16px",fontSize:11,fontWeight:700,color:S.cyan,cursor:hnLoading?"wait":"pointer"}}>
+                  {hnLoading ? "Fetching…" : "↺ Refresh"}
+                </button>
+              </div>
             </div>
 
             {hnLoading && (
