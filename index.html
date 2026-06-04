@@ -1741,9 +1741,7 @@ function ContentEngineSection() {
               value={sourceContent}
               onChange={e=>{setSourceContent(e.target.value);setSourceExtracted(false);}}
               rows={4}
-              placeholder={"Paste transcript, article, or talking points...
-
-e.g. "Our CRO saw forecast accuracy hit 94% in Q2 with zero CRM changes…""}
+              placeholder={"Paste transcript, article, or talking points — e.g. 'Our CRO saw 94% forecast accuracy in Q2 with zero CRM changes…'"}
               style={{width:"100%",background:S.surface,border:`1px solid ${S.border}`,borderRadius:8,padding:"9px 11px",fontSize:11,color:S.text,fontFamily:"Inter,sans-serif",resize:"vertical",lineHeight:1.5,boxSizing:"border-box"}}
             />
             <button onClick={extractFromSource} disabled={!sourceContent.trim()} style={{
@@ -2544,6 +2542,182 @@ P.S. If your number is "we don't really track that," that's also useful data. An
 
 
 
+/* ── GTM AGENT SKILLS LIBRARY SECTION ── */
+function GTMSkillsSection() {
+  const CATS = ["All","Marketing","Sales & RevOps","Customer Advocacy","Content Ops","Customer Support","GTM Ops"];
+  const CAT_COLOR = {
+    "Marketing":"#0099CC","Sales & RevOps":"#7C3AED","Customer Advocacy":"#059669",
+    "Content Ops":"#D97706","Customer Support":"#DC2626","GTM Ops":"#0A0A1A",
+  };
+  const STATUS_META = {
+    "ready":    { label:"Ready for Adaptation", color:"#059669", bg:"rgba(5,150,105,0.08)"  },
+    "v1":       { label:"Source-Backed v1",      color:"#0099CC", bg:"rgba(0,153,204,0.08)"  },
+    "advanced": { label:"Advanced Pattern",      color:"#D97706", bg:"rgba(217,119,6,0.08)"  },
+    "helper":   { label:"Helper Pattern",        color:"#6B7280", bg:"rgba(107,114,128,0.08)"},
+  };
+  const SKILLS = [
+    { cat:"Marketing",         icon:"🚀", name:"Mega Campaign Generator",           user:"Demand Gen & Campaign Marketers",         outcome:"Turns scattered campaign inputs into a review-ready launch package: positioning, subject lines, email and LinkedIn sequences.",                             connections:["Drive/Docs","CRM","Sheets","Chat"],                    status:"ready",    path:"skills/marketing/mega-campaign-generator" },
+    { cat:"Marketing",         icon:"📬", name:"MCP Media Inbox Triage",            user:"Marketing, PR, Community, Partnerships",  outcome:"Surfaces buried media and partnership requests from a shared inbox and routes them to a prioritized action list with owners.",                           connections:["Gmail","Slack","Google Sheets","LLM"],                 status:"v1",       path:"skills/marketing/mcp-media-inbox-triage" },
+    { cat:"Marketing",         icon:"🔍", name:"Campaign Postmortem",               user:"Marketing Leaders & Demand Gen",          outcome:"Builds a sourced campaign retro: what happened, what worked, what broke, and what changes next.",                                                      connections:["Drive/Docs","Analytics","CRM","Tracker","Chat"],       status:"v1",       path:"skills/marketing/campaign-postmortem" },
+    { cat:"Marketing",         icon:"🎨", name:"HTML Mockup Builder",               user:"Marketing Web & Campaign Teams",          outcome:"Generates reviewable HTML mockups from campaign or landing-page briefs — no designer required for every iteration.",                                  connections:["Drive/Docs","Asset Library","Project Tracker"],        status:"ready",    path:"skills/marketing/html-mockup-builder" },
+    { cat:"Marketing",         icon:"🎯", name:"Brand Guidelines Builder",          user:"Brand & Marketing Teams",                 outcome:"Converts brand source material into agent-usable rules so downstream skills produce on-brand output and flag what does not fit.",                     connections:["Drive/Docs","Asset Library","Design Tool"],            status:"ready",    path:"skills/marketing/brand-guidelines-builder" },
+    { cat:"Sales & RevOps",    icon:"📧", name:"Sales Sequence Builder",            user:"Sales & RevOps Teams",                    outcome:"Creates source-backed outbound or follow-up sequences tailored to account context, persona, and trigger signals.",                                   connections:["CRM","Gmail/Outlook","Docs","Chat"],                   status:"ready",    path:"skills/sales-revops/sales-sequence-builder" },
+    { cat:"Sales & RevOps",    icon:"📊", name:"Customer Deck Builder",             user:"Sales, CS, Onboarding & RevOps",          outcome:"Turns account context, usage signals, and meeting goals into a structured customer deck generated directly in Gamma.",                                connections:["Gamma","CRM","Account Data","Docs"],                   status:"v1",       path:"skills/sales-revops/customer-deck-builder" },
+    { cat:"Sales & RevOps",    icon:"📡", name:"Named Account Trigger Radar",       user:"ABM, Sales & RevOps Teams",               outcome:"Ranks target accounts by why-now signals and recommends the next best seller action for each one.",                                                  connections:["CRM","Sheets","Chat","Research Sources"],              status:"ready",    path:"skills/sales-revops/named-account-trigger-radar" },
+    { cat:"Sales & RevOps",    icon:"🔎", name:"AI Audit Account Report",           user:"Midmarket & Expansion Sales",             outcome:"Builds account-level AI adoption reports that help reps identify expansion or consultation opportunities.",                                            connections:["CRM","Usage Reports","Sheets","Video Tool"],           status:"ready",    path:"skills/sales-revops/mmpe-ai-audit-account-report" },
+    { cat:"Sales & RevOps",    icon:"🔄", name:"Cross-CRM Opportunity Sync",        user:"RevOps, Sales Ops & MIS",                 outcome:"Keeps opportunities and accounts in sync across multiple CRMs while preserving attribution, commission accuracy, and data governance.",                connections:["Multiple CRMs","LLM","Finance/Commission System"],     status:"v1",       path:"skills/sales-revops/cross-crm-opportunity-sync" },
+    { cat:"Customer Advocacy", icon:"⭐", name:"Find Customer Social Proof",        user:"Campaign Marketers & Sales Enablement",   outcome:"Searches approved customer content libraries to surface the right story, quote, or stat — with approval before any external use of names or metrics.", connections:["Content Library","CRM","Drive/Docs","Deck Library"],   status:"v1",       path:"skills/customer-advocacy/find-customer-social-proof" },
+    { cat:"Customer Advocacy", icon:"✍", name:"Customer Story Writer",             user:"Customer Advocacy & Content Marketers",   outcome:"Turns interview transcripts and proof points into narrative customer stories with customer, brand, and legal approval gates built in.",                connections:["Transcript Source","Drive/Docs","CRM","Story Tracker"],status:"v1",       path:"skills/customer-advocacy/customer-story-writer" },
+    { cat:"Content Ops",       icon:"🎬", name:"Company Recording to Postable Clip",user:"Content Ops, Social, Comms & Events",    outcome:"Finds source recordings, locates useful moments, and prepares approved clips for distribution. Paired with intake and handoff automations.",           connections:["Drive/Video Storage","Calendar","Chat","Tracker"],     status:"advanced", path:"skills/content-ops/company-recording-clip" },
+    { cat:"Customer Support",  icon:"🎫", name:"Support Ticket Triage Agent",       user:"Support Leaders, Ops & Technical Reps",  outcome:"Pulls ticket context, searches issue tracker and knowledge base in parallel, classifies the issue, and hands the rep a recommended next action. Reduces per-ticket research from 15 min to 4 min.",connections:["Helpdesk","Issue Tracker","Knowledge Base","CRM"],status:"v1",path:"skills/customer-support/support-ticket-triage" },
+    { cat:"GTM Ops",           icon:"🗺", name:"Inbound Lead Audit + CX Map",       user:"Marketing Ops & GTM Ops Teams",           outcome:"Audits lead handling and maps the customer experience from form fill to follow-up — finds exactly where the handoff breaks.",                          connections:["CRM","Sheets","Scheduler","Chat"],                     status:"ready",    path:"skills/gtm-ops/inbound-lead-audit-cx-map" },
+    { cat:"GTM Ops",           icon:"🚨", name:"No Lead Left Behind Audit",         user:"Marketing Ops & SDR Operations",          outcome:"Finds missed, delayed, or low-quality lead follow-up and turns gaps into owner-ready actions with severity scoring.",                                  connections:["CRM","Sheets","Scheduler","Chat","Meeting System"],    status:"advanced", path:"skills/gtm-ops/no-lead-left-behind-lead-treatment-audit" },
+    { cat:"GTM Ops",           icon:"🔍", name:"Find Lead Account Owner",           user:"GTM Ops & RevOps Teams",                  outcome:"Resolves the best account or lead owner using a clear fallback order — a helper skill used inside audits and routing workflows.",                      connections:["CRM","Org Directory","Sheets"],                        status:"helper",   path:"skills/gtm-ops/find-lead-account-owner" },
+    { cat:"GTM Ops",           icon:"📋", name:"Daily Lead Steward",                user:"Marketing Ops, SDR Ops & Sales Managers", outcome:"Creates a daily operating view of leads needing attention, follow-up, or escalation — with scheduled generation and manager approval gate.",           connections:["CRM","Sheets","Scheduler","Chat","Meeting System"],    status:"ready",    path:"skills/gtm-ops/daily-lead-steward" },
+    { cat:"GTM Ops",           icon:"🔗", name:"MCP Sheet Cache Bridge",            user:"GTM Ops & Business Operations Builders",  outcome:"Keeps Zapier Tables as source of truth while legacy Google Sheets tools read a lightweight synchronized cache tab.",                                   connections:["Zapier MCP","Zapier Tables","Google Sheets","Slack"],  status:"v1",       path:"skills/gtm-ops/mcp-sheet-cache-bridge" },
+  ];
+  const AUTOMATIONS = [
+    { name:"Daily Notable Lead Audit",                    icon:"📅", desc:"Runs daily CRM review, highlights gaps and owner actions — manager approval before posting." },
+    { name:"Daily SDR Unconverted Hand-Raiser Call List", icon:"📞", desc:"Produces a daily prioritized call list of high-intent hand-raisers who have not yet converted." },
+    { name:"Weekly No Lead Left Behind MQL Rollup",       icon:"📈", desc:"Summarizes unresolved MQL follow-up patterns weekly and recommends process improvements." },
+    { name:"Friday Unconverted MQL Audit Sync",           icon:"📆", desc:"Weekly closeout view of unconverted MQLs and follow-up accountability for ops and RevOps teams." },
+    { name:"No Lead Left Behind Standup Brief",           icon:"💬", desc:"Turns lead follow-up signal into a concise standup brief for operating rhythm reviews." },
+  ];
+
+  const [activeCat, setActiveCat] = useState("All");
+  const [expanded,  setExpanded]  = useState(null);
+
+  const visible = SKILLS.filter(s => activeCat === "All" || s.cat === activeCat);
+
+  return (
+    <div id="gtm-skills" style={{background:S.surface}}>
+      <div style={{maxWidth:1200,margin:"0 auto",padding:"56px 36px 48px"}}>
+        <SectionHeader number="07" accent="GTM AGENT SKILLS LIBRARY"
+          title={<>Zapier <span style={{color:S.cyan}}>GTM Cheat Codes</span> — Agent Skills for Revenue Teams</>}
+          sub="19 structured, reusable agent skills from Zapier's public GTM Cheat Codes repo — covering marketing, sales, RevOps, customer advocacy, content ops, support, and GTM ops. Each skill pulls from your business context and produces reviewable work with human approval gates built in." />
+
+        {/* Repo banner */}
+        <div style={{background:`linear-gradient(135deg,${S.cyanDim} 0%,rgba(124,58,237,0.06) 100%)`,border:`1px solid ${S.cyanBorder}`,borderRadius:12,padding:"16px 24px",marginBottom:32,display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:12}}>
+          <div>
+            <div style={{fontSize:13,fontWeight:700,color:S.text,marginBottom:3}}>github.com/zapier/gtm-cheat-codes</div>
+            <div style={{fontSize:12,color:S.muted}}>Works in <strong style={{color:S.text}}>Codex · Claude Code · Cursor · ChatGPT</strong> — connects to your CRM, docs, chat, and scheduling tools via Zapier MCP</div>
+          </div>
+          <a href="https://github.com/zapier/gtm-cheat-codes" target="_blank" rel="noopener" style={{background:S.cyan,color:"#09090F",borderRadius:8,padding:"10px 22px",fontSize:12,fontWeight:800,letterSpacing:"0.06em",textTransform:"uppercase",textDecoration:"none",whiteSpace:"nowrap",flexShrink:0}}>VIEW REPO →</a>
+        </div>
+
+        {/* Category filter */}
+        <div style={{display:"flex",gap:6,marginBottom:28,flexWrap:"wrap"}}>
+          {CATS.map(cat => {
+            const color = cat==="All" ? S.cyan : (CAT_COLOR[cat] || S.cyan);
+            const active = activeCat === cat;
+            const count  = cat==="All" ? SKILLS.length : SKILLS.filter(s=>s.cat===cat).length;
+            return (
+              <button key={cat} onClick={()=>{ setActiveCat(cat); setExpanded(null); }} style={{
+                padding:"7px 16px",borderRadius:100,fontSize:12,fontWeight:700,cursor:"pointer",transition:"all 0.15s",
+                background:active?color:"transparent",
+                border:`2px solid ${active?color:S.border}`,
+                color:active?"#fff":S.muted,
+              }}>{cat} <span style={{fontSize:10,opacity:0.8}}>{count}</span></button>
+            );
+          })}
+        </div>
+
+        {/* Skills grid */}
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(340px,1fr))",gap:16,marginBottom:40}}>
+          {visible.map((skill,i) => {
+            const catColor = CAT_COLOR[skill.cat] || S.cyan;
+            const sm = STATUS_META[skill.status] || STATUS_META["ready"];
+            const isExp = expanded === i;
+            return (
+              <div key={i} className="card-hover" onClick={()=>setExpanded(isExp?null:i)} style={{
+                background:S.bg,border:`1px solid ${isExp?catColor:S.border}`,borderRadius:12,
+                padding:20,cursor:"pointer",transition:"all 0.15s",
+                boxShadow:isExp?`0 4px 20px ${catColor}20`:"0 1px 4px rgba(0,0,0,0.04)",
+              }}>
+                <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:10,gap:8}}>
+                  <div style={{display:"flex",alignItems:"center",gap:10}}>
+                    <span style={{fontSize:20,flexShrink:0}}>{skill.icon}</span>
+                    <div>
+                      <div style={{fontSize:13,fontWeight:700,color:S.text,lineHeight:1.3}}>{skill.name}</div>
+                      <span style={{fontSize:9,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",color:catColor}}>{skill.cat}</span>
+                    </div>
+                  </div>
+                  <span style={{fontSize:9,fontWeight:700,background:sm.bg,color:sm.color,padding:"3px 8px",borderRadius:100,whiteSpace:"nowrap",flexShrink:0,border:`1px solid ${sm.color}40`}}>{sm.label}</span>
+                </div>
+
+                <div style={{fontSize:12,color:S.muted,lineHeight:1.65,marginBottom:isExp?12:0}}>{skill.outcome}</div>
+
+                {isExp && (
+                  <div style={{borderTop:`1px solid ${S.border}`,paddingTop:12,marginTop:4}}>
+                    <div style={{fontSize:10,fontWeight:700,color:S.muted,letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:4}}>Target User</div>
+                    <div style={{fontSize:11,color:S.text,marginBottom:10}}>{skill.user}</div>
+                    <div style={{fontSize:10,fontWeight:700,color:S.muted,letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:6}}>Recommended Connections</div>
+                    <div style={{display:"flex",gap:5,flexWrap:"wrap",marginBottom:14}}>
+                      {skill.connections.map(conn=>(
+                        <span key={conn} style={{fontSize:10,fontWeight:600,background:S.surface,border:`1px solid ${S.border}`,color:S.muted,padding:"3px 9px",borderRadius:100}}>{conn}</span>
+                      ))}
+                    </div>
+                    <a href={`https://github.com/zapier/gtm-cheat-codes/tree/main/${skill.path}`} target="_blank" rel="noopener" onClick={e=>e.stopPropagation()} style={{fontSize:11,fontWeight:700,color:catColor,textDecoration:"none"}}>
+                      View on GitHub →
+                    </a>
+                  </div>
+                )}
+
+                <div style={{marginTop:8,fontSize:10,color:S.light,textAlign:"right"}}>{isExp?"▲ collapse":"▼ expand"}</div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Paired automations */}
+        <div style={{background:S.bg,border:`1px solid ${S.border}`,borderRadius:12,overflow:"hidden",marginBottom:32}}>
+          <div style={{padding:"14px 24px",borderBottom:`1px solid ${S.border}`,display:"flex",alignItems:"center",gap:12,flexWrap:"wrap"}}>
+            <span style={{fontSize:12,fontWeight:700,color:S.text,letterSpacing:"0.04em"}}>PAIRED GTM OPS AUTOMATIONS</span>
+            <span style={{fontSize:10,color:S.muted}}>Scheduled workflows — all require human review before posting summaries or escalating owners</span>
+          </div>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(260px,1fr))"}}>
+            {AUTOMATIONS.map((a,i)=>(
+              <div key={i} style={{padding:"16px 20px",borderRight:`1px solid ${S.border}`,borderBottom:`1px solid ${S.border}`}}>
+                <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:6}}>
+                  <span style={{fontSize:16}}>{a.icon}</span>
+                  <span style={{fontSize:12,fontWeight:700,color:S.text}}>{a.name}</span>
+                </div>
+                <div style={{fontSize:11,color:S.muted,lineHeight:1.6}}>{a.desc}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Deploy steps */}
+        <div style={{background:`linear-gradient(135deg,${S.cyanDim} 0%,rgba(124,58,237,0.04) 100%)`,border:`1px solid ${S.cyanBorder}`,borderRadius:12,padding:"24px 28px"}}>
+          <div style={{fontSize:12,fontWeight:800,color:S.text,marginBottom:16,letterSpacing:"0.04em"}}>HOW TO DEPLOY ANY SKILL — 4 STEPS</div>
+          <div style={{display:"flex",alignItems:"flex-start",gap:0,flexWrap:"wrap"}}>
+            {[
+              {step:"01",file:"SETUP.md",            desc:"Configure Zapier MCP and SDK connections for your approved systems and tools"},
+              {step:"02",file:"SKILL.md",             desc:"Copy into your agent skill directory — works in Codex, Claude Code, Cursor, ChatGPT"},
+              {step:"03",file:"metadata.yaml",        desc:"Adapt to your approved data sources, tools, team context, and approval owners"},
+              {step:"04",file:"ONBOARDING-PROMPT.md", desc:"Run before the first real workflow to calibrate the agent to your environment"},
+            ].map((s,i)=>(
+              <React.Fragment key={s.step}>
+                <div style={{flex:1,minWidth:160,padding:"0 14px 8px 0"}}>
+                  <div style={{fontSize:9,fontWeight:800,color:S.cyan,letterSpacing:"0.12em",textTransform:"uppercase",marginBottom:4}}>STEP {s.step}</div>
+                  <code style={{fontSize:11,fontWeight:700,color:S.text,background:S.surface,border:`1px solid ${S.border}`,display:"inline-block",padding:"2px 8px",borderRadius:4,marginBottom:6}}>{s.file}</code>
+                  <div style={{fontSize:11,color:S.muted,lineHeight:1.6}}>{s.desc}</div>
+                </div>
+                {i<3&&<div style={{color:S.border,fontSize:18,flexShrink:0,paddingTop:18,paddingRight:8}}>→</div>}
+              </React.Fragment>
+            ))}
+          </div>
+          <div style={{marginTop:16,paddingTop:14,borderTop:`1px solid ${S.border}`,display:"flex",alignItems:"center",gap:12,flexWrap:"wrap"}}>
+            <span style={{fontSize:11,color:S.muted}}>⚠️ Every skill includes explicit <strong style={{color:S.text}}>human approval gates</strong> before sending messages, writing CRM records, posting publicly, or making any customer-facing claims.</span>
+            <a href="https://zapier.com/mcp" target="_blank" rel="noopener" style={{fontSize:11,fontWeight:700,color:S.cyan,textDecoration:"none",whiteSpace:"nowrap",flexShrink:0}}>Try Zapier MCP →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ── NAV ── */
 function Nav() {
   const [active, setActive] = useState("campaign-studio");
@@ -2555,6 +2729,7 @@ function Nav() {
     { id:"channel-pulse", label:"Channel Pulse" },
     { id:"gtm-blueprint", label:"GTM Blueprint" },
     { id:"content-engine", label:"Content Engine" },
+    { id:"gtm-skills", label:"Agent Skills" },
   ];
   const scrollTo = id => {
     const el = document.getElementById(id);
@@ -2694,6 +2869,8 @@ function App() {
       <GTMBlueprintSection />
       <div className="section-divider" />
       <ContentEngineSection />
+      <div className="section-divider" />
+      <GTMSkillsSection />
 
       {/* FOOTER */}
       <div style={{borderTop:`1px solid ${S.border}`,padding:"22px 32px",display:"flex",alignItems:"center",justifyContent:"space-between",background:S.surface,flexWrap:"wrap",gap:12}}>
