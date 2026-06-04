@@ -620,6 +620,98 @@ function ChannelPulseSection() {
             ))}
           </div>
         )}
+
+        {subTab==="LIVE SIGNALS" && (
+          <div>
+            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:20,flexWrap:"wrap",gap:12}}>
+              <div>
+                <div style={{fontSize:13,fontWeight:700,color:S.text,marginBottom:4}}>Live B2B &amp; AI Signals — Hacker News Top Stories</div>
+                <div style={{fontSize:11,color:S.muted}}>Filtered for AI, SaaS, marketing, and revenue relevance · Hacker News Firebase API · Free · No key required</div>
+              </div>
+              <button onClick={fetchHNSignals} disabled={hnLoading} style={{background:S.cyanDim,border:`1px solid ${S.cyanBorder}`,borderRadius:6,padding:"7px 16px",fontSize:11,fontWeight:700,color:S.cyan,cursor:hnLoading?"wait":"pointer"}}>
+                {hnLoading ? "Fetching…" : "↺ Refresh"}
+              </button>
+            </div>
+
+            {hnLoading && (
+              <div style={{textAlign:"center",padding:"48px 20px",color:S.muted,background:S.surface,borderRadius:10,border:`1px solid ${S.border}`}}>
+                <div style={{fontSize:13,fontWeight:700,color:S.text,marginBottom:6}}>Fetching live signals…</div>
+                <div style={{fontSize:11,color:S.light}}>news.ycombinator.com Firebase API</div>
+              </div>
+            )}
+
+            {hnError && !hnLoading && (
+              <div style={{textAlign:"center",padding:"40px 20px",background:S.surface,borderRadius:10,border:`1px solid ${S.border}`}}>
+                <div style={{fontSize:13,fontWeight:700,color:S.red,marginBottom:8}}>Could not reach Hacker News API</div>
+                <div style={{fontSize:11,color:S.muted,marginBottom:16}}>Check your connection or try refreshing</div>
+                <button onClick={fetchHNSignals} style={{background:S.cyanDim,border:`1px solid ${S.cyanBorder}`,borderRadius:6,padding:"8px 18px",fontSize:11,fontWeight:700,color:S.cyan,cursor:"pointer"}}>Try Again</button>
+              </div>
+            )}
+
+            {!hnLoading && !hnError && hnStories.length > 0 && (
+              <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:20}}>
+                {hnStories.map((s,i) => (
+                  <a key={s.id} href={s.url || `https://news.ycombinator.com/item?id=${s.id}`} target="_blank" rel="noopener"
+                    style={{display:"block",background:S.bg,border:`1px solid ${S.border}`,borderRadius:10,padding:"14px 18px",textDecoration:"none",transition:"border-color 0.15s"}}
+                    onMouseOver={e=>e.currentTarget.style.borderColor=S.cyan}
+                    onMouseOut={e=>e.currentTarget.style.borderColor=S.border}>
+                    <div style={{display:"flex",alignItems:"flex-start",gap:14}}>
+                      <div style={{background:i<3?S.cyanDim:S.surface,border:`1px solid ${i<3?S.cyanBorder:S.border}`,borderRadius:8,padding:"8px 10px",textAlign:"center",flexShrink:0,minWidth:44}}>
+                        <div style={{fontSize:15,fontWeight:900,color:i<3?S.cyan:S.muted,lineHeight:1}}>{s.score}</div>
+                        <div style={{fontSize:9,color:S.light,fontWeight:600,letterSpacing:"0.08em"}}>PTS</div>
+                      </div>
+                      <div style={{flex:1,minWidth:0}}>
+                        <div style={{fontSize:13,fontWeight:600,color:S.text,lineHeight:1.4,marginBottom:5}}>{s.title}</div>
+                        <div style={{display:"flex",gap:10,flexWrap:"wrap",alignItems:"center"}}>
+                          <span style={{fontSize:10,color:S.muted}}>{s.url?new URL(s.url).hostname.replace("www.",""):"news.ycombinator.com"}</span>
+                          <span style={{color:S.border,fontSize:10}}>·</span>
+                          <span style={{fontSize:10,color:S.muted}}>{Math.floor((Date.now()/1000-s.time)/3600)<24?Math.floor((Date.now()/1000-s.time)/3600)+"h ago":Math.floor((Date.now()/1000-s.time)/86400)+"d ago"}</span>
+                          <span style={{color:S.border,fontSize:10}}>·</span>
+                          <span style={{fontSize:10,color:S.muted}}>{s.descendants||0} comments</span>
+                        </div>
+                      </div>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            )}
+
+            {!hnLoading && !hnError && hnFetched && hnStories.length === 0 && (
+              <div style={{textAlign:"center",padding:"32px",color:S.muted,fontSize:12,background:S.surface,borderRadius:10,marginBottom:20}}>
+                No relevant B2B/AI stories in current top 30 — refresh in a few minutes.
+              </div>
+            )}
+
+            {!hnFetched && !hnLoading && (
+              <div style={{textAlign:"center",padding:"48px 20px",background:S.surface,borderRadius:10,border:`1px dashed ${S.border}`,marginBottom:20}}>
+                <div style={{fontSize:13,fontWeight:700,color:S.text,marginBottom:8}}>Live Market Signal Feed</div>
+                <div style={{fontSize:12,color:S.muted,marginBottom:16,maxWidth:400,margin:"0 auto 16px"}}>Fetches trending B2B, AI, and SaaS stories from Hacker News in real time — no API key needed.</div>
+                <button onClick={fetchHNSignals} style={{background:S.cyan,border:"none",borderRadius:8,padding:"10px 24px",fontSize:12,fontWeight:800,color:"#09090F",cursor:"pointer",letterSpacing:"0.06em"}}>LOAD LIVE SIGNALS</button>
+              </div>
+            )}
+
+            <div style={{padding:"14px 18px",background:S.cyanDim,border:`1px solid ${S.cyanBorder}`,borderRadius:10}}>
+              <div style={{fontSize:10,fontWeight:700,color:S.cyan,letterSpacing:"0.08em",marginBottom:8}}>FREE DATA SOURCES — PRODUCTION UPGRADE PATH</div>
+              <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+                {[
+                  {name:"HackerNews API",  note:"Live now · No key · Firebase JSON"},
+                  {name:"Reddit API",      note:"Free tier · r/marketing r/saas r/sales"},
+                  {name:"NewsAPI.org",     note:"100 req/day free · B2B headlines"},
+                  {name:"SparkToro",       note:"Audience intel · Free tier"},
+                  {name:"SimilarWeb",      note:"Traffic + channel share · Free tier"},
+                  {name:"Google Trends",   note:"Keyword momentum · Free · No key"},
+                ].map(d=>(
+                  <div key={d.name} style={{background:S.bg,border:`1px solid ${S.cyanBorder}`,borderRadius:8,padding:"7px 12px"}}>
+                    <div style={{fontSize:11,fontWeight:700,color:S.text}}>{d.name}</div>
+                    <div style={{fontSize:10,color:S.muted}}>{d.note}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        )}
       </div>
     </div>
   );
