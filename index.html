@@ -436,11 +436,40 @@ function ChannelPulseSection() {
   const [subTab, setSubTab] = useState("COMPETITOR GRID");
   const barRef = useRef(null);
   const [barsVisible, setBarsVisible] = useState(false);
+  const [hnStories,   setHnStories]   = useState([]);
+  const [hnLoading,   setHnLoading]   = useState(false);
+  const [hnError,     setHnError]     = useState(false);
+  const [hnFetched,   setHnFetched]   = useState(false);
+
+  const B2B_KW = ["ai","saas","startup","sales","marketing","revenue","crm","automation","b2b","growth","enterprise","api","analytics","llm","agent","workflow","gtm","pipeline"];
+  const hnRelevant = t => B2B_KW.some(k => t.toLowerCase().includes(k));
+  const hnTimeAgo = ts => { const m=Math.floor((Date.now()/1000-ts)/60); return m<60?m+"m ago":m<1440?Math.floor(m/60)+"h ago":Math.floor(m/1440)+"d ago"; };
+
+  const fetchHNSignals = () => {
+    setHnLoading(true); setHnError(false);
+    fetch("https://hacker-news.firebaseio.com/v0/topstories.json")
+      .then(r => r.json())
+      .then(ids => Promise.all(ids.slice(0,30).map(id =>
+        fetch("https://hacker-news.firebaseio.com/v0/item/"+id+".json").then(r => r.json())
+      )))
+      .then(stories => {
+        const filtered = stories
+          .filter(s => s && s.title && s.type==="story" && hnRelevant(s.title))
+          .sort((a,b) => b.score - a.score)
+          .slice(0, 10);
+        setHnStories(filtered);
+        setHnLoading(false);
+        setHnFetched(true);
+      })
+      .catch(() => { setHnError(true); setHnLoading(false); });
+  };
+
   useEffect(() => {
     if (subTab === "CHANNEL MIX") {
       const t = setTimeout(() => setBarsVisible(true), 60);
       return () => clearTimeout(t);
     }
+    if (subTab === "LIVE SIGNALS" && !hnFetched) fetchHNSignals();
   }, [subTab]);
 
   const competitors = [
@@ -663,9 +692,9 @@ function ChannelPulseSection() {
                       <div style={{flex:1,minWidth:0}}>
                         <div style={{fontSize:13,fontWeight:600,color:S.text,lineHeight:1.4,marginBottom:5}}>{s.title}</div>
                         <div style={{display:"flex",gap:10,flexWrap:"wrap",alignItems:"center"}}>
-                          <span style={{fontSize:10,color:S.muted}}>{s.url?new URL(s.url).hostname.replace("www.",""):"news.ycombinator.com"}</span>
+                          <span style={{fontSize:10,color:S.muted}}>{s.url?s.url.replace(/https?:\/\//,"").split("/")[0].replace("www.",""):"news.ycombinator.com"}</span>
                           <span style={{color:S.border,fontSize:10}}>·</span>
-                          <span style={{fontSize:10,color:S.muted}}>{Math.floor((Date.now()/1000-s.time)/3600)<24?Math.floor((Date.now()/1000-s.time)/3600)+"h ago":Math.floor((Date.now()/1000-s.time)/86400)+"d ago"}</span>
+                          <span style={{fontSize:10,color:S.muted}}>{hnTimeAgo(s.time)}</span>
                           <span style={{color:S.border,fontSize:10}}>·</span>
                           <span style={{fontSize:10,color:S.muted}}>{s.descendants||0} comments</span>
                         </div>
