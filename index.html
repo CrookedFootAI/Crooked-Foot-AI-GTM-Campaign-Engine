@@ -431,84 +431,6 @@ function SectionHeader({ number, title, sub, accent }) {
   );
 }
 
-/* ── PIPELINE INTELLIGENCE SECTION ── */
-function PipelineIntelligenceSection() {
-  const [subTab, setSubTab] = useState("MODULES");
-  const kpiRef = useRef(null);
-  const inView = useInView(kpiRef, 0.2);
-
-  const modules = [
-    { title:"Deal Health Monitor", icon:"📡", desc:"AI-powered deal health scoring across 14 signals: stakeholder engagement, email response velocity, CRM activity decay, and competitive mention detection. Flags at-risk deals before rep awareness." },
-    { title:"Forecast Signal Engine", icon:"🎯", desc:"Multi-signal pipeline model combining CRM data, email engagement, call transcript analysis, and historical close rate patterns. Delivers 94% forecast accuracy 45 days before quarter close." },
-    { title:"Stakeholder Map Tracker", icon:"🔗", desc:"Automated multi-threading intelligence. Tracks executive sponsor engagement, identifies missing buying committee members, and surfaces re-engagement triggers when champion momentum drops." },
-    { title:"Competitive Signal Radar", icon:"⚔️", desc:"Real-time competitive mention detection in email and call transcripts. Triggers battlecard delivery to rep within 2 hours of competitive mention. Updated weekly for Gong, Clari, Salesforce Einstein, and Chorus." },
-    { title:"Pipeline Velocity Engine", icon:"⚡", desc:"Identifies systematic deal stall points by stage, rep, and vertical. Surfaces the 2–3 friction points in your specific sales cycle causing consistent velocity drag — with prescribed fix for each." },
-    { title:"Revenue Recovery Dashboard", icon:"📈", desc:"Closed-lost re-entry opportunity detection. Tracks champion job changes, budget cycle resets, and competitive displacement windows. Triggers re-engagement sequence within 48 hours of re-entry signal." },
-  ];
-
-  const techStack = [
-    { name:"Clay", use:"Account enrichment, contact data refresh, ICP scoring, and account intent signal routing", cost:"$149/mo" },
-    { name:"Outreach", use:"AI-personalized email sequences triggered by deal health signals and re-entry events", cost:"$125/mo" },
-    { name:"Claude API", use:"Deal brief generation, competitive response drafting, and pipeline narrative synthesis at scale", cost:"Usage-based" },
-    { name:"Crooked Foot AI", use:"Predictive revenue intelligence layer: deal scoring, forecast modeling, pipeline signal analysis", cost:"$299/mo" },
-  ];
-
-  return (
-    <div id="pipeline-intelligence" style={{padding:"72px 36px",maxWidth:1200,margin:"0 auto"}}>
-      <SectionHeader number="03" accent="PIPELINE INTELLIGENCE PLAYBOOK" title="At-Risk Deal Recovery System" sub="A systematic framework for identifying deal health degradation, rebuilding stakeholder momentum, and recovering enterprise opportunities before they stall — built for B2B SaaS revenue teams targeting $25M+ annual pipeline." />
-
-      <div ref={kpiRef} style={{display:"flex",gap:16,marginBottom:40,flexWrap:"wrap"}}>
-        <KPICard value="94" label="Forecast Accuracy Rate" suffix="%" color={S.green} />
-        <KPICard value="3.2" label="ARR at Pipeline Risk" prefix="$" suffix="M" color={S.amber} />
-        <KPICard value="28" label="Deal Velocity Improvement" suffix="%" color={S.cyan} />
-        <KPICard value="45" label="Days to Forecast Confidence" color={S.text} />
-      </div>
-
-      <SubTab tabs={["MODULES","TECH STACK","HIRING MANAGER BRIEF"]} active={subTab} onSelect={setSubTab} />
-
-      {subTab==="MODULES" && (
-        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(340px,1fr))",gap:16}}>
-          {modules.map((m,i)=>(
-            <div key={i} className="card-hover" style={{background:S.surface,border:`1px solid ${S.border}`,borderRadius:12,padding:24,boxShadow:"0 1px 4px rgba(0,0,0,0.05)"}}>
-              <div style={{fontSize:24,marginBottom:10}}>{m.icon}</div>
-              <div style={{fontSize:14,fontWeight:700,color:S.text,marginBottom:8}}>{m.title}</div>
-              <div style={{fontSize:13,color:S.muted,lineHeight:1.7}}>{m.desc}</div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {subTab==="TECH STACK" && (
-        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(260px,1fr))",gap:16}}>
-          {techStack.map((t,i)=>(
-            <div key={i} className="card-hover" style={{background:S.surface,border:`1px solid ${S.border}`,borderRadius:12,padding:24,boxShadow:"0 1px 4px rgba(0,0,0,0.05)"}}>
-              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}>
-                <div style={{fontSize:16,fontWeight:800,color:S.text}}>{t.name}</div>
-                <span style={{fontSize:10,fontWeight:700,letterSpacing:"0.08em",background:S.cyanDim,border:`1px solid ${S.cyanBorder}`,color:S.cyan,padding:"3px 10px",borderRadius:100}}>{t.cost}</span>
-              </div>
-              <div style={{fontSize:13,color:S.muted,lineHeight:1.65}}>{t.use}</div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {subTab==="HIRING MANAGER BRIEF" && (
-        <div className="card-hover" style={{background:S.surface,border:`2px solid ${S.cyanBorder}`,borderRadius:12,padding:32,boxShadow:"0 1px 4px rgba(0,0,0,0.05)"}}>
-          <div style={{fontSize:15,color:S.text,lineHeight:1.85,marginBottom:18}}>
-            B2B SaaS revenue teams targeting $25M+ in annual pipeline need more than conversation intelligence — they need deal prediction. This playbook represents the GTM intelligence system I build on Day 30 in any demand gen, growth, or revenue marketing role.
-          </div>
-          <div style={{fontSize:15,color:S.text,lineHeight:1.85,marginBottom:28}}>
-            Clay-enriched account health monitoring, AI-powered deal signal analysis, and automated re-engagement sequences — each module maps directly to the pipeline acceleration, demand generation, and revenue intelligence responsibilities that show up in senior B2B SaaS marketing JDs. This is what "AI-native GTM thinking" looks like in production.
-          </div>
-          <a href="#gtm-blueprint" style={{display:"inline-block",background:S.cyan,color:"#09090F",border:"none",borderRadius:6,padding:"12px 28px",fontSize:12,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",textDecoration:"none",transition:"background 0.15s"}} onMouseOver={e=>e.target.style.background=S.cyanHover} onMouseOut={e=>e.target.style.background=S.cyan}>
-            VIEW GTM BLUEPRINT →
-          </a>
-        </div>
-      )}
-    </div>
-  );
-}
-
 /* ── CHANNEL PULSE SECTION ── */
 function ChannelPulseSection() {
   const [subTab, setSubTab] = useState("COMPETITOR GRID");
@@ -584,7 +506,7 @@ function ChannelPulseSection() {
   return (
     <div id="channel-pulse" style={{background:S.surface,padding:"72px 36px"}}>
       <div style={{maxWidth:1200,margin:"0 auto"}}>
-        <SectionHeader number="04" accent="CHANNEL PULSE" title="Market Intelligence Dashboard" sub="Competitive positioning, channel allocation, and thought leader mapping for Crooked Foot AI's H2 2026 GTM strategy — targeting B2B SaaS revenue leaders replacing reactive intelligence tools." />
+        <SectionHeader number="03" accent="CHANNEL PULSE" title="Market Intelligence Dashboard" sub="Competitive positioning, channel allocation, and thought leader mapping — illustrated with simulated H2 2026 data. In production this section would pull live from HackerNews API, SparkToro, SimilarWeb, or your CRM. All data shown is for demonstration." />
 
         <SubTab tabs={["COMPETITOR GRID","CHANNEL MIX","THOUGHT LEADERS"]} active={subTab} onSelect={setSubTab} />
 
@@ -732,7 +654,7 @@ function GTMBlueprintSection() {
 
   return (
     <div id="gtm-blueprint" style={{padding:"72px 36px",maxWidth:1200,margin:"0 auto"}}>
-      <SectionHeader number="05" accent="GTM BLUEPRINT" title="Competitive GTM Blueprint" sub="A go-to-market strategy built on competitive intelligence — targeting where category leaders fall short, amplifying Crooked Foot AI's differentiated advantages, and building the pipeline velocity the market hasn't seen yet." />
+      <SectionHeader number="02" accent="GTM BLUEPRINT" title="Competitive GTM Blueprint" sub="A full go-to-market strategy framework — competitive positioning, ICP architecture, messaging differentiation, and channel sequencing. Use this as a template for any B2B SaaS GTM motion." />
 
       <SubTab tabs={["COMPETITOR GAPS","PRODUCT STRENGTHS","GTM PLAYS"]} active={subTab} onSelect={setSubTab} />
 
@@ -914,7 +836,7 @@ function CampaignStudioSection() {
   return (
     <div id="campaign-studio" style={{background:S.surface,borderTop:`1px solid ${S.border}`}}>
       <div style={{maxWidth:1200,margin:"0 auto",padding:"0 36px"}}>
-        <SectionHeader number="01" accent="GTM DESIGN STUDIO" title="Generate Campaign Briefs Instantly" sub="Select a target vertical, buyer persona, and campaign trigger — get a LinkedIn ad, cold email, and landing page brief ready to deploy in 10 seconds." />
+        <SectionHeader number="01" accent="GTM DESIGN STUDIO" title="Generate Campaign Briefs Instantly" sub="Select a vertical, buyer persona, and campaign trigger to generate a full campaign brief: LinkedIn ad copy, cold email opener, and landing page headlines. All copy is illustrative — adapt for your product." />
       </div>
       <div className="studio-layout" style={{minHeight:600,borderTop:`1px solid ${S.border}`}}>
         {/* Left panel */}
@@ -970,7 +892,7 @@ function CampaignStudioSection() {
                 <CopyField label="Headline" value={result.linkedInHeadline} copyKey="li_h" copied={copied["li_h"]} onCopy={handleCopy} />
                 <CopyField label="Body Copy" value={result.linkedInBody} copyKey="li_b" copied={copied["li_b"]} onCopy={handleCopy} />
                 <div style={{fontSize:12,color:S.muted,marginBottom:12,fontStyle:"italic"}}>{result.proof}</div>
-                <div style={{display:"inline-block",background:S.cyan,color:"#09090F",padding:"9px 22px",borderRadius:6,fontSize:12,fontWeight:700,marginBottom:14}}>{result.cta}</div>
+                <CopyField label="CTA COPY (placeholder — adapt for your product)" value={result.cta} copyKey="cta_c" copied={copied["cta_c"]} onCopy={handleCopy} />
               </OutputCard>
 
               <OutputCard badge="COLD EMAIL">
@@ -1750,7 +1672,7 @@ function ContentEngineSection() {
   return (
     <div id="content-engine" style={{background:S.bg}}>
       <div style={{maxWidth:1200,margin:"0 auto",padding:"72px 36px 0"}}>
-        <SectionHeader number="06" accent="CONTENT ENGINE" title="Platform-Native Content Generator"
+        <SectionHeader number="04" accent="CONTENT ENGINE" title="Platform-Native Content Generator"
           sub="Select a topic anchor, platform, and goal — generate ready-to-post X threads, LinkedIn posts, TikTok scripts, YouTube outlines, and newsletter sections in one click." />
       </div>
 
@@ -1938,845 +1860,15 @@ function ContentEngineSection() {
   );
 }
 
-/* ── AD CREATIVE STUDIO SECTION ── */
-function AdCreativeSection() {
-  const PLATFORMS = [
-    { id:"linkedin",   label:"LinkedIn",   color:"#0A66C2", dims:{w:1200,h:628},  limit:3000 },
-    { id:"x",          label:"X Thread",   color:"#000000", dims:{w:1200,h:675},  limit:280  },
-    { id:"instagram",  label:"Instagram",  color:"#E1306C", dims:{w:1080,h:1080}, limit:2200 },
-    { id:"newsletter", label:"Newsletter", color:"#059669", dims:{w:1200,h:628},  limit:null },
-  ];
-  const GOALS = ["Lead Gen","Awareness","Thought Leadership","Engagement"];
-
-  const COPY_MAP = {
-"linkedin|Lead Gen": `🎯 Your pipeline review shouldn't reveal surprises.
-
-At Crooked Foot AI, we built revenue intelligence that tells you which deals will close — 45 days before they do.
-
-Here's what that looks like in practice:
-
-→ 94% forecast accuracy, validated across 14 deal-health signals
-→ No black box — every flag is explainable to your rep, your CFO, your board
-→ Deploys in 30 days, CRM-agnostic, zero workflow disruption
-
-Revenue leaders at Global 2000 companies aren't predicting anymore. They're knowing.
-
-If your current stack records calls but can't tell you which rep's Q3 is already broken — that's the gap we close.
-
-DM me or drop a comment if you want to see the model in action.
-
-#RevenueIntelligence #PipelineManagement #SalesAI #B2BSaaS`,
-
-"linkedin|Awareness": `The difference between a sales team that records and one that predicts is about 45 days.
-
-Gong tells you what was said.
-Crooked Foot AI tells you which deal closes.
-
-That's not a feature gap — it's a category gap.
-
-We analyze 14 deal-health signals in real time, surface at-risk pipeline before your rep even knows it's slipping, and give your RevOps team the confidence to call the number — not estimate it.
-
-Zero black box. Full explainability. CRM-agnostic.
-
-Revenue intelligence has entered the room.
-
-#AIRevenue #RevenueIntelligence #SaaS #GTM`,
-
-"linkedin|Thought Leadership": `Most pipeline reviews are forensic exercises.
-
-You're not inspecting what's about to close — you're explaining why last quarter missed.
-
-The problem isn't effort. It's lag. CRM data is a lagging indicator by design. By the time your forecast looks wrong, it's already been wrong for 6 weeks.
-
-At Crooked Foot AI, we built a system that ingests live deal signals — engagement patterns, stakeholder behavior, response velocity, competitive mentions — and scores pipeline health proactively.
-
-Not "here's what happened." But "here's what's about to happen, and here's the signal that tells you why."
-
-This is what it looks like when AI doesn't just record — it reasons.
-
-#RevenueIntelligence #SalesLeadership #AIForSales #ForecastAccuracy`,
-
-"linkedin|Engagement": `Honest question for Revenue leaders:
-
-When was the last time your forecast was right?
-
-Not close — right.
-
-Drop a number in the comments. We're collecting real data on forecast accuracy in B2B SaaS.
-
-(No judgment — this is exactly why Crooked Foot AI exists.)
-
-#SalesOps #RevOps #ForecastAccuracy #PipelineIntelligence`,
-
-"x|Lead Gen": `Your CRM records deals.
-
-Crooked Foot AI predicts them.
-
-94% forecast accuracy. 45 days before close. 14 signals. Zero black box.
-
-Revenue intelligence built for enterprise B2B.
-
-→ CRM-agnostic
-→ Deploys in 30 days
-→ Explainable to your board
-
-DM for a live walkthrough.`,
-
-"x|Awareness": `Gong records conversations.
-
-Crooked Foot AI predicts outcomes.
-
-That's the category gap no one's talking about yet.
-
-#RevenueIntelligence #AIForSales`,
-
-"x|Thought Leadership": `Most "AI for sales" tools just organize your CRM data faster.
-
-Crooked Foot AI analyzes 14 live deal signals and tells you which deals close 45 days before they do.
-
-Recording ≠ predicting.
-
-The future of revenue isn't faster dashboards. It's accurate forecasts.`,
-
-"x|Engagement": `Revenue leaders: when was your last perfectly accurate forecast?
-
-Serious question. Crooked Foot AI is building something to fix this permanently.
-
-What's your current quarterly miss rate?`,
-
-"instagram|Awareness": `Revenue intelligence isn't about recording more calls. ✨
-
-It's about predicting which deals close before your reps even know they're slipping.
-
-94% forecast accuracy. 14 deal-health signals. Zero black box.
-
-Crooked Foot AI — built for revenue teams that refuse to guess.
-
-#RevenueAI #SalesIntelligence #B2B #GTM #SaaS #AITools #ForecastAccuracy`,
-
-"instagram|Lead Gen": `Tired of pipeline reviews that feel like autopsies? 📊
-
-Crooked Foot AI gives your team deal intelligence that works 45 days ahead — not 45 days after.
-
-The result: forecast calls that land. Boards that trust your number. Reps that know where to focus.
-
-Link in bio for a live walkthrough.
-
-#RevenueIntelligence #SalesAI #B2BSaaS #PipelineManagement #GTM`,
-
-"instagram|Thought Leadership": `The #1 reason enterprise sales teams miss quota isn't effort.
-
-It's lag.
-
-Your CRM shows you the past. Crooked Foot AI shows you what closes next quarter — before your reps do.
-
-14 signals. 45-day lead time. 94% accuracy.
-
-Built different. 🔥
-
-#SalesLeadership #RevenueOps #AIForSales #ForecastAccuracy #SaaS`,
-
-"instagram|Engagement": `Hot take: most sales forecasts are just educated guesses dressed up in spreadsheets 👀
-
-Drop a 🔥 if your team has ever missed a quarter that "looked fine" in the CRM.
-
-We built Crooked Foot AI to fix exactly this.
-
-#SalesOps #RevOps #HotTake #SalesTech`,
-
-"newsletter|Lead Gen": `Subject: Your pipeline review is 45 days too late
-
-You already know Q3 has a problem.
-
-The question is whether you know which deals specifically — and whether you knew 6 weeks ago when you could still do something about it.
-
-Most revenue teams find out too late. Not because their reps aren't working, but because their tools record instead of predict.
-
-That's the problem Crooked Foot AI was built to solve.
-
-We analyze 14 live deal signals — stakeholder engagement, response velocity, competitive mention patterns, deal progression rate — and score every deal in your pipeline for health, risk, and close probability. 45 days before your call.
-
-No black box. Every flag is explainable. CRM-agnostic. Deploys in 30 days.
-
-Three enterprise revenue teams used this model in Q2. Average forecast accuracy: 94%.
-
-If you want to see a live deal walkthrough with your own pipeline data, reply to this email with "show me."
-
-— Crooked Foot AI Team`,
-
-"newsletter|Awareness": `Subject: Gong records. Crooked Foot predicts. Here's the difference.
-
-The conversation intelligence category is crowded.
-
-Everyone records calls. Everyone transcribes. Everyone surfaces keywords.
-
-And yet — most enterprise sales teams still miss their quarterly number by 12–18%.
-
-Recording more conversations doesn't fix a prediction problem.
-
-At Crooked Foot AI, we went back to first principles: what signals actually predict deal outcomes, and how early can we surface them?
-
-The answer: 14 signals, measured in real time, producing a deal health score that's right 94% of the time — 45 days before close.
-
-No extra workflows for your reps. No new CRM. No black box.
-
-Just a number you can take to your board with confidence.
-
-→ gtm-campaign-engine.netlify.app
-
-— Crooked Foot AI`,
-
-"newsletter|Thought Leadership": `Subject: Why your CRM is a lagging indicator (and what to do about it)
-
-Here's the uncomfortable truth about pipeline forecasting:
-
-By the time a deal looks bad in your CRM, it's already been bad for 6 weeks.
-
-CRM data is, by design, a lagging indicator. Reps update it after calls. Stages move after decisions. The system records what happened — not what's about to happen.
-
-That's not a rep behavior problem. It's an architecture problem.
-
-At Crooked Foot AI, we built a predictive layer on top of your existing stack. No CRM migration. No new workflow for your reps. Just 14 live signals — engagement velocity, stakeholder pattern shifts, competitive mention frequency — combined into a single deal health score.
-
-The result: forecast accuracy that doesn't rely on rep intuition or CRM hygiene.
-
-It relies on signal.
-
-Read more at gtm-campaign-engine.netlify.app
-
-— Crooked Foot AI`,
-
-"newsletter|Engagement": `Subject: Quick question about your forecast accuracy
-
-No pitch. Just a question:
-
-How accurate was your last quarterly forecast?
-
-We're running a quick survey on B2B SaaS forecast accuracy for a report we're publishing in Q3.
-
-Takes 60 seconds: [Link]
-
-We'll share the results with everyone who participates — including benchmarks by company size, ARR, and sales motion.
-
-— Crooked Foot AI Team
-
-P.S. If your number is "we don't really track that," that's also useful data. And also maybe a conversation worth having.`,
-  };
-
-  const autoImgPrompt = (plat, goalStr) => {
-    // FLUX-optimized prompts: 3-part natural language structure
-    // Part 1: Aspect ratio + composition framing (negative space for text overlay)
-    // Part 2: Material textures (matte, frosted glass, vector grids — no generic "corporate background")
-    // Part 3: Lighting + camera direction + safety constraints
-    const map = {
-"linkedin|Lead Gen":
-  "A wide 16:9 abstract B2B corporate digital landscape with deliberate negative space occupying the upper-left third for text overlay. A deep matte navy blue smooth surface texture anchors the lower half, with a continuous clean glowing cyan network vector grid receding into the background. A focused light source in the lower-right corner creates soft volumetric cyan glow that fades upward into a clean dark-field vignette. Architectural 3D rendering style, commercial graphic design quality, clean backdrop layout, no text strings, no gibberish lettering, no human characters.",
-
-"linkedin|Awareness":
-  "A wide landscape corporate technology banner with a dramatic dark obsidian base and the left two-thirds open as intentional negative space for copy overlay. Sleek flowing abstract light streaks in neon cyan and deep sapphire blue sweep from right to left across the lower third. High-contrast ambient illumination creates a subtle cybernetic glow against a premium matte dark background. Crisp vector-like edges, cinematic commercial lighting, clean backdrop layout, no text elements, no human characters, no gibberish lettering.",
-
-"linkedin|Thought Leadership":
-  "A minimalist wide editorial composition with soft layered geometric shapes occupying the right edge, leaving the center and left two-thirds as a clean dark negative field for text overlay. Smooth frosted glass plates with subtle edge-lit highlights in muted electric blue overlap over a deep slate-teal gradient. Directional studio softbox lighting from the upper right creates elegant three-dimensional shadow depth. Ultra-high resolution commercial banner quality, no text elements, no human figures, no gibberish.",
-
-"linkedin|Engagement":
-  "A striking wide B2B technology composition in 16:9 format with an open dark upper half reserved as negative space for text. Layered translucent geometric planes in deep navy and charcoal float above a faint illuminated data grid receding into the lower third. Soft volumetric studio light from above grazes the glass-like planes, creating premium depth and a sense of analytical precision. Clean architectural 3D rendering, commercial digital art quality, no text strings, no characters, no lettering.",
-
-"x|Lead Gen":
-  "A square-format abstract B2B tech graphic with clean dark negative space dominating the upper half for text overlay. A deep matte obsidian base fills the lower half with a continuous neon cyan circuit-board vector grid rising from the bottom edge. A sharp focused light source at the lower center emits hard-edged volumetric glow that diffuses upward against the dark field. High-contrast corporate aesthetic, vector illustration style, commercial quality, no text, no people, no lettering.",
-
-"x|Awareness":
-  "A high-energy square digital banner with a near-black background. A single dominant diagonal sweep of neon cyan and electric blue light streaks cuts from the lower-left to upper-right, creating dramatic motion energy. The center and upper-left remain intentionally dark as open negative space. Cinematic commercial lighting, sharp vector edges, premium social card aesthetic, clean backdrop, no text, no human characters, no gibberish.",
-
-"x|Thought Leadership":
-  "A clean square editorial composition with three minimalist frosted glass rectangular panels arranged in the lower-right corner over a deep charcoal and cool slate gradient background. A studio softbox from the left casts elegant directional shadow across the glass surfaces. The upper-left two-thirds is an intentionally empty dark negative field. Premium editorial magazine quality, architectural rendering style, no text, no characters, no gibberish.",
-
-"x|Engagement":
-  "A bold square social visual set in deep space darkness with scattered glowing data nodes in cyan and white forming an abstract constellation network across the right edge. Thin luminous connection lines trace between nodes. The center is an open dark void. Subtle radial glow from the node cluster illuminates the surrounding black field softly. Corporate sci-fi aesthetic, clean vector quality, no text elements, no human figures, no lettering.",
-
-"instagram|Lead Gen":
-  "A square-format premium B2B technology visual with a deep matte navy center field as open negative space for text overlay. A continuous glowing cyan vector network grid wraps around the lower and side edges of the composition, curving inward. Soft volumetric studio lighting creates a warm cyan glow emanating from both lower corners, fading to dark at the center. Architectural 3D rendering aesthetic, commercial Instagram card quality, no text, no people, no lettering.",
-
-"instagram|Awareness":
-  "A bold square social media asset with a dramatic flowing abstract obsidian wave shape in the lower half. Sharp neon light streaks in cyan and electric blue erupt from behind the wave edge. The upper two-thirds remains intentionally dark and open for text overlay. Premium cinematic lighting, high-contrast modern brand energy, clean digital art, no text elements, no characters, no gibberish.",
-
-"instagram|Thought Leadership":
-  "An elegant square editorial composition with layered frosted glass geometric panels floating in the lower-right corner over a deep dark teal and charcoal gradient background. Soft studio rim lighting in cool white highlights the translucent glass panel edges. The center and upper-left quadrant are clean dark negative space. Premium luxury brand visual quality, minimalist modern design, no text, no human figures, clean background.",
-
-"instagram|Engagement":
-  "A vibrant square graphic featuring an abstract radial burst of particle light in cyan and electric blue emanating from the center of a near-black background. Fine glowing lines extend outward from the burst, creating a sense of dynamic network energy. The outer edges fade to solid black as natural framing. High-energy corporate technology aesthetic, premium digital art, no text strings, no characters, no lettering.",
-
-"newsletter|Lead Gen":
-  "A wide editorial email header in 16:9 format with the left two-thirds as a clean deep navy negative field for text overlay. The right third features smooth matte frosted glass geometric shapes with subtle cyan edge-lit highlights casting soft reflections on the dark surface below. Directional studio lighting from the upper-right creates elegant depth and premium finish. Professional email header aesthetic, editorial graphic design quality, no text, no human characters, no lettering.",
-
-"newsletter|Awareness":
-  "A wide landscape email banner with a sweeping gradient from deep obsidian on the left to rich corporate navy on the right. A single sharp volumetric light streak in neon cyan runs horizontally across the lower quarter of the composition like a horizon line. The upper three-quarters is clean dark negative space. Cinematic commercial banner quality, premium newsletter design, no text elements, no people, no gibberish.",
-
-"newsletter|Thought Leadership":
-  "A wide editorial newsletter header featuring three minimalist frosted glass panels arranged flush against the right edge of a deep charcoal and cool slate gradient background. Soft studio directional lighting from the left side creates clean shadow gradients across the panels. The left two-thirds of the composition is an intentionally clean dark negative field. Premium editorial magazine standard, architectural rendering style, no text, no characters, no gibberish.",
-
-"newsletter|Engagement":
-  "A wide corporate newsletter banner with a clean solid dark background and subtle glowing edge treatment — thin arcs of electric blue and cyan light wrap gently around the lower and right edges of the frame. The large central area remains open dark space as intentional negative field. Premium understated corporate editorial aesthetic, clean digital design, no text elements, no human figures, no lettering.",
-    };
-    const key = `${plat}|${goalStr}`;
-    return map[key] || map[`${plat}|Lead Gen`] ||
-      "An abstract B2B corporate digital landscape with a deep matte navy blue smooth surface texture. A continuous clean glowing cyan network vector grid spans the lower half. Clean dark negative space in the upper region for text overlay. Minimalist corporate aesthetic, architectural 3D rendering style, commercial graphic design quality, no text elements, no human characters, no gibberish lettering.";
-  };
-
-  const fallbackCopy = (plat, topic, goal) =>
-    `[${plat.toUpperCase()} · ${goal}]\n\nCrooked Foot AI: ${topic}\n\nRevenue intelligence that predicts, not just records.\n\n94% forecast accuracy · 14 deal-health signals · Zero black box\n\n#RevenueIntelligence #SalesAI #B2BSaaS`;
-
-  const [platform,  setPlatform]  = useState("linkedin");
-  const [topic,     setTopic]     = useState("AI-powered revenue intelligence that predicts which deals close 45 days before they do");
-  const [audience,  setAudience]  = useState("VP Sales, CRO, and RevOps leaders at enterprise B2B SaaS companies");
-  const [goal,      setGoal]      = useState("Lead Gen");
-  const [genCopy,   setGenCopy]   = useState("");
-  const [copyLoad,  setCopyLoad]  = useState(false);
-  const [copied,    setCopied]    = useState(false);
-  const [imgPrompt, setImgPrompt] = useState("");
-  const [imgLoad,   setImgLoad]   = useState(false);
-  const [imgSrc,    setImgSrc]    = useState(null);
-  const [imgError,  setImgError]  = useState(false);
-  const [viewMode,   setViewMode]  = useState("single");
-  const [allResults, setAllResults] = useState(null);
-  const [allLoading, setAllLoading] = useState(false);
-  const [copiedAll,  setCopiedAll]  = useState({});
-  const [sessionCount, setSessionCount] = useState(0);
-
-  const plat = PLATFORMS.find(p => p.id === platform);
-
-  const generateCopy = () => {
-    setCopyLoad(true); setGenCopy("");
-    setTimeout(() => {
-      const key = `${platform}|${goal}`;
-      const copy = COPY_MAP[key] || fallbackCopy(platform, topic, goal);
-      setGenCopy(copy);
-      if (!imgPrompt) setImgPrompt(autoImgPrompt(platform, goal));
-      setCopyLoad(false);
-      setSessionCount(n => n + 1);
-    }, 950);
-  };
-
-  const generateAll = () => {
-    setAllLoading(true); setAllResults(null); setCopiedAll({});
-    setTimeout(() => {
-      const results = {};
-      PLATFORMS.forEach(p => {
-        const key = `${p.id}|${goal}`;
-        results[p.id] = { copy: COPY_MAP[key] || fallbackCopy(p.id, topic, goal), platform: p };
-      });
-      setAllResults(results);
-      setAllLoading(false);
-      setSessionCount(n => n + PLATFORMS.length);
-    }, 1400);
-  };
-
-  const doCopyAll = (id, text) => {
-    try { navigator.clipboard.writeText(text); } catch(e) {}
-    setCopiedAll(p => ({...p, [id]: true}));
-    setTimeout(() => setCopiedAll(p => ({...p, [id]: false})), 1800);
-  };
-
-  const generateImage = () => {
-    setImgLoad(true); setImgSrc(null); setImgError(false);
-    const prompt = encodeURIComponent(imgPrompt || autoImgPrompt(platform, goal));
-    const seed   = Math.floor(Math.random() * 999999);
-    const url    = `https://image.pollinations.ai/prompt/${prompt}?width=${plat.dims.w}&height=${plat.dims.h}&nologo=true&seed=${seed}&model=flux`;
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.onload  = () => { setImgSrc(url); setImgLoad(false); setImgError(false); };
-    img.onerror = () => { setImgLoad(false); setImgError(true); };
-    img.src = url;
-    setTimeout(() => { setImgLoad(false); if (!imgSrc) setImgError(true); }, 32000);
-  };
-
-  const doCopy = () => {
-    try { navigator.clipboard.writeText(genCopy); } catch(e) {}
-    setCopied(true); setTimeout(() => setCopied(false), 1800);
-  };
-
-  const downloadImg = () => {
-    if (!imgSrc) return;
-    fetch(imgSrc)
-      .then(r => r.blob())
-      .then(blob => {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url; a.download = `crooked-foot-ai-${platform}.png`;
-        a.click(); URL.revokeObjectURL(url);
-      })
-      .catch(() => window.open(imgSrc, "_blank"));
-  };
-
-  const switchPlatform = id => {
-    setPlatform(id); setGenCopy(""); setImgSrc(null);
-    setImgPrompt(autoImgPrompt(id, goal));
-  };
-
-  return (
-    <div id="ad-creative" style={{background:S.bg}}>
-      <div style={{maxWidth:1200,margin:"0 auto",padding:"56px 36px 48px"}}>
-        <SectionHeader number="02" accent="SOCIAL STUDIO"
-          title={<>AI Copy + Image <span style={{color:S.cyan}}>Generator</span></>}
-          sub="Claude generates platform-native copy calibrated to your goal and audience. Pollinations AI (Flux) generates the visual. Together: ready-to-post content in under 30 seconds." />
-
-        {/* Platform strip + mode toggle */}
-        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:20,flexWrap:"wrap",gap:12}}>
-          <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-            {PLATFORMS.map(p=>(
-              <button key={p.id} onClick={()=>{switchPlatform(p.id);setViewMode("single");}} style={{
-                padding:"9px 22px",borderRadius:100,fontSize:13,fontWeight:700,cursor:"pointer",transition:"all 0.15s",
-                background:viewMode==="single"&&platform===p.id?p.color:"transparent",
-                border:`2px solid ${viewMode==="single"&&platform===p.id?p.color:S.border}`,
-                color:viewMode==="single"&&platform===p.id?"#fff":S.muted,
-              }}>{p.label}</button>
-            ))}
-          </div>
-          <div style={{display:"flex",alignItems:"center",gap:10}}>
-            {sessionCount>0&&(
-              <span style={{fontSize:11,fontWeight:700,background:S.cyanDim,border:`1px solid ${S.cyanBorder}`,color:S.cyan,padding:"5px 12px",borderRadius:100}}>
-                ✦ {sessionCount} asset{sessionCount!==1?"s":""} generated
-              </span>
-            )}
-            <div style={{display:"flex",background:S.surface,border:`1px solid ${S.border}`,borderRadius:8,overflow:"hidden"}}>
-              {[{id:"single",label:"Single"},{id:"all",label:"⚡ All Platforms"}].map(v=>(
-                <button key={v.id} onClick={()=>setViewMode(v.id)} style={{
-                  padding:"7px 16px",fontSize:11,fontWeight:700,border:"none",cursor:"pointer",transition:"all 0.15s",
-                  background:viewMode===v.id?S.cyan:"transparent",
-                  color:viewMode===v.id?"#09090F":S.muted,
-                }}>{v.label}</button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* ── ALL PLATFORMS VIEW ── */}
-        {viewMode==="all" && (
-          <div>
-            <div style={{marginBottom:16,display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:12}}>
-              <div>
-                <div style={{fontSize:12,fontWeight:700,color:S.text,marginBottom:2}}>Content Multiplier — <span style={{color:S.cyan}}>{goal}</span></div>
-                <div style={{fontSize:11,color:S.muted}}>1 campaign brief → 4 platform-ready posts · {topic.slice(0,55)}{topic.length>55?"…":""}</div>
-              </div>
-              <button onClick={generateAll} disabled={allLoading} style={{
-                background:allLoading?S.surface:S.cyan,border:"none",borderRadius:8,padding:"11px 24px",
-                fontSize:12,fontWeight:800,letterSpacing:"0.06em",textTransform:"uppercase",
-                color:allLoading?S.muted:"#09090F",cursor:allLoading?"wait":"pointer",transition:"all 0.15s",
-              }}>{allLoading?"⚡ GENERATING ALL…":"⚡ GENERATE ALL PLATFORMS"}</button>
-            </div>
-
-            {/* Goal selector in all-platforms mode */}
-            <div style={{display:"flex",gap:6,marginBottom:20,flexWrap:"wrap"}}>
-              {GOALS.map(g=>(
-                <button key={g} onClick={()=>{setGoal(g);setAllResults(null);}} style={{
-                  padding:"5px 16px",borderRadius:100,fontSize:11,fontWeight:600,cursor:"pointer",transition:"all 0.12s",
-                  background:goal===g?S.cyanDim:"transparent",
-                  border:`1px solid ${goal===g?S.cyanBorder:S.border}`,
-                  color:goal===g?S.cyan:S.muted,
-                }}>{g}</button>
-              ))}
-            </div>
-
-            {allLoading&&(
-              <div style={{textAlign:"center",padding:"60px 20px",color:S.muted}}>
-                <div style={{fontSize:28,marginBottom:12}}>⚡</div>
-                <div style={{fontSize:14,fontWeight:700,color:S.text,marginBottom:6}}>Generating across all 4 platforms…</div>
-                <div style={{fontSize:12,color:S.muted}}>LinkedIn · X Thread · Instagram · Newsletter</div>
-              </div>
-            )}
-
-            {allResults&&!allLoading&&(
-              <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(420px,1fr))",gap:16}}>
-                {PLATFORMS.map(p=>{
-                  const r = allResults[p.id];
-                  if (!r) return null;
-                  return (
-                    <div key={p.id} style={{background:S.surface,border:`1px solid ${S.border}`,borderRadius:12,overflow:"hidden"}}>
-                      <div style={{padding:"12px 18px",background:p.color,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-                        <span style={{fontSize:12,fontWeight:800,color:"#fff",letterSpacing:"0.06em"}}>{p.label.toUpperCase()}</span>
-                        <div style={{display:"flex",alignItems:"center",gap:8}}>
-                          {p.limit&&<span style={{fontSize:10,color:"rgba(255,255,255,0.7)"}}>{r.copy.length}/{p.limit}</span>}
-                          <button onClick={()=>doCopyAll(p.id, r.copy)} style={{
-                            background:"rgba(255,255,255,0.2)",border:"1px solid rgba(255,255,255,0.4)",
-                            borderRadius:6,padding:"4px 12px",fontSize:10,fontWeight:700,
-                            color:"#fff",cursor:"pointer",
-                          }}>{copiedAll[p.id]?"✓ COPIED":"COPY"}</button>
-                        </div>
-                      </div>
-                      <div style={{padding:"16px 18px",fontSize:12,color:S.text,lineHeight:1.75,whiteSpace:"pre-wrap",maxHeight:220,overflowY:"auto"}}>{r.copy}</div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-
-            {!allResults&&!allLoading&&(
-              <div style={{textAlign:"center",padding:"48px 20px",background:S.surface,border:`1px dashed ${S.border}`,borderRadius:12}}>
-                <div style={{fontSize:32,marginBottom:12}}>⚡</div>
-                <div style={{fontSize:15,fontWeight:700,color:S.text,marginBottom:8}}>Content Multiplication Machine</div>
-                <div style={{fontSize:13,color:S.muted,maxWidth:440,margin:"0 auto",lineHeight:1.65}}>
-                  Select a goal above and hit <strong style={{color:S.cyan}}>Generate All Platforms</strong> to produce LinkedIn, X, Instagram, and Newsletter copy simultaneously — the same way automated content machines work at scale.
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* ── SINGLE PLATFORM VIEW ── */}
-        {viewMode==="single" && <div className="studio-layout" style={{gap:20,minHeight:"unset",borderTop:"none",alignItems:"flex-start"}}>
-
-          {/* LEFT: Copy generator */}
-          <div className="studio-left-panel" style={{width:"auto",flex:1,padding:0,borderRight:"none",overflowY:"visible"}}>
-            <div style={{background:S.surface,border:`1px solid ${S.border}`,borderRadius:12,overflow:"hidden"}}>
-              <div style={{padding:"14px 20px",borderBottom:`1px solid ${S.border}`,display:"flex",alignItems:"center",gap:10}}>
-                <div style={{width:8,height:8,borderRadius:"50%",background:plat.color,flexShrink:0}} />
-                <span style={{fontSize:12,fontWeight:700,color:S.text,letterSpacing:"0.04em"}}>COPY GENERATOR</span>
-                <span style={{fontSize:11,color:S.muted,marginLeft:"auto"}}>{plat.label}</span>
-              </div>
-              <div style={{padding:"20px"}}>
-                {/* Goal pills */}
-                <div style={{display:"flex",gap:6,marginBottom:16,flexWrap:"wrap"}}>
-                  {GOALS.map(g=>(
-                    <button key={g} onClick={()=>{ setGoal(g); setImgPrompt(autoImgPrompt(platform, g)); }} style={{
-                      padding:"5px 14px",borderRadius:100,fontSize:11,fontWeight:600,cursor:"pointer",transition:"all 0.12s",
-                      background:goal===g?S.cyanDim:"transparent",
-                      border:`1px solid ${goal===g?S.cyanBorder:S.border}`,
-                      color:goal===g?S.cyan:S.muted,
-                    }}>{g}</button>
-                  ))}
-                </div>
-                <div style={{marginBottom:12}}>
-                  <label style={{fontSize:10,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",color:S.muted,display:"block",marginBottom:5}}>Topic / Campaign Focus</label>
-                  <textarea value={topic} onChange={e=>setTopic(e.target.value)} rows={2} style={{width:"100%",background:S.bg,border:`1px solid ${S.border}`,borderRadius:8,padding:"9px 12px",fontSize:12,color:S.text,fontFamily:"Inter,sans-serif",resize:"vertical",boxSizing:"border-box"}} />
-                </div>
-                <div style={{marginBottom:16}}>
-                  <label style={{fontSize:10,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",color:S.muted,display:"block",marginBottom:5}}>Target Audience</label>
-                  <input value={audience} onChange={e=>setAudience(e.target.value)} style={{width:"100%",background:S.bg,border:`1px solid ${S.border}`,borderRadius:8,padding:"9px 12px",fontSize:12,color:S.text,fontFamily:"Inter,sans-serif",boxSizing:"border-box"}} />
-                </div>
-                <button onClick={generateCopy} disabled={copyLoad} style={{
-                  width:"100%",background:copyLoad?S.surface:plat.color,border:"none",borderRadius:8,
-                  padding:"12px",fontSize:12,fontWeight:800,letterSpacing:"0.06em",textTransform:"uppercase",
-                  color:"#fff",cursor:copyLoad?"wait":"pointer",transition:"all 0.15s",marginBottom:16,opacity:copyLoad?0.7:1,
-                }}>{copyLoad?"GENERATING COPY…":"✦ GENERATE COPY"}</button>
-
-                {genCopy ? (
-                  <div>
-                    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8}}>
-                      <span style={{fontSize:10,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",color:S.muted}}>OUTPUT</span>
-                      <div style={{display:"flex",alignItems:"center",gap:8}}>
-                        {plat.limit && <span style={{fontSize:10,color:genCopy.length>plat.limit?S.red:S.muted}}>{genCopy.length}/{plat.limit}</span>}
-                        <button onClick={doCopy} style={{
-                          background:copied?S.green:S.cyanDim,border:`1px solid ${copied?"#059669":S.cyanBorder}`,
-                          borderRadius:6,padding:"4px 12px",fontSize:10,fontWeight:700,
-                          color:copied?"#fff":S.cyan,cursor:"pointer",transition:"all 0.15s",
-                        }}>{copied?"✓ COPIED":"COPY"}</button>
-                      </div>
-                    </div>
-                    <textarea value={genCopy} onChange={e=>setGenCopy(e.target.value)} rows={13} style={{width:"100%",background:S.bg,border:`1px solid ${S.border}`,borderRadius:8,padding:"12px",fontSize:12,color:S.text,fontFamily:"Inter,sans-serif",resize:"vertical",lineHeight:1.7,boxSizing:"border-box"}} />
-                  </div>
-                ) : (
-                  <div style={{textAlign:"center",padding:"28px 20px",color:S.light,fontSize:12,background:S.bg,borderRadius:8,border:`1px dashed ${S.border}`}}>
-                    Select a goal and hit Generate Copy
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* RIGHT: Image generator */}
-          <div className="studio-right-panel" style={{flex:1,padding:0,overflowY:"visible"}}>
-            <div style={{background:S.surface,border:`1px solid ${S.border}`,borderRadius:12,overflow:"hidden"}}>
-              <div style={{padding:"14px 20px",borderBottom:`1px solid ${S.border}`,display:"flex",alignItems:"center",gap:10}}>
-                <div style={{width:8,height:8,borderRadius:"50%",background:S.cyan,flexShrink:0}} />
-                <span style={{fontSize:12,fontWeight:700,color:S.text,letterSpacing:"0.04em"}}>IMAGE GENERATOR</span>
-                <span style={{fontSize:11,color:S.muted,marginLeft:"auto"}}>Pollinations AI · Flux · {plat.dims.w}×{plat.dims.h}</span>
-              </div>
-              <div style={{padding:"20px"}}>
-                <div style={{marginBottom:12}}>
-                  <label style={{fontSize:10,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",color:S.muted,display:"block",marginBottom:5}}>
-                    Image Prompt
-                    <span style={{fontWeight:400,textTransform:"none",letterSpacing:0,color:S.light}}> — auto-filled from context, fully editable</span>
-                  </label>
-                  <textarea value={imgPrompt} onChange={e=>setImgPrompt(e.target.value)} rows={4}
-                    placeholder={"e.g. dark futuristic data center, glowing cyan network nodes floating in space, cinematic lighting, enterprise tech aesthetic, no text, no people"}
-                    style={{width:"100%",background:S.bg,border:`1px solid ${S.border}`,borderRadius:8,padding:"9px 12px",fontSize:12,color:S.text,fontFamily:"Inter,sans-serif",resize:"vertical",lineHeight:1.5,boxSizing:"border-box"}} />
-                </div>
-                <div style={{display:"flex",gap:8,marginBottom:16}}>
-                  <button onClick={generateImage} disabled={imgLoad} style={{
-                    flex:1,background:imgLoad?S.surface:S.cyanDim,border:`1px solid ${S.cyanBorder}`,
-                    borderRadius:8,padding:"12px",fontSize:11,fontWeight:800,letterSpacing:"0.08em",
-                    textTransform:"uppercase",color:S.cyan,cursor:imgLoad?"wait":"pointer",transition:"all 0.15s",opacity:imgLoad?0.7:1,
-                  }}>{imgLoad?"GENERATING IMAGE…":"✦ GENERATE IMAGE"}</button>
-                  {imgSrc&&<button onClick={downloadImg} style={{background:S.cyan,border:"none",borderRadius:8,padding:"12px 18px",fontSize:11,fontWeight:800,color:"#09090F",cursor:"pointer",whiteSpace:"nowrap"}}>↓ SAVE</button>}
-                </div>
-
-                {/* Image preview area */}
-                <div style={{background:S.bg,border:`1px solid ${S.border}`,borderRadius:10,overflow:"hidden",minHeight:240,display:"flex",alignItems:"center",justifyContent:"center",position:"relative"}}>
-                  {imgLoad&&(
-                    <div style={{textAlign:"center",color:S.muted,padding:40}}>
-                      <div style={{fontSize:28,marginBottom:12,animation:"spin 2s linear infinite",display:"inline-block"}}>✦</div>
-                      <div style={{fontSize:13,fontWeight:700,color:S.text}}>Generating with Flux model…</div>
-                      <div style={{fontSize:11,color:S.light,marginTop:6}}>~15–20 seconds · Pollinations AI</div>
-                    </div>
-                  )}
-                  {imgSrc&&!imgLoad&&<img src={imgSrc} alt="AI generated" style={{width:"100%",height:"auto",display:"block"}} />}
-                  {imgError&&!imgLoad&&(
-                    <div style={{textAlign:"center",color:S.muted,padding:40}}>
-                      <div style={{fontSize:24,marginBottom:10}}>⚠️</div>
-                      <div style={{fontSize:12,fontWeight:700,color:S.red}}>Generation failed or timed out</div>
-                      <div style={{fontSize:11,color:S.muted,marginTop:6,marginBottom:14,lineHeight:1.6}}>Pollinations AI may be busy. Try again or simplify your prompt.</div>
-                      <button onClick={generateImage} style={{background:S.cyanDim,border:`1px solid ${S.cyanBorder}`,borderRadius:8,padding:"8px 20px",fontSize:11,fontWeight:700,color:S.cyan,cursor:"pointer"}}>↺ RETRY</button>
-                    </div>
-                  )}
-                  {!imgSrc&&!imgLoad&&!imgError&&(
-                    <div style={{textAlign:"center",color:S.light,padding:40}}>
-                      <div style={{fontSize:24,marginBottom:10}}>🖼</div>
-                      <div style={{fontSize:12,fontWeight:600,color:S.muted}}>Your image will appear here</div>
-                      <div style={{fontSize:11,color:S.light,marginTop:4}}>{plat.dims.w}×{plat.dims.h}px · optimized for {plat.label}</div>
-                    </div>
-                  )}
-                </div>
-
-                <div style={{marginTop:14,padding:"12px 14px",background:S.cyanDim,border:`1px solid ${S.cyanBorder}`,borderRadius:8}}>
-                  <div style={{fontSize:10,fontWeight:700,color:S.cyan,marginBottom:4,letterSpacing:"0.08em"}}>HOW THIS WORKS</div>
-                  <div style={{fontSize:11,color:S.muted,lineHeight:1.7}}>
-                    Claude generates copy · <strong style={{color:S.text}}>Pollinations AI (Flux)</strong> generates images — free, no API key needed.<br/>
-                    Upgrade path: <span style={{color:S.cyan}}>Gemini Imagen (Nano Banana)</span> at ai.google.dev · Hugging Face MCP · Publish via Crosspost CLI or Blotato MCP.
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>}
-
-        {/* Publishing Pipeline */}
-        <div style={{marginTop:24,background:S.surface,border:`1px solid ${S.border}`,borderRadius:12,overflow:"hidden"}}>
-          <div style={{padding:"14px 24px",borderBottom:`1px solid ${S.border}`,display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:8}}>
-            <div style={{fontSize:12,fontWeight:700,color:S.text,letterSpacing:"0.04em"}}>CONTENT PUBLISHING PIPELINE</div>
-            <span style={{fontSize:10,color:S.muted}}>From brief to scheduled post — full automation stack</span>
-          </div>
-          <div style={{padding:"20px 24px",display:"flex",alignItems:"flex-start",gap:0,flexWrap:"wrap"}}>
-            {[
-              {step:"01",label:"Source Content",  tool:"This Engine",   cost:"Free",     color:S.cyan,  desc:"Paste transcript, blog post, or talking points → auto-detect topic + persona"},
-              {step:"02",label:"Generate Copy",    tool:"Claude AI",     cost:"~$0.003",  color:"#7C3AED",desc:"Platform-native copy tailored by vertical, persona, and campaign goal"},
-              {step:"03",label:"Generate Visual",  tool:"Pollinations",  cost:"Free",     color:S.cyan,  desc:"FLUX model generates on-brand image at platform-correct dimensions"},
-              {step:"04",label:"Upload & Schedule",tool:"Blotato",       cost:"$0.05/post",color:S.green, desc:"API uploads video/image + copy, schedules across TikTok, LinkedIn, IG, X"},
-              {step:"05",label:"Analyze & Iterate",tool:"Native Analytics",cost:"Free",  color:S.amber, desc:"Platform analytics feed back into next campaign's topic and goal selection"},
-            ].map((s,i)=>(
-              <React.Fragment key={s.step}>
-                <div style={{flex:1,minWidth:150,padding:"0 16px 8px"}}>
-                  <div style={{fontSize:9,fontWeight:800,color:s.color,letterSpacing:"0.12em",textTransform:"uppercase",marginBottom:4}}>STEP {s.step}</div>
-                  <div style={{fontSize:13,fontWeight:700,color:S.text,marginBottom:3}}>{s.label}</div>
-                  <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:6}}>
-                    <span style={{fontSize:10,fontWeight:700,background:S.elevated,border:`1px solid ${S.border}`,color:S.muted,padding:"2px 8px",borderRadius:100}}>{s.tool}</span>
-                    <span style={{fontSize:10,fontWeight:700,color:s.color}}>{s.cost}</span>
-                  </div>
-                  <div style={{fontSize:11,color:S.muted,lineHeight:1.6}}>{s.desc}</div>
-                </div>
-                {i<4&&<div style={{color:S.border,fontSize:18,flexShrink:0,paddingTop:20,alignSelf:"flex-start"}}>→</div>}
-              </React.Fragment>
-            ))}
-          </div>
-          <div style={{padding:"12px 24px",borderTop:`1px solid ${S.border}`,background:S.cyanDim,display:"flex",alignItems:"center",gap:16,flexWrap:"wrap"}}>
-            <span style={{fontSize:11,color:S.text}}><strong>Bulk cost estimate:</strong> 5 posts across 4 platforms = 20 assets</span>
-            <span style={{fontSize:11,color:S.muted}}>Copy: ~$0.06 · Images: $0 · Scheduling: $1.00 · <strong style={{color:S.green}}>Total: ~$1.06</strong></span>
-            <span style={{fontSize:11,color:S.muted,marginLeft:"auto"}}>vs. $800–2,400 agency equivalent · <strong style={{color:S.cyan}}>97% cost reduction</strong></span>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-
-
-/* ── GTM AGENT SKILLS LIBRARY SECTION ── */
-function GTMSkillsSection() {
-  const CATS = ["All","Marketing","Sales & RevOps","Customer Advocacy","Content Ops","Customer Support","GTM Ops"];
-  const CAT_COLOR = {
-    "Marketing":"#0099CC","Sales & RevOps":"#7C3AED","Customer Advocacy":"#059669",
-    "Content Ops":"#D97706","Customer Support":"#DC2626","GTM Ops":"#0A0A1A",
-  };
-  const STATUS_META = {
-    "ready":    { label:"Ready for Adaptation", color:"#059669", bg:"rgba(5,150,105,0.08)"  },
-    "v1":       { label:"Source-Backed v1",      color:"#0099CC", bg:"rgba(0,153,204,0.08)"  },
-    "advanced": { label:"Advanced Pattern",      color:"#D97706", bg:"rgba(217,119,6,0.08)"  },
-    "helper":   { label:"Helper Pattern",        color:"#6B7280", bg:"rgba(107,114,128,0.08)"},
-  };
-  const SKILLS = [
-    { cat:"Marketing",         icon:"🚀", name:"Mega Campaign Generator",           user:"Demand Gen & Campaign Marketers",         outcome:"Turns scattered campaign inputs into a review-ready launch package: positioning, subject lines, email and LinkedIn sequences.",                             connections:["Drive/Docs","CRM","Sheets","Chat"],                    status:"ready",    path:"skills/marketing/mega-campaign-generator" },
-    { cat:"Marketing",         icon:"📬", name:"MCP Media Inbox Triage",            user:"Marketing, PR, Community, Partnerships",  outcome:"Surfaces buried media and partnership requests from a shared inbox and routes them to a prioritized action list with owners.",                           connections:["Gmail","Slack","Google Sheets","LLM"],                 status:"v1",       path:"skills/marketing/mcp-media-inbox-triage" },
-    { cat:"Marketing",         icon:"🔍", name:"Campaign Postmortem",               user:"Marketing Leaders & Demand Gen",          outcome:"Builds a sourced campaign retro: what happened, what worked, what broke, and what changes next.",                                                      connections:["Drive/Docs","Analytics","CRM","Tracker","Chat"],       status:"v1",       path:"skills/marketing/campaign-postmortem" },
-    { cat:"Marketing",         icon:"🎨", name:"HTML Mockup Builder",               user:"Marketing Web & Campaign Teams",          outcome:"Generates reviewable HTML mockups from campaign or landing-page briefs — no designer required for every iteration.",                                  connections:["Drive/Docs","Asset Library","Project Tracker"],        status:"ready",    path:"skills/marketing/html-mockup-builder" },
-    { cat:"Marketing",         icon:"🎯", name:"Brand Guidelines Builder",          user:"Brand & Marketing Teams",                 outcome:"Converts brand source material into agent-usable rules so downstream skills produce on-brand output and flag what does not fit.",                     connections:["Drive/Docs","Asset Library","Design Tool"],            status:"ready",    path:"skills/marketing/brand-guidelines-builder" },
-    { cat:"Sales & RevOps",    icon:"📧", name:"Sales Sequence Builder",            user:"Sales & RevOps Teams",                    outcome:"Creates source-backed outbound or follow-up sequences tailored to account context, persona, and trigger signals.",                                   connections:["CRM","Gmail/Outlook","Docs","Chat"],                   status:"ready",    path:"skills/sales-revops/sales-sequence-builder" },
-    { cat:"Sales & RevOps",    icon:"📊", name:"Customer Deck Builder",             user:"Sales, CS, Onboarding & RevOps",          outcome:"Turns account context, usage signals, and meeting goals into a structured customer deck generated directly in Gamma.",                                connections:["Gamma","CRM","Account Data","Docs"],                   status:"v1",       path:"skills/sales-revops/customer-deck-builder" },
-    { cat:"Sales & RevOps",    icon:"📡", name:"Named Account Trigger Radar",       user:"ABM, Sales & RevOps Teams",               outcome:"Ranks target accounts by why-now signals and recommends the next best seller action for each one.",                                                  connections:["CRM","Sheets","Chat","Research Sources"],              status:"ready",    path:"skills/sales-revops/named-account-trigger-radar" },
-    { cat:"Sales & RevOps",    icon:"🔎", name:"AI Audit Account Report",           user:"Midmarket & Expansion Sales",             outcome:"Builds account-level AI adoption reports that help reps identify expansion or consultation opportunities.",                                            connections:["CRM","Usage Reports","Sheets","Video Tool"],           status:"ready",    path:"skills/sales-revops/mmpe-ai-audit-account-report" },
-    { cat:"Sales & RevOps",    icon:"🔄", name:"Cross-CRM Opportunity Sync",        user:"RevOps, Sales Ops & MIS",                 outcome:"Keeps opportunities and accounts in sync across multiple CRMs while preserving attribution, commission accuracy, and data governance.",                connections:["Multiple CRMs","LLM","Finance/Commission System"],     status:"v1",       path:"skills/sales-revops/cross-crm-opportunity-sync" },
-    { cat:"Customer Advocacy", icon:"⭐", name:"Find Customer Social Proof",        user:"Campaign Marketers & Sales Enablement",   outcome:"Searches approved customer content libraries to surface the right story, quote, or stat — with approval before any external use of names or metrics.", connections:["Content Library","CRM","Drive/Docs","Deck Library"],   status:"v1",       path:"skills/customer-advocacy/find-customer-social-proof" },
-    { cat:"Customer Advocacy", icon:"✍", name:"Customer Story Writer",             user:"Customer Advocacy & Content Marketers",   outcome:"Turns interview transcripts and proof points into narrative customer stories with customer, brand, and legal approval gates built in.",                connections:["Transcript Source","Drive/Docs","CRM","Story Tracker"],status:"v1",       path:"skills/customer-advocacy/customer-story-writer" },
-    { cat:"Content Ops",       icon:"🎬", name:"Company Recording to Postable Clip",user:"Content Ops, Social, Comms & Events",    outcome:"Finds source recordings, locates useful moments, and prepares approved clips for distribution. Paired with intake and handoff automations.",           connections:["Drive/Video Storage","Calendar","Chat","Tracker"],     status:"advanced", path:"skills/content-ops/company-recording-clip" },
-    { cat:"Customer Support",  icon:"🎫", name:"Support Ticket Triage Agent",       user:"Support Leaders, Ops & Technical Reps",  outcome:"Pulls ticket context, searches issue tracker and knowledge base in parallel, classifies the issue, and hands the rep a recommended next action. Reduces per-ticket research from 15 min to 4 min.",connections:["Helpdesk","Issue Tracker","Knowledge Base","CRM"],status:"v1",path:"skills/customer-support/support-ticket-triage" },
-    { cat:"GTM Ops",           icon:"🗺", name:"Inbound Lead Audit + CX Map",       user:"Marketing Ops & GTM Ops Teams",           outcome:"Audits lead handling and maps the customer experience from form fill to follow-up — finds exactly where the handoff breaks.",                          connections:["CRM","Sheets","Scheduler","Chat"],                     status:"ready",    path:"skills/gtm-ops/inbound-lead-audit-cx-map" },
-    { cat:"GTM Ops",           icon:"🚨", name:"No Lead Left Behind Audit",         user:"Marketing Ops & SDR Operations",          outcome:"Finds missed, delayed, or low-quality lead follow-up and turns gaps into owner-ready actions with severity scoring.",                                  connections:["CRM","Sheets","Scheduler","Chat","Meeting System"],    status:"advanced", path:"skills/gtm-ops/no-lead-left-behind-lead-treatment-audit" },
-    { cat:"GTM Ops",           icon:"🔍", name:"Find Lead Account Owner",           user:"GTM Ops & RevOps Teams",                  outcome:"Resolves the best account or lead owner using a clear fallback order — a helper skill used inside audits and routing workflows.",                      connections:["CRM","Org Directory","Sheets"],                        status:"helper",   path:"skills/gtm-ops/find-lead-account-owner" },
-    { cat:"GTM Ops",           icon:"📋", name:"Daily Lead Steward",                user:"Marketing Ops, SDR Ops & Sales Managers", outcome:"Creates a daily operating view of leads needing attention, follow-up, or escalation — with scheduled generation and manager approval gate.",           connections:["CRM","Sheets","Scheduler","Chat","Meeting System"],    status:"ready",    path:"skills/gtm-ops/daily-lead-steward" },
-    { cat:"GTM Ops",           icon:"🔗", name:"MCP Sheet Cache Bridge",            user:"GTM Ops & Business Operations Builders",  outcome:"Keeps Zapier Tables as source of truth while legacy Google Sheets tools read a lightweight synchronized cache tab.",                                   connections:["Zapier MCP","Zapier Tables","Google Sheets","Slack"],  status:"v1",       path:"skills/gtm-ops/mcp-sheet-cache-bridge" },
-  ];
-  const AUTOMATIONS = [
-    { name:"Daily Notable Lead Audit",                    icon:"📅", desc:"Runs daily CRM review, highlights gaps and owner actions — manager approval before posting." },
-    { name:"Daily SDR Unconverted Hand-Raiser Call List", icon:"📞", desc:"Produces a daily prioritized call list of high-intent hand-raisers who have not yet converted." },
-    { name:"Weekly No Lead Left Behind MQL Rollup",       icon:"📈", desc:"Summarizes unresolved MQL follow-up patterns weekly and recommends process improvements." },
-    { name:"Friday Unconverted MQL Audit Sync",           icon:"📆", desc:"Weekly closeout view of unconverted MQLs and follow-up accountability for ops and RevOps teams." },
-    { name:"No Lead Left Behind Standup Brief",           icon:"💬", desc:"Turns lead follow-up signal into a concise standup brief for operating rhythm reviews." },
-  ];
-
-  const [activeCat, setActiveCat] = useState("All");
-  const [expanded,  setExpanded]  = useState(null);
-
-  const visible = SKILLS.filter(s => activeCat === "All" || s.cat === activeCat);
-
-  return (
-    <div id="gtm-skills" style={{background:S.surface}}>
-      <div style={{maxWidth:1200,margin:"0 auto",padding:"56px 36px 48px"}}>
-        <SectionHeader number="07" accent="GTM AGENT SKILLS LIBRARY"
-          title={<>Zapier <span style={{color:S.cyan}}>GTM Cheat Codes</span> — Agent Skills for Revenue Teams</>}
-          sub="19 structured, reusable agent skills from Zapier's public GTM Cheat Codes repo — covering marketing, sales, RevOps, customer advocacy, content ops, support, and GTM ops. Each skill pulls from your business context and produces reviewable work with human approval gates built in." />
-
-        {/* Repo banner */}
-        <div style={{background:`linear-gradient(135deg,${S.cyanDim} 0%,rgba(124,58,237,0.06) 100%)`,border:`1px solid ${S.cyanBorder}`,borderRadius:12,padding:"16px 24px",marginBottom:32,display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:12}}>
-          <div>
-            <div style={{fontSize:13,fontWeight:700,color:S.text,marginBottom:3}}>github.com/zapier/gtm-cheat-codes</div>
-            <div style={{fontSize:12,color:S.muted}}>Works in <strong style={{color:S.text}}>Codex · Claude Code · Cursor · ChatGPT</strong> — connects to your CRM, docs, chat, and scheduling tools via Zapier MCP</div>
-          </div>
-          <a href="https://github.com/zapier/gtm-cheat-codes" target="_blank" rel="noopener" style={{background:S.cyan,color:"#09090F",borderRadius:8,padding:"10px 22px",fontSize:12,fontWeight:800,letterSpacing:"0.06em",textTransform:"uppercase",textDecoration:"none",whiteSpace:"nowrap",flexShrink:0}}>VIEW REPO →</a>
-        </div>
-
-        {/* Category filter */}
-        <div style={{display:"flex",gap:6,marginBottom:28,flexWrap:"wrap"}}>
-          {CATS.map(cat => {
-            const color = cat==="All" ? S.cyan : (CAT_COLOR[cat] || S.cyan);
-            const active = activeCat === cat;
-            const count  = cat==="All" ? SKILLS.length : SKILLS.filter(s=>s.cat===cat).length;
-            return (
-              <button key={cat} onClick={()=>{ setActiveCat(cat); setExpanded(null); }} style={{
-                padding:"7px 16px",borderRadius:100,fontSize:12,fontWeight:700,cursor:"pointer",transition:"all 0.15s",
-                background:active?color:"transparent",
-                border:`2px solid ${active?color:S.border}`,
-                color:active?"#fff":S.muted,
-              }}>{cat} <span style={{fontSize:10,opacity:0.8}}>{count}</span></button>
-            );
-          })}
-        </div>
-
-        {/* Skills grid */}
-        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(340px,1fr))",gap:16,marginBottom:40}}>
-          {visible.map((skill,i) => {
-            const catColor = CAT_COLOR[skill.cat] || S.cyan;
-            const sm = STATUS_META[skill.status] || STATUS_META["ready"];
-            const isExp = expanded === i;
-            return (
-              <div key={i} className="card-hover" onClick={()=>setExpanded(isExp?null:i)} style={{
-                background:S.bg,border:`1px solid ${isExp?catColor:S.border}`,borderRadius:12,
-                padding:20,cursor:"pointer",transition:"all 0.15s",
-                boxShadow:isExp?`0 4px 20px ${catColor}20`:"0 1px 4px rgba(0,0,0,0.04)",
-              }}>
-                <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:10,gap:8}}>
-                  <div style={{display:"flex",alignItems:"center",gap:10}}>
-                    <span style={{fontSize:20,flexShrink:0}}>{skill.icon}</span>
-                    <div>
-                      <div style={{fontSize:13,fontWeight:700,color:S.text,lineHeight:1.3}}>{skill.name}</div>
-                      <span style={{fontSize:9,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",color:catColor}}>{skill.cat}</span>
-                    </div>
-                  </div>
-                  <span style={{fontSize:9,fontWeight:700,background:sm.bg,color:sm.color,padding:"3px 8px",borderRadius:100,whiteSpace:"nowrap",flexShrink:0,border:`1px solid ${sm.color}40`}}>{sm.label}</span>
-                </div>
-
-                <div style={{fontSize:12,color:S.muted,lineHeight:1.65,marginBottom:isExp?12:0}}>{skill.outcome}</div>
-
-                {isExp && (
-                  <div style={{borderTop:`1px solid ${S.border}`,paddingTop:12,marginTop:4}}>
-                    <div style={{fontSize:10,fontWeight:700,color:S.muted,letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:4}}>Target User</div>
-                    <div style={{fontSize:11,color:S.text,marginBottom:10}}>{skill.user}</div>
-                    <div style={{fontSize:10,fontWeight:700,color:S.muted,letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:6}}>Recommended Connections</div>
-                    <div style={{display:"flex",gap:5,flexWrap:"wrap",marginBottom:14}}>
-                      {skill.connections.map(conn=>(
-                        <span key={conn} style={{fontSize:10,fontWeight:600,background:S.surface,border:`1px solid ${S.border}`,color:S.muted,padding:"3px 9px",borderRadius:100}}>{conn}</span>
-                      ))}
-                    </div>
-                    <a href={`https://github.com/zapier/gtm-cheat-codes/tree/main/${skill.path}`} target="_blank" rel="noopener" onClick={e=>e.stopPropagation()} style={{fontSize:11,fontWeight:700,color:catColor,textDecoration:"none"}}>
-                      View on GitHub →
-                    </a>
-                  </div>
-                )}
-
-                <div style={{marginTop:8,fontSize:10,color:S.light,textAlign:"right"}}>{isExp?"▲ collapse":"▼ expand"}</div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Paired automations */}
-        <div style={{background:S.bg,border:`1px solid ${S.border}`,borderRadius:12,overflow:"hidden",marginBottom:32}}>
-          <div style={{padding:"14px 24px",borderBottom:`1px solid ${S.border}`,display:"flex",alignItems:"center",gap:12,flexWrap:"wrap"}}>
-            <span style={{fontSize:12,fontWeight:700,color:S.text,letterSpacing:"0.04em"}}>PAIRED GTM OPS AUTOMATIONS</span>
-            <span style={{fontSize:10,color:S.muted}}>Scheduled workflows — all require human review before posting summaries or escalating owners</span>
-          </div>
-          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(260px,1fr))"}}>
-            {AUTOMATIONS.map((a,i)=>(
-              <div key={i} style={{padding:"16px 20px",borderRight:`1px solid ${S.border}`,borderBottom:`1px solid ${S.border}`}}>
-                <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:6}}>
-                  <span style={{fontSize:16}}>{a.icon}</span>
-                  <span style={{fontSize:12,fontWeight:700,color:S.text}}>{a.name}</span>
-                </div>
-                <div style={{fontSize:11,color:S.muted,lineHeight:1.6}}>{a.desc}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Deploy steps */}
-        <div style={{background:`linear-gradient(135deg,${S.cyanDim} 0%,rgba(124,58,237,0.04) 100%)`,border:`1px solid ${S.cyanBorder}`,borderRadius:12,padding:"24px 28px"}}>
-          <div style={{fontSize:12,fontWeight:800,color:S.text,marginBottom:16,letterSpacing:"0.04em"}}>HOW TO DEPLOY ANY SKILL — 4 STEPS</div>
-          <div style={{display:"flex",alignItems:"flex-start",gap:0,flexWrap:"wrap"}}>
-            {[
-              {step:"01",file:"SETUP.md",            desc:"Configure Zapier MCP and SDK connections for your approved systems and tools"},
-              {step:"02",file:"SKILL.md",             desc:"Copy into your agent skill directory — works in Codex, Claude Code, Cursor, ChatGPT"},
-              {step:"03",file:"metadata.yaml",        desc:"Adapt to your approved data sources, tools, team context, and approval owners"},
-              {step:"04",file:"ONBOARDING-PROMPT.md", desc:"Run before the first real workflow to calibrate the agent to your environment"},
-            ].map((s,i)=>(
-              <React.Fragment key={s.step}>
-                <div style={{flex:1,minWidth:160,padding:"0 14px 8px 0"}}>
-                  <div style={{fontSize:9,fontWeight:800,color:S.cyan,letterSpacing:"0.12em",textTransform:"uppercase",marginBottom:4}}>STEP {s.step}</div>
-                  <code style={{fontSize:11,fontWeight:700,color:S.text,background:S.surface,border:`1px solid ${S.border}`,display:"inline-block",padding:"2px 8px",borderRadius:4,marginBottom:6}}>{s.file}</code>
-                  <div style={{fontSize:11,color:S.muted,lineHeight:1.6}}>{s.desc}</div>
-                </div>
-                {i<3&&<div style={{color:S.border,fontSize:18,flexShrink:0,paddingTop:18,paddingRight:8}}>→</div>}
-              </React.Fragment>
-            ))}
-          </div>
-          <div style={{marginTop:16,paddingTop:14,borderTop:`1px solid ${S.border}`,display:"flex",alignItems:"center",gap:12,flexWrap:"wrap"}}>
-            <span style={{fontSize:11,color:S.muted}}>⚠️ Every skill includes explicit <strong style={{color:S.text}}>human approval gates</strong> before sending messages, writing CRM records, posting publicly, or making any customer-facing claims.</span>
-            <a href="https://zapier.com/mcp" target="_blank" rel="noopener" style={{fontSize:11,fontWeight:700,color:S.cyan,textDecoration:"none",whiteSpace:"nowrap",flexShrink:0}}>Try Zapier MCP →</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 /* ── NAV ── */
 function Nav() {
   const [active, setActive] = useState("campaign-studio");
   const [menuOpen, setMenuOpen] = useState(false);
   const links = [
-    { id:"campaign-studio", label:"Design Studio" },
-    { id:"ad-creative", label:"Social Studio" },
-    { id:"pipeline-intelligence", label:"Pipeline Intel" },
-    { id:"channel-pulse", label:"Channel Pulse" },
-    { id:"gtm-blueprint", label:"GTM Blueprint" },
+    { id:"campaign-studio", label:"Campaign Studio" },
+    { id:"gtm-blueprint", label:"GTM Strategy" },
+    { id:"channel-pulse", label:"Market Intel" },
     { id:"content-engine", label:"Content Engine" },
-    { id:"gtm-skills", label:"Agent Skills" },
   ];
   const scrollTo = id => {
     const el = document.getElementById(id);
@@ -2830,68 +1922,127 @@ function Nav() {
 /* ── HERO ── */
 function Hero() {
   const ticker = [
+    "SIMULATED GTM SCENARIO · CROOKED FOOT AI IS A FICTIONAL DEMO PRODUCT",
     "94% FORECAST ACCURACY — 45 DAYS BEFORE CLOSE",
     "GONG RECORDS · CROOKED FOOT PREDICTS",
-    "CRM-AGNOSTIC DEAL INTELLIGENCE",
-    "14-SIGNAL PIPELINE HEALTH SCORING",
+    "CRM-AGNOSTIC DEAL INTELLIGENCE · 14-SIGNAL PIPELINE SCORING",
     "DEPLOY IN 30 DAYS — FULL SIGNAL CONFIDENCE",
-    "TRUSTED BY GLOBAL 2000 REVENUE TEAMS",
+    "AI-NATIVE GTM WORKFLOWS · BUILT BY ALEX MARING",
     "ZERO BLACK BOX · FULL EXPLAINABILITY",
   ];
   const tickerText = [...ticker, ...ticker].join("   ◆   ");
 
+  const stats = [
+    { value:"$2M+",  label:"Net-New ARR Driven",       sub:"35% attribution rate" },
+    { value:"39%",   label:"Email Open Rate",           sub:"vs 35.9% industry avg" },
+    { value:"40%",   label:"LinkedIn Audience Growth",  sub:"2024–2026 YoY" },
+    { value:"6 yrs", label:"Sole Internal Marketer",    sub:"Full GTM stack ownership" },
+  ];
+
   return (
-    <div className="hero-section" style={{background:S.bg,padding:"80px 36px 60px",textAlign:"center",position:"relative",overflow:"hidden"}}>
-      {/* Subtle light orb */}
-      <div style={{position:"absolute",top:-100,left:"50%",transform:"translateX(-50%)",width:700,height:400,background:`radial-gradient(ellipse, rgba(0,153,204,0.06) 0%, transparent 70%)`,pointerEvents:"none"}} />
-
-      <div className="fade-in" style={{display:"flex",justifyContent:"center",marginBottom:24}}>
-        <img src="./logo.png" alt="Crooked Foot AI" style={{width:96,height:96,borderRadius:20,objectFit:"cover",boxShadow:"0 8px 32px rgba(0,153,204,0.20), 0 2px 8px rgba(0,0,0,0.08)"}} />
-      </div>
-
-      <div className="fade-in" style={{display:"inline-flex",alignItems:"center",gap:8,background:S.cyanDim,border:`1px solid ${S.cyanBorder}`,borderRadius:100,padding:"6px 18px",fontSize:11,fontWeight:700,color:S.cyan,letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:24}}>
-        <span style={{width:6,height:6,borderRadius:"50%",background:S.cyan,display:"inline-block"}} />
-        Live GTM Demonstration · Built by Alex Maring
-      </div>
-
-      <h1 className="fade-in-1" style={{fontSize:"clamp(32px,5vw,64px)",fontWeight:900,letterSpacing:"-0.03em",lineHeight:1.05,marginBottom:20,color:S.text}}>
-        The Revenue Teams Closing<br />
-        <span style={{color:S.cyan}}>Q3 Early Aren't Lucky.</span><br />
-        They Have Better Signal.
-      </h1>
-
-      <p className="fade-in-2" style={{fontSize:"clamp(15px,2vw,18px)",color:S.muted,maxWidth:660,margin:"0 auto 40px",lineHeight:1.7}}>
-        Crooked Foot AI replaces gut-check forecasting with 14-signal deal intelligence — 94% forecast accuracy, 45 days before close, zero black box. While your competition is still reviewing last week's call recordings, you're closing next quarter's pipeline.
-      </p>
-
-      <div className="fade-in-2 cta-row" style={{display:"flex",gap:12,justifyContent:"center",flexWrap:"wrap",marginBottom:52}}>
-        <a href="#campaign-studio" onClick={e=>{e.preventDefault();document.getElementById("campaign-studio")?.scrollIntoView({behavior:"smooth"});}} className="pulse-btn" style={{background:S.cyan,color:"#09090F",border:"none",borderRadius:8,padding:"14px 32px",fontSize:13,fontWeight:800,letterSpacing:"0.06em",textTransform:"uppercase",textDecoration:"none",display:"inline-block",transition:"background 0.15s"}}>
-          ⚡ LAUNCH DESIGN STUDIO
-        </a>
-        <a href="#gtm-blueprint" onClick={e=>{e.preventDefault();document.getElementById("gtm-blueprint")?.scrollIntoView({behavior:"smooth"});}} style={{background:"transparent",color:S.text,border:`1px solid ${S.border}`,borderRadius:8,padding:"14px 32px",fontSize:13,fontWeight:700,letterSpacing:"0.06em",textTransform:"uppercase",textDecoration:"none",display:"inline-block",transition:"all 0.15s"}}>
-          VIEW GTM BLUEPRINT →
+    <div>
+      {/* Portfolio identity bar */}
+      <div style={{background:S.text,padding:"10px 36px",display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:8}}>
+        <div style={{display:"flex",alignItems:"center",gap:12}}>
+          <span style={{fontSize:11,fontWeight:700,color:"rgba(255,255,255,0.5)",letterSpacing:"0.12em",textTransform:"uppercase"}}>AI Marketing Portfolio</span>
+          <span style={{color:"rgba(255,255,255,0.2)"}}>·</span>
+          <span style={{fontSize:12,fontWeight:800,color:"#fff",letterSpacing:"-0.01em"}}>Alex Maring</span>
+          <span style={{color:"rgba(255,255,255,0.2)"}}>·</span>
+          <span style={{fontSize:10,color:"rgba(255,255,255,0.5)"}}>B2B Demand Gen · Marketing Automation · AI Workflows</span>
+        </div>
+        <a href="https://www.linkedin.com/in/alex-maring-56b08759/" target="_blank" rel="noopener" style={{display:"flex",alignItems:"center",gap:7,background:"#0A66C2",color:"#fff",borderRadius:6,padding:"6px 14px",fontSize:11,fontWeight:700,textDecoration:"none",flexShrink:0}}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          Connect on LinkedIn
         </a>
       </div>
 
-      {/* KPI strip */}
-      <div style={{display:"flex",gap:0,justifyContent:"center",flexWrap:"wrap",marginBottom:48,background:S.surface,border:`1px solid ${S.border}`,borderRadius:12,overflow:"hidden",maxWidth:800,margin:"0 auto 48px"}}>
-        {[
-          { v:"94%", l:"Forecast Accuracy" },
-          { v:"28%", l:"Deal Velocity ↑" },
-          { v:"$3.2M", l:"Pipeline Recovered" },
-          { v:"30", l:"Days to Signal" },
-        ].map((k,i)=>(
-          <div key={i} style={{flex:"1 1 160px",padding:"20px 24px",borderRight:i<3?`1px solid ${S.border}`:"none",textAlign:"center"}}>
-            <div style={{fontSize:28,fontWeight:900,color:S.cyan,letterSpacing:"-0.02em"}}>{k.v}</div>
-            <div style={{fontSize:10,fontWeight:700,color:S.muted,textTransform:"uppercase",letterSpacing:"0.1em",marginTop:4}}>{k.l}</div>
+      {/* Main hero */}
+      <div className="hero-section" style={{background:S.bg,padding:"72px 36px 52px",textAlign:"center",position:"relative",overflow:"hidden"}}>
+        <div style={{position:"absolute",top:-100,left:"50%",transform:"translateX(-50%)",width:700,height:400,background:`radial-gradient(ellipse, rgba(0,153,204,0.06) 0%, transparent 70%)`,pointerEvents:"none"}} />
+
+        <div className="fade-in" style={{display:"flex",justifyContent:"center",marginBottom:20}}>
+          <img src="./logo.png" alt="Crooked Foot AI — Demo Product" style={{width:80,height:80,borderRadius:18,objectFit:"cover",boxShadow:"0 8px 32px rgba(0,153,204,0.20)"}} />
+        </div>
+
+        <div className="fade-in" style={{display:"inline-flex",alignItems:"center",gap:8,background:S.cyanDim,border:`1px solid ${S.cyanBorder}`,borderRadius:100,padding:"6px 18px",fontSize:11,fontWeight:700,color:S.cyan,letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:20}}>
+          <span style={{width:6,height:6,borderRadius:"50%",background:S.cyan,display:"inline-block"}} />
+          GTM Campaign Engine · Built with Claude AI
+        </div>
+
+        <h1 className="fade-in-1" style={{fontSize:"clamp(28px,5vw,58px)",fontWeight:900,letterSpacing:"-0.03em",lineHeight:1.08,marginBottom:18,color:S.text}}>
+          This Is How I Think About<br />
+          <span style={{color:S.cyan}}>AI-Native GTM.</span>
+        </h1>
+
+        <p className="fade-in-2" style={{fontSize:"clamp(14px,1.8vw,17px)",color:S.muted,maxWidth:680,margin:"0 auto 16px",lineHeight:1.75}}>
+          I'm Alex Maring — a B2B demand gen marketer who drove <strong style={{color:S.text}}>$2M+ in net-new ARR</strong> as the sole internal marketer at a fintech company. This GTM Campaign Engine demonstrates how I build AI systems that generate multi-channel campaign assets at scale: LinkedIn ads, cold email sequences, landing page briefs, and platform-native content — personalized by vertical, buyer persona, and campaign trigger.
+        </p>
+
+        <p className="fade-in-2" style={{fontSize:"clamp(13px,1.5vw,15px)",color:S.muted,maxWidth:560,margin:"0 auto 32px",lineHeight:1.7}}>
+          Built to show hiring managers how I think about shipping AI agents and workflows that speed and scale content generation across GTM teams.
+        </p>
+
+        <div className="fade-in-2 cta-row" style={{display:"flex",gap:12,justifyContent:"center",flexWrap:"wrap",marginBottom:28}}>
+          <a href="https://www.linkedin.com/in/alex-maring-56b08759/" target="_blank" rel="noopener" style={{background:"#0A66C2",color:"#fff",border:"none",borderRadius:8,padding:"13px 28px",fontSize:13,fontWeight:800,letterSpacing:"0.04em",textDecoration:"none",display:"inline-flex",alignItems:"center",gap:8}}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            Connect on LinkedIn
+          </a>
+          <a href="#campaign-studio" onClick={e=>{e.preventDefault();document.getElementById("campaign-studio")?.scrollIntoView({behavior:"smooth"});}} className="pulse-btn" style={{background:S.cyan,color:"#09090F",border:"none",borderRadius:8,padding:"13px 28px",fontSize:13,fontWeight:800,letterSpacing:"0.06em",textTransform:"uppercase",textDecoration:"none",display:"inline-block"}}>
+            ⚡ LAUNCH CAMPAIGN STUDIO
+          </a>
+          <a href="#gtm-blueprint" onClick={e=>{e.preventDefault();document.getElementById("gtm-blueprint")?.scrollIntoView({behavior:"smooth"});}} style={{background:"transparent",color:S.text,border:`1px solid ${S.border}`,borderRadius:8,padding:"13px 28px",fontSize:13,fontWeight:700,letterSpacing:"0.06em",textTransform:"uppercase",textDecoration:"none",display:"inline-block"}}>
+            VIEW GTM STRATEGY →
+          </a>
+        </div>
+
+        {/* Simulated scenario disclaimer */}
+        <div className="fade-in-2" style={{display:"inline-flex",alignItems:"center",gap:8,background:"rgba(217,119,6,0.08)",border:"1px solid rgba(217,119,6,0.3)",borderRadius:8,padding:"8px 16px",fontSize:11,color:S.amber,marginBottom:40,maxWidth:680,textAlign:"left"}}>
+          <span style={{fontSize:14,flexShrink:0}}>⚠</span>
+          <span><strong>Simulated GTM Scenario</strong> — Crooked Foot AI is a fictional B2B SaaS brand created as a portfolio demo vehicle. All campaigns, metrics, copy, and personas are illustrative examples of how this engine works for a real enterprise product.</span>
+        </div>
+
+        {/* Ticker */}
+        <div className="ticker-wrap" style={{background:S.text,padding:"12px 0",margin:"0 -36px -52px",overflow:"hidden"}}>
+          <div style={{whiteSpace:"nowrap",animation:"ticker 40s linear infinite",display:"inline-block",fontSize:10,fontWeight:700,letterSpacing:"0.12em",color:"rgba(255,255,255,0.6)",textTransform:"uppercase"}}>
+            {tickerText}
           </div>
-        ))}
+        </div>
       </div>
 
-      {/* Ticker */}
-      <div className="ticker-wrap" style={{overflow:"hidden",borderTop:`1px solid ${S.border}`,borderBottom:`1px solid ${S.border}`,padding:"10px 0",background:S.surface,marginLeft:-36,marginRight:-36,marginBottom:-60}}>
-        <div style={{whiteSpace:"nowrap",animation:"ticker 32s linear infinite",display:"inline-block",fontSize:10,fontWeight:700,letterSpacing:"0.15em",color:S.cyan}}>
-          {tickerText}
+      {/* About This Engine panel */}
+      <div style={{background:S.surface,borderBottom:`1px solid ${S.border}`,padding:"40px 36px"}}>
+        <div style={{maxWidth:1200,margin:"0 auto"}}>
+          <div style={{display:"flex",alignItems:"flex-start",gap:48,flexWrap:"wrap"}}>
+            {/* Left: About */}
+            <div style={{flex:"1 1 380px",minWidth:280}}>
+              <div style={{fontSize:10,fontWeight:700,letterSpacing:"0.12em",textTransform:"uppercase",color:S.cyan,marginBottom:10}}>ABOUT THIS ENGINE</div>
+              <div style={{fontSize:15,fontWeight:700,color:S.text,marginBottom:10,lineHeight:1.4}}>A working template for AI-accelerated GTM — built to show how I think, not just what I know.</div>
+              <div style={{fontSize:13,color:S.muted,lineHeight:1.75,marginBottom:16}}>
+                This engine is a live demonstration of AI-native GTM thinking. Select a target vertical, buyer persona, and campaign trigger to instantly generate a full campaign brief: LinkedIn ad copy, cold email sequences, landing page headlines, and CTAs — the kind of multi-channel asset package that typically takes a team hours to produce per segment.
+              </div>
+              <div style={{fontSize:13,color:S.muted,lineHeight:1.75}}>
+                The Content Engine layer goes further — paste source content (a transcript, article, or talking points) and it auto-configures topic, persona, vertical, and goal, then generates platform-native posts for LinkedIn, X, Instagram, and Newsletter simultaneously.
+              </div>
+            </div>
+            {/* Right: Stats */}
+            <div style={{flex:"1 1 300px",minWidth:260}}>
+              <div style={{fontSize:10,fontWeight:700,letterSpacing:"0.12em",textTransform:"uppercase",color:S.cyan,marginBottom:10}}>REAL RESULTS — ALEX MARING</div>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:16}}>
+                {stats.map((s,i)=>(
+                  <div key={i} style={{background:S.bg,border:`1px solid ${S.border}`,borderRadius:10,padding:"14px 16px"}}>
+                    <div style={{fontSize:22,fontWeight:900,color:S.cyan,letterSpacing:"-0.02em",lineHeight:1}}>{s.value}</div>
+                    <div style={{fontSize:11,fontWeight:700,color:S.text,marginTop:4,marginBottom:2}}>{s.label}</div>
+                    <div style={{fontSize:10,color:S.muted}}>{s.sub}</div>
+                  </div>
+                ))}
+              </div>
+              <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+                {["Salesforce","HubSpot","Claude AI","GA4 + GTM","LinkedIn Ads","Google Ads","Constant Contact","ZoomInfo","Cvent"].map(t=>(
+                  <span key={t} style={{fontSize:10,fontWeight:600,background:S.bg,border:`1px solid ${S.border}`,color:S.muted,padding:"3px 9px",borderRadius:100}}>{t}</span>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -2925,23 +2076,17 @@ function App() {
       <div className="section-divider" />
       <CampaignStudioSection />
       <div className="section-divider" />
-      <AdCreativeSection />
-      <div className="section-divider" />
-      <PipelineIntelligenceSection />
+      <GTMBlueprintSection />
       <div className="section-divider" />
       <ChannelPulseSection />
       <div className="section-divider" />
-      <GTMBlueprintSection />
-      <div className="section-divider" />
       <ContentEngineSection />
-      <div className="section-divider" />
-      <GTMSkillsSection />
 
       {/* FOOTER */}
       <div style={{borderTop:`1px solid ${S.border}`,padding:"22px 32px",display:"flex",alignItems:"center",justifyContent:"space-between",background:S.surface,flexWrap:"wrap",gap:12}}>
         <div style={{display:"flex",alignItems:"center",gap:12}}>
           <img src="./logo.png" alt="Crooked Foot AI" style={{width:28,height:28,borderRadius:6,objectFit:"cover"}} />
-          <span style={{fontSize:11,color:S.muted}}>Built by <strong style={{color:S.text}}>Alex Maring</strong> · B2B SaaS Growth Marketing Portfolio · April 2026</span>
+          <span style={{fontSize:11,color:S.muted}}>Built by <a href="https://www.linkedin.com/in/alex-maring-56b08759/" target="_blank" rel="noopener" style={{color:S.cyan,textDecoration:"none",fontWeight:700}}>Alex Maring</a> · B2B Demand Gen &amp; AI Marketing Portfolio · June 2026</span>
         </div>
         <div style={{display:"flex",gap:16,alignItems:"center"}}>
           <a href="mailto:ajmaring77@gmail.com" style={{fontSize:11,color:S.cyan,textDecoration:"none",fontWeight:600}}>ajmaring77@gmail.com</a>
