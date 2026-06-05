@@ -674,10 +674,10 @@ function ChannelPulseSection() {
             <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:20,flexWrap:"wrap",gap:12}}>
               <div>
                 <div style={{fontSize:13,fontWeight:700,color:S.text,marginBottom:4}}>Live B2B &amp; AI Signals — Hacker News Top Stories</div>
-                <div style={{fontSize:11,color:S.muted}}>Top B2B, AI &amp; SaaS stories from the last 24–48h · Hacker News API · Fetched live on page load · No API key</div>
+                <div style={{fontSize:11,color:S.muted}}>Top B2B, AI &amp; SaaS stories · updated live</div>
               </div>
               <div style={{display:"flex",alignItems:"center",gap:10}}>
-                {hnFetchedAt && <span style={{fontSize:10,color:S.muted}}>Fetched at {hnFetchedAt} · last 24–48h</span>}
+                {hnFetchedAt && <span style={{fontSize:10,color:S.muted}}>Updated {hnFetchedAt}</span>}
                 <button onClick={fetchHNSignals} disabled={hnLoading} style={{background:S.cyanDim,border:`1px solid ${S.cyanBorder}`,borderRadius:6,padding:"7px 16px",fontSize:11,fontWeight:700,color:S.cyan,cursor:hnLoading?"wait":"pointer"}}>
                   {hnLoading ? "Fetching…" : "↺ Refresh"}
                 </button>
@@ -760,8 +760,6 @@ function ChannelPulseSection() {
               </div>
             </div>
           </div>
-        )}
-
         )}
       </div>
     </div>
