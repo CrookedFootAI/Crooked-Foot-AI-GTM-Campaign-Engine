@@ -442,7 +442,17 @@ function ChannelPulseSection() {
   const [hnFetched,   setHnFetched]   = useState(false);
   const [hnFetchedAt, setHnFetchedAt] = useState(null);
 
-  const B2B_KW = ["\\b(ai|artificial intelligence)\\b","\\bsaas\\b","\\bstartup\\b","\\bsales\\b","\\bmarketing\\b","\\brevenue\\b","\\bcrm\\b","\\bautomation\\b","\\bb2b\\b","\\bgrowth\\b","\\benterprise\\b","\\bapi\\b","\\banalytics\\b","\\bllm\\b","\\bagent\\b","\\bworkflow\\b","\\bgtm\\b","\\bpipeline\\b","\\bmachine learning\\b","\\bproduct\\b","\\bfunding\\b","\\bsoftware\\b"];
+  const B2B_KW = [
+    "\\b(ai|artificial intelligence)\\b",
+    "\\bsaas\\b","\\bb2b\\b","\\benterprise sales\\b","\\benterprise software\\b",
+    "\\bsales\\b","\\bmarketing\\b","\\brevenue\\b","\\bcrm\\b",
+    "\\bautomation\\b","\\bworkflow\\b",
+    "\\bllm\\b","\\bmachine learning\\b","\\bgenai\\b","\\bgpt\\b","\\bai agent\\b",
+    "\\bgtm\\b","\\bpipeline\\b","\\bforecast\\b",
+    "\\brevops\\b","\\bdemand gen\\b","\\babm\\b","\\bsdr\\b","\\bsales intelligence\\b",
+    "\\boutbound\\b","\\bprospect\\b","\\bcold email\\b","\\bsales enablement\\b",
+    "\\bhubspot\\b","\\bsalesforce\\b","\\bgong\\b","\\bclari\\b","\\boutreach\\b","\\bsalesloft\\b",
+  ];
   const hnRelevant = t => B2B_KW.some(k => new RegExp(k,"i").test(t));
   const hnTimeAgo = ts => { const m=Math.floor((Date.now()/1000-ts)/60); return m<60?m+"m ago":m<1440?Math.floor(m/60)+"h ago":Math.floor(m/1440)+"d ago"; };
 
