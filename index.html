@@ -1800,20 +1800,124 @@ function personalizeCopy(content, vertical, persona) {
   return { ...content, hook, body, cta, meta };
 }
 
+/* ── Per-topic facts used by the platform-native generator ── */
+const TOPIC_FACTS = {
+  "94% Forecast Accuracy": {
+    stat: "94% forecast accuracy — 45 days before quarter close",
+    pain: "Most CROs don't know their forecast is wrong until it's too late",
+    mechanism: "14 behavioral deal signals — not self-reported CRM data",
+    proof: "Databricks, Caterpillar, and Honeywell",
+    hook_angle: "Your Q3 forecast is probably wrong. Here's why.",
+  },
+  "Gong vs. Revenue Intelligence": {
+    stat: "Predictive deal intelligence vs. reactive call recordings",
+    pain: "Conversation intelligence tells you what happened — not what's about to",
+    mechanism: "Signal-based deal prediction layered over any call tool you already use",
+    proof: "Enterprise sales teams running Gong alongside Crooked Foot AI",
+    hook_angle: "Gong tells you what was said. We tell you what happens next.",
+  },
+  "Pipeline Review in 8 Minutes": {
+    stat: "Full pipeline review in 8 minutes — not 3 hours",
+    pain: "Pipeline reviews eat half a sales leader's week and still miss the real risks",
+    mechanism: "AI-prioritized deal health surface — exceptions only, not every deal",
+    proof: "VP Sales teams across fintech, SaaS, and industrial B2B",
+    hook_angle: "Your pipeline review shouldn't take 3 hours.",
+  },
+  "28% Deal Velocity Gain": {
+    stat: "28% faster deal cycles in 90 days",
+    pain: "Deals stall because reps don't know which signals to act on next",
+    mechanism: "Early deal-risk detection combined with next-action scoring",
+    proof: "Caterpillar's enterprise B2B revenue team",
+    hook_angle: "Caterpillar cut their deal cycle by 28% in 90 days. Here's what changed.",
+  },
+  "CRM-Agnostic Architecture": {
+    stat: "Identical forecast accuracy on HubSpot, Pipedrive, and Salesforce",
+    pain: "40% of B2B teams don't run Salesforce — but every competitor was built for it",
+    mechanism: "Same model architecture and accuracy benchmarks regardless of CRM input",
+    proof: "HubSpot shops, Pipedrive teams, and mixed-CRM enterprise environments",
+    hook_angle: "40% of enterprise B2B doesn't run Salesforce. Most AI tools were built as if they do.",
+  },
+};
+
+/* ── Goal angles — how the framing shifts per goal ── */
+const GOAL_ANGLE = {
+  "Authority":   { open:"Here's what the data actually shows:", close:"The signal matters more than the story.", cta_verb:"Follow for more on" },
+  "Awareness":   { open:"Most revenue teams don't know this gap exists.", close:"Worth knowing — even if you're not in market yet.", cta_verb:"Share if this resonates with" },
+  "Conversion":  { open:"Here's what changes when teams make this switch:", close:"Book a 20-minute revenue architecture review →", cta_verb:"Book a demo to see" },
+  "Engagement":  { open:"Genuine question for revenue leaders:", close:"Drop your take below — I read every reply.", cta_verb:"Comment your take on" },
+  "Launch":      { open:"We just changed how this works:", close:"Early access is open — link in comments.", cta_verb:"Be first to see" },
+};
+
+/* ── Platform-native content generator — distinct format per platform ── */
+function generateForPlatform(topic, platform, goal) {
+  const f = TOPIC_FACTS[topic] || {
+    stat: topic, pain: "Revenue teams lose deals they should win",
+    mechanism: "AI-powered behavioral signal analysis", proof: "Enterprise B2B teams globally",
+    hook_angle: topic,
+  };
+  const g = GOAL_ANGLE[goal] || GOAL_ANGLE["Authority"];
+
+  if (platform === "X Thread") {
+    return {
+      hook: f.hook_angle,
+      body: `${f.hook_angle}\n\nThread 🧵\n\n1/ The problem:\n${f.pain}.\n\nMost teams have accepted this as normal. It's a system problem, not a people problem.\n\n2/ What actually predicts outcomes:\n${f.mechanism}.\n\nNot gut feel. Not extra pipeline reviews. Signals.\n\n3/ The result when you fix it:\n${f.stat}.\n\nNot a pilot. A repeatable model.\n\n4/ ${f.proof} validated this in the field.\n\nThey didn't change their CRM. They changed what they measured.\n\n${g.open}\n\n${g.close}`,
+      cta: goal === "Conversion" ? "DM me 'signal' — I'll walk you through the architecture." : `${g.cta_verb} ${topic.toLowerCase()}.`,
+      meta: "4-tweet thread · one idea per tweet · no hashtag spam · punchy close",
+    };
+  }
+
+  if (platform === "LinkedIn") {
+    return {
+      hook: f.hook_angle,
+      body: `${f.hook_angle}\n\n${g.open}\n\nThe problem isn't effort. It's architecture.\n\nMost revenue teams are measuring the wrong inputs. Not because they're bad at their jobs — because the system was built to collect data, not produce signal.\n\nWhat changes when you fix it:\n→ ${f.mechanism}\n→ ${f.stat}\n→ Validated with ${f.proof}\n\n${f.pain}.\n\nThat gap is solvable. And the teams closing it first are compounding the advantage every quarter.\n\n${g.close}`,
+      cta: goal === "Conversion" ? "Comment 'revenue' and I'll send you the full architecture breakdown." : `${g.cta_verb} ${topic.toLowerCase()}.`,
+      meta: "~200 words · strong opener · short paragraphs · lesson/result framing · no hashtag wall at the end",
+    };
+  }
+
+  if (platform === "TikTok Script") {
+    return {
+      hook: `[0:00–0:03] "${f.hook_angle}"`,
+      body: `[0:00–0:03] HOOK\nOn-screen text: "${f.hook_angle}"\nVoiceover: "${f.hook_angle}"\n\n[0:03–0:18] THE PROBLEM\n"Here's what's actually happening: ${f.pain}. And most teams don't even know it."\nVisual: side-by-side — what teams measure vs. what actually predicts close\n\n[0:18–0:38] THE MECHANISM\n"The fix is ${f.mechanism}. Not more meetings. Not more CRM hygiene."\nVisual: signal dashboard — deal health scores updating in real time\n\n[0:38–0:52] THE PROOF\n"${f.proof} used this to achieve ${f.stat}."\nVisual: before/after numbers on screen — big font, clean background\n\n[0:52–0:60] CTA\n"${goal === "Conversion" ? "Link in bio — book a 20-minute walkthrough." : "Follow for more on what actually moves B2B revenue."}"\nVisual: logo + single stat + CTA text`,
+      cta: goal === "Conversion" ? "Link in bio — 20-min revenue architecture call" : "Follow + comment your biggest pipeline challenge",
+      meta: "~60s · hook must land in first 3s · script tightly to visuals · one CTA only · no talking head — demo footage wins",
+    };
+  }
+
+  if (platform === "YouTube Outline") {
+    return {
+      hook: `${f.hook_angle} [Full Breakdown for Revenue Leaders]`,
+      body: `TITLE: ${f.hook_angle} — What Revenue Leaders Need to Know\n\n[0:00–0:30] HOOK\nOpen with the outcome: ${f.stat}\n"Here's exactly how — and why most teams are still getting this wrong."\n\n[0:30–2:30] THE PROBLEM\n• ${f.pain}\n• Walk through a typical broken process — make it feel familiar\n• Show the gap between what teams measure and what actually predicts deals\n• Build empathy before you build the case\n\n[2:30–5:30] THE MECHANISM\n• Explain: ${f.mechanism}\n• Screen recording or live demo of signal dashboard\n• Break down 3–4 specific signal types and what each predicts\n• Keep it concrete — show the number, not just the concept\n\n[5:30–7:30] THE PROOF\n• ${f.proof} case study — before and after\n• ${f.stat}\n• What specifically changed on the team (behavior, not just output)\n\n[7:30–8:30] HOW TO AUDIT YOUR STACK\n• 3 questions to ask about your current revenue intelligence setup\n• What to keep, what to replace, what to layer on\n\n[8:30–9:00] CTA\n"${goal === "Conversion" ? "Link in the description — book a revenue architecture review." : "Subscribe for weekly revenue intelligence breakdowns."}"\nTeaser for next video topic`,
+      cta: goal === "Conversion" ? "Link in description — book a revenue architecture review" : "Subscribe + comment your biggest pipeline challenge",
+      meta: "~8–10 min · show result in first 30s · chapter markers in description · refresh visual every 20–30s · B-roll over talking head when possible",
+    };
+  }
+
+  if (platform === "Newsletter") {
+    return {
+      hook: `The ${topic} Problem Nobody's Talking About`,
+      body: `The ${topic} Problem Nobody's Talking About\n\n${g.open}\n\n---\n\nWHAT'S ACTUALLY HAPPENING\n\n${f.pain}. Most revenue teams have accepted this as the cost of doing business. It isn't — it's an architecture problem.\n\nAnd architecture problems have solutions.\n\n---\n\nTHE MECHANISM\n\n${f.mechanism}. The math is simple once you see it. The hard part is getting the system in place to see it.\n\nHere's what that looks like in practice:\n→ Move from input metrics to behavioral signals\n→ Remove self-reported data from the forecast equation\n→ Score deals on what's actually happening, not what reps say is happening\n\n---\n\nTHE RESULT\n\n${f.stat}. Validated with ${f.proof}.\n\nThis isn't a pilot result. It's a model. Repeatable across deal types, team sizes, and verticals.\n\n---\n\n${g.close}`,
+      cta: goal === "Conversion" ? "Reply to this email — I'll send the full architecture breakdown." : "Hit reply with your take — I read every one.",
+      meta: "~350 words · one clear angle per issue · skimmable section headers · strong opening line · reply CTA drives highest engagement",
+    };
+  }
+
+  return {
+    hook: f.hook_angle,
+    body: `[${platform}]\n\n${f.pain}.\n\n${f.mechanism}.\n\nResult: ${f.stat}\n\nValidated with ${f.proof}.`,
+    cta: `${g.cta_verb} ${topic.toLowerCase()}.`,
+    meta: `Platform-native draft for ${platform} · ${goal} goal`,
+  };
+}
+
 function getContentEngine(topic, platform, goal) {
   const key = `${topic}|${platform}|${goal}`;
   if (CE_CONTENT[key]) return CE_CONTENT[key];
-  // Smart fallback for unmapped combinations
-  const topicKey = Object.keys(CE_CONTENT).find(k => k.startsWith(`${topic}|${platform}`));
-  if (topicKey) return CE_CONTENT[topicKey];
-  const platformKey = Object.keys(CE_CONTENT).find(k => k.startsWith(`${topic}|`));
-  if (platformKey) return CE_CONTENT[platformKey];
-  return {
-    hook: `How ${topic} changes the game for B2B revenue teams`,
-    body: `[${platform} content for topic: "${topic}" — goal: ${goal}]\n\nThis combination would be generated using Crooked Foot AI's content engine. The core angle: ${topic} is one of the most underleveraged signals in enterprise B2B revenue intelligence.\n\nAdd this key to CE_CONTENT to fully populate this variant:\n"${topic}|${platform}|${goal}"`,
-    cta: `Follow for more on ${topic}`,
-    meta: `Add key "${topic}|${platform}|${goal}" to CE_CONTENT for a fully written draft.`,
-  };
+  // Same topic + platform but different goal
+  const sameTopicPlatform = Object.keys(CE_CONTENT).find(k => k.startsWith(`${topic}|${platform}|`));
+  if (sameTopicPlatform) return CE_CONTENT[sameTopicPlatform];
+  // No hardcoded variant — generate platform-native content
+  return generateForPlatform(topic, platform, goal);
 }
 
 const PLATFORM_META = {
