@@ -510,51 +510,39 @@ function ChannelPulseSection() {
     { name:"Partner / Integration Co-Marketing", pct:6, color:"#002030" },
   ];
 
-  const leaders = [
-    { name:"Kyle Coleman", title:"CMO", company:"Copy.ai", followers:"52K", tags:["Revenue Leadership","PLG","B2B SaaS"], signal:"green", signalText:"Revenue Intelligence Advocate",
-      recentPosts:[
-        { date:"Apr 5", text:"The CRO of the future runs on signal, not gut. The ones still building forecasts from weekly rep check-ins are going to be replaced by AI-native revenue teams within 3 years." },
-        { date:"Mar 28", text:"Stop buying tools. Start buying outcomes. The best revenue intelligence platform isn't the one with the best demo — it's the one that surfaces the right signal at the right time." },
-      ]
+  // Real practitioners in AI & B2B SaaS — topicKW used to match live HN signals
+  const LEADERS = [
+    { name:"Kyle Coleman",   title:"CMO",               company:"Copy.ai",    followers:"58K", signal:"green", signalText:"AI × Revenue",
+      tags:["AI Sales Automation","Revenue Intelligence","GTM"],
+      topicKW:["copy.ai","ai sales","revenue intelligence","sales automation","gtm ai"],
     },
-    { name:"Sam Jacobs", title:"Founder", company:"Pavilion", followers:"89K", tags:["Revenue Leadership","CRO Community","GTM Strategy"], signal:"green", signalText:"GTM Authority",
-      recentPosts:[
-        { date:"Apr 7", text:"The 2026 CRO is a data scientist who can sell. AI is eliminating the excuses for forecast misses — and the boards are starting to expect it." },
-        { date:"Apr 1", text:"The platforms that will win in revenue intelligence are the ones that can close the loop between signal detection and action. Recording is table stakes now." },
-      ]
+    { name:"Dharmesh Shah",  title:"Co-Founder & CTO",  company:"HubSpot",    followers:"430K", signal:"green", signalText:"SaaS + AI Authority",
+      tags:["SaaS","AI","CRM","Inbound"],
+      topicKW:["hubspot","saas ai","crm","inbound marketing","ai crm"],
     },
-    { name:"Jen Allen-Knuth", title:"Community Growth", company:"Lavender", followers:"47K", tags:["Sales Development","Cold Email","AI SDR"], signal:"amber", signalText:"Thought Leader",
-      recentPosts:[
-        { date:"Apr 4", text:"AI in the SDR function is moving faster than any other part of the revenue org. The reps who win in 2026 know how to orchestrate AI signals — not just respond to them." },
-        { date:"Mar 25", text:"The conversation intelligence vs. revenue intelligence debate is real. One tells you what happened. The other tells you what to do next. Know the difference." },
-      ]
+    { name:"Jason Lemkin",   title:"Founder",            company:"SaaStr",     followers:"74K", signal:"green", signalText:"B2B SaaS Authority",
+      tags:["SaaS","ARR Growth","B2B Community"],
+      topicKW:["saastr","saas","arr","b2b saas","saas funding"],
     },
-    { name:"Chris Orlob", title:"CEO", company:"PClub.io", followers:"68K", tags:["Sales Excellence","CRO","Pipeline"], signal:"green", signalText:"Strong Advocate",
-      recentPosts:[
-        { date:"Apr 6", text:"Pipeline is a prediction, not a report. The best revenue teams I know are using AI to build the prediction — and using the CRM as the audit trail, not the source of truth." },
-        { date:"Mar 30", text:"The forecast accuracy gap between AI-native revenue teams and everyone else is going to be 25–30 percentage points by EOY 2026. This isn't a prediction — it's already happening." },
-      ]
+    { name:"Kipp Bodnar",    title:"CMO",                company:"HubSpot",    followers:"38K", signal:"amber", signalText:"B2B Marketing Voice",
+      tags:["Demand Gen","B2B Marketing","Content Strategy"],
+      topicKW:["b2b marketing","demand generation","content marketing","marketing ai"],
     },
-    { name:"Carolyn Lowe", title:"VP Revenue Marketing", company:"Ross Video", followers:"22K", tags:["Demand Gen","Revenue Marketing","ABM"], signal:"amber", signalText:"Potential Ally",
-      recentPosts:[
-        { date:"Apr 3", text:"Revenue marketing isn't about MQL volume anymore. It's about deal signal quality. The marketers who understand pipeline risk are the ones getting a seat at the revenue table." },
-        { date:"Mar 22", text:"Watching the revenue intelligence space evolve fast. The tools that connect marketing signal to deal health are going to redefine how we measure marketing impact." },
-      ]
+    { name:"Adam Robinson",  title:"CEO",                company:"RB2B",       followers:"26K", signal:"amber", signalText:"Pipeline Growth",
+      tags:["B2B SaaS","Pipeline","Retargeting"],
+      topicKW:["b2b pipeline","retargeting","sales pipeline","lead generation"],
     },
-    { name:"Adam Schoenfeld", title:"Co-Founder", company:"Keyplay", followers:"18K", tags:["ICP Intelligence","Ideal Customer Profile","RevOps"], signal:"amber", signalText:"ICP Intelligence Voice",
-      recentPosts:[
-        { date:"Apr 2", text:"The ICP is not a spreadsheet. It's a signal. The best GTM teams are building ICPs from deal outcome data — not persona guesses from 2021." },
-        { date:"Mar 19", text:"Revenue intelligence without ICP precision is just data. The platforms that combine account fit + deal signal are the ones changing how enterprise revenue works." },
-      ]
+    { name:"Becc Holland",   title:"Founder",            company:"Flip the Script", followers:"44K", signal:"amber", signalText:"Outbound & SDR",
+      tags:["Outbound Sales","SDR","Cold Outreach"],
+      topicKW:["outbound sales","sdr","cold email","sales development","cold calling"],
     },
   ];
-
   const sigC = { green:S.green, amber:S.amber, red:S.red };
 
   return (
     <div id="channel-pulse" style={{background:S.surface,padding:"72px 36px"}}>
       <div style={{maxWidth:1200,margin:"0 auto"}}>
-        <SectionHeader number="03" accent="CHANNEL PULSE" title="Market Intelligence Dashboard" sub="Live B2B and AI market signals via Hacker News API — no key required. Plus: simulated competitive positioning, channel allocation, and thought leader mapping to illustrate how this section would look with a real product." />
+        <SectionHeader number="03" accent="CHANNEL PULSE" title="Market Intelligence Dashboard" sub="Live B2B and AI market signals via Hacker News API — no key required. Competitive positioning, channel allocation, and real practitioners in the AI & B2B SaaS space with live trending signals matched to their topic area." />
 
         <SubTab tabs={["LIVE SIGNALS","COMPETITOR GRID","CHANNEL MIX","THOUGHT LEADERS"]} active={subTab} onSelect={setSubTab} />
 
@@ -624,48 +612,102 @@ function ChannelPulseSection() {
         )}
 
         {subTab==="THOUGHT LEADERS" && (
-          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(300px,1fr))",gap:16}}>
-            {leaders.map(l=>(
-              <div key={l.name} className="card-hover" style={{background:S.elevated,border:`1px solid ${S.border}`,borderRadius:12,padding:24,boxShadow:"0 1px 4px rgba(0,0,0,0.05)",display:"flex",flexDirection:"column"}}>
-                <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:12}}>
-                  <div style={{display:"flex",alignItems:"center",gap:12}}>
-                    <div style={{width:44,height:44,background:S.cyanDim,border:`1px solid ${S.cyanBorder}`,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,fontWeight:800,color:S.cyan,flexShrink:0}}>
-                      {l.name.split(" ").map(w=>w[0]).slice(0,2).join("")}
-                    </div>
-                    <div>
-                      <div style={{fontSize:14,fontWeight:700,color:S.text,lineHeight:1.2}}>{l.name}</div>
-                      <div style={{fontSize:11,color:S.muted,marginTop:1}}>{l.title}</div>
-                      <div style={{display:"inline-flex",alignItems:"center",gap:4,marginTop:3,fontSize:10,fontWeight:600,background:"rgba(0,0,0,0.04)",border:"1px solid rgba(0,0,0,0.08)",color:S.muted,padding:"2px 8px",borderRadius:100}}>
-                        {l.company}
-                      </div>
-                    </div>
-                  </div>
-                  <div style={{display:"inline-flex",alignItems:"center",gap:5,fontSize:9,fontWeight:700,letterSpacing:"0.07em",textTransform:"uppercase",background:`${sigC[l.signal]}15`,border:`1px solid ${sigC[l.signal]}40`,color:sigC[l.signal],padding:"3px 9px",borderRadius:100,whiteSpace:"nowrap",flexShrink:0,marginLeft:8}}>
-                    <span style={{width:5,height:5,borderRadius:"50%",background:sigC[l.signal],display:"inline-block"}} />
-                    {l.signalText}
-                  </div>
-                </div>
-                <div style={{fontSize:11,fontWeight:600,color:S.light,marginBottom:10}}>{l.followers} followers</div>
-                <div style={{display:"flex",gap:5,flexWrap:"wrap",marginBottom:14}}>
-                  {l.tags.map(tag=>(
-                    <span key={tag} style={{fontSize:9,fontWeight:600,background:S.cyanDim,border:`1px solid ${S.cyanBorder}`,color:S.cyan,padding:"2px 9px",borderRadius:100}}>{tag}</span>
-                  ))}
-                </div>
-                <div style={{borderTop:`1px solid ${S.border}`,paddingTop:14,marginTop:"auto"}}>
-                  <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:10}}>
-                    <span style={{fontSize:10,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",color:S.cyan}}>Recent Posts</span>
-                  </div>
-                  <div style={{display:"flex",flexDirection:"column",gap:10}}>
-                    {l.recentPosts.map((post,i)=>(
-                      <div key={i} style={{background:S.surface,border:`1px solid ${S.border}`,borderRadius:8,padding:"10px 12px"}}>
-                        <div style={{fontSize:9,fontWeight:700,color:S.light,textTransform:"uppercase",letterSpacing:"0.06em",marginBottom:5}}>{post.date}</div>
-                        <div style={{fontSize:11,color:S.muted,lineHeight:1.55}}>{post.text}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+          <div>
+            {/* Header row — mirrors LIVE SIGNALS pattern */}
+            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:20,flexWrap:"wrap",gap:12}}>
+              <div>
+                <div style={{fontSize:13,fontWeight:700,color:S.text,marginBottom:4}}>Top Voices in AI &amp; B2B SaaS</div>
+                <div style={{fontSize:11,color:S.muted}}>Real practitioners — live trending signals matched to their topic area</div>
               </div>
-            ))}
+              <div style={{display:"flex",alignItems:"center",gap:10}}>
+                {hnFetchedAt && <span style={{fontSize:10,color:S.muted}}>Signals updated {hnFetchedAt}</span>}
+                <button onClick={fetchHNSignals} disabled={hnLoading} style={{background:S.cyanDim,border:`1px solid ${S.cyanBorder}`,borderRadius:6,padding:"7px 16px",fontSize:11,fontWeight:700,color:S.cyan,cursor:hnLoading?"wait":"pointer"}}>
+                  {hnLoading ? "Fetching…" : "↺ Refresh Signals"}
+                </button>
+              </div>
+            </div>
+
+            {/* Loading state */}
+            {hnLoading && (
+              <div style={{textAlign:"center",padding:"48px 20px",color:S.muted,background:S.surface,borderRadius:10,border:`1px solid ${S.border}`}}>
+                <div style={{fontSize:13,fontWeight:700,color:S.text,marginBottom:6}}>Fetching live signals…</div>
+                <div style={{fontSize:11,color:S.light}}>Matching HN stories to each leader's topic area</div>
+              </div>
+            )}
+
+            {/* Cards grid */}
+            {!hnLoading && (
+              <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(300px,1fr))",gap:16}}>
+                {LEADERS.map(l => {
+                  // Match a live HN story to this leader's topic keywords
+                  const liveStory = hnStories.find(s =>
+                    l.topicKW.some(kw => new RegExp(kw.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),"i").test(s.title))
+                  );
+                  const sc = sigC[l.signal];
+                  return (
+                    <div key={l.name} className="card-hover" style={{background:S.elevated,border:`1px solid ${S.border}`,borderRadius:12,padding:24,boxShadow:"0 1px 4px rgba(0,0,0,0.05)",display:"flex",flexDirection:"column"}}>
+
+                      {/* Avatar + name + signal badge */}
+                      <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:12}}>
+                        <div style={{display:"flex",alignItems:"center",gap:12}}>
+                          <div style={{width:44,height:44,background:S.cyanDim,border:`1px solid ${S.cyanBorder}`,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,fontWeight:800,color:S.cyan,flexShrink:0}}>
+                            {l.name.split(" ").map(w=>w[0]).slice(0,2).join("")}
+                          </div>
+                          <div>
+                            <div style={{fontSize:14,fontWeight:700,color:S.text,lineHeight:1.2}}>{l.name}</div>
+                            <div style={{fontSize:11,color:S.muted,marginTop:1}}>{l.title}</div>
+                            <div style={{display:"inline-flex",alignItems:"center",gap:4,marginTop:3,fontSize:10,fontWeight:600,background:"rgba(0,0,0,0.04)",border:"1px solid rgba(0,0,0,0.08)",color:S.muted,padding:"2px 8px",borderRadius:100}}>
+                              {l.company}
+                            </div>
+                          </div>
+                        </div>
+                        <div style={{display:"inline-flex",alignItems:"center",gap:5,fontSize:9,fontWeight:700,letterSpacing:"0.07em",textTransform:"uppercase",background:`${sc}15`,border:`1px solid ${sc}40`,color:sc,padding:"3px 9px",borderRadius:100,whiteSpace:"nowrap",flexShrink:0,marginLeft:8}}>
+                          <span style={{width:5,height:5,borderRadius:"50%",background:sc,display:"inline-block"}} />
+                          {l.signalText}
+                        </div>
+                      </div>
+
+                      {/* Followers + tags */}
+                      <div style={{fontSize:11,fontWeight:600,color:S.light,marginBottom:10}}>{l.followers} LinkedIn followers</div>
+                      <div style={{display:"flex",gap:5,flexWrap:"wrap",marginBottom:14}}>
+                        {l.tags.map(tag=>(
+                          <span key={tag} style={{fontSize:9,fontWeight:600,background:S.cyanDim,border:`1px solid ${S.cyanBorder}`,color:S.cyan,padding:"2px 9px",borderRadius:100}}>{tag}</span>
+                        ))}
+                      </div>
+
+                      {/* Live signal section */}
+                      <div style={{borderTop:`1px solid ${S.border}`,paddingTop:14,marginTop:"auto"}}>
+                        <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:10}}>
+                          <span style={{width:6,height:6,borderRadius:"50%",background:liveStory?S.green:"#D1D5DB",display:"inline-block",flexShrink:0}} />
+                          <span style={{fontSize:10,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",color:liveStory?S.green:S.muted}}>
+                            {liveStory ? "Live Signal — Trending Now" : "No live signal right now"}
+                          </span>
+                        </div>
+                        {liveStory ? (
+                          <a href={liveStory.url || `https://news.ycombinator.com/item?id=${liveStory.id}`} target="_blank" rel="noopener"
+                            style={{display:"block",background:S.surface,border:`1px solid ${S.border}`,borderRadius:8,padding:"10px 12px",textDecoration:"none",transition:"border-color 0.15s"}}
+                            onMouseOver={e=>e.currentTarget.style.borderColor=S.cyan}
+                            onMouseOut={e=>e.currentTarget.style.borderColor=S.border}>
+                            <div style={{fontSize:12,fontWeight:600,color:S.text,lineHeight:1.45,marginBottom:5}}>{liveStory.title}</div>
+                            <div style={{display:"flex",gap:8,flexWrap:"wrap",alignItems:"center"}}>
+                              <span style={{fontSize:10,fontWeight:700,color:S.cyan}}>{liveStory.score} pts</span>
+                              <span style={{color:S.border,fontSize:10}}>·</span>
+                              <span style={{fontSize:10,color:S.muted}}>{hnTimeAgo(liveStory.time)}</span>
+                              <span style={{color:S.border,fontSize:10}}>·</span>
+                              <span style={{fontSize:10,color:S.muted}}>{liveStory.descendants||0} comments</span>
+                            </div>
+                          </a>
+                        ) : (
+                          <div style={{background:S.surface,border:`1px dashed ${S.border}`,borderRadius:8,padding:"10px 12px"}}>
+                            <div style={{fontSize:11,color:S.light,lineHeight:1.55}}>Refresh signals to find trending HN discussions in this space.</div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
 
