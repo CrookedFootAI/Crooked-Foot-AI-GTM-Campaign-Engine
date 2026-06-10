@@ -97,7 +97,12 @@
 
     /* CTA grid */
     .cta-row { flex-direction: column !important; align-items: stretch !important; }
-    .cta-row a { text-align: center !important; }
+    .cta-row a { text-align: center !important; justify-content: center !important; }
+
+    /* Identity bar — center on wrap */
+    .identity-bar { justify-content: center !important; }
+    .identity-bar-text { display: none !important; }
+    .identity-bar-linkedin { width: 100% !important; justify-content: center !important; }
   }
 
   @media (max-width: 480px) {
@@ -2173,15 +2178,15 @@ function Hero() {
   return (
     <div>
       {/* Portfolio identity bar */}
-      <div style={{background:S.text,padding:"10px 36px",display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:8}}>
-        <div style={{display:"flex",alignItems:"center",gap:12}}>
+      <div className="identity-bar" style={{background:S.text,padding:"10px 36px",display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:8}}>
+        <div className="identity-bar-text" style={{display:"flex",alignItems:"center",gap:12}}>
           <span style={{fontSize:11,fontWeight:700,color:"rgba(255,255,255,0.5)",letterSpacing:"0.12em",textTransform:"uppercase"}}>AI Marketing Portfolio</span>
           <span style={{color:"rgba(255,255,255,0.2)"}}>·</span>
           <span style={{fontSize:12,fontWeight:800,color:"#fff",letterSpacing:"-0.01em"}}>Alex Maring</span>
           <span style={{color:"rgba(255,255,255,0.2)"}}>·</span>
           <span style={{fontSize:10,color:"rgba(255,255,255,0.5)"}}>B2B Demand Gen · Marketing Automation · AI Workflows</span>
         </div>
-        <a href="https://www.linkedin.com/in/alex-maring-56b08759/" target="_blank" rel="noopener" style={{display:"flex",alignItems:"center",gap:7,background:"#0A66C2",color:"#fff",borderRadius:6,padding:"6px 14px",fontSize:11,fontWeight:700,textDecoration:"none",flexShrink:0}}>
+        <a href="https://www.linkedin.com/in/alex-maring-56b08759/" target="_blank" rel="noopener" className="identity-bar-linkedin" style={{display:"flex",alignItems:"center",gap:7,background:"#0A66C2",color:"#fff",borderRadius:6,padding:"6px 14px",fontSize:11,fontWeight:700,textDecoration:"none",flexShrink:0}}>
           <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
           Connect on LinkedIn
         </a>
