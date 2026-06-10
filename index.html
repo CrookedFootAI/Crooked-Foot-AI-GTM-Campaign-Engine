@@ -510,31 +510,31 @@ function ChannelPulseSection() {
     { name:"Partner / Integration Co-Marketing", pct:6, color:"#002030" },
   ];
 
-  // Real practitioners in AI & B2B SaaS — topicKW used to match live HN signals
+  // Real practitioners in AI & B2B SaaS — topicKW matches single/short terms likely in HN titles
   const LEADERS = [
     { name:"Kyle Coleman",   title:"CMO",               company:"Copy.ai",    followers:"58K", signal:"green", signalText:"AI × Revenue",
       tags:["AI Sales Automation","Revenue Intelligence","GTM"],
-      topicKW:["copy.ai","ai sales","revenue intelligence","sales automation","gtm ai"],
+      topicKW:["sales","revenue","gtm","forecast","pipeline","crm"],
     },
     { name:"Dharmesh Shah",  title:"Co-Founder & CTO",  company:"HubSpot",    followers:"430K", signal:"green", signalText:"SaaS + AI Authority",
       tags:["SaaS","AI","CRM","Inbound"],
-      topicKW:["hubspot","saas ai","crm","inbound marketing","ai crm"],
+      topicKW:["hubspot","llm","machine learning","saas","ai agent","genai"],
     },
     { name:"Jason Lemkin",   title:"Founder",            company:"SaaStr",     followers:"74K", signal:"green", signalText:"B2B SaaS Authority",
       tags:["SaaS","ARR Growth","B2B Community"],
-      topicKW:["saastr","saas","arr","b2b saas","saas funding"],
+      topicKW:["saastr","b2b","enterprise sales","revops","sales intelligence"],
     },
     { name:"Kipp Bodnar",    title:"CMO",                company:"HubSpot",    followers:"38K", signal:"amber", signalText:"B2B Marketing Voice",
       tags:["Demand Gen","B2B Marketing","Content Strategy"],
-      topicKW:["b2b marketing","demand generation","content marketing","marketing ai"],
+      topicKW:["marketing","demand gen","abm","sales enablement","hubspot"],
     },
     { name:"Adam Robinson",  title:"CEO",                company:"RB2B",       followers:"26K", signal:"amber", signalText:"Pipeline Growth",
       tags:["B2B SaaS","Pipeline","Retargeting"],
-      topicKW:["b2b pipeline","retargeting","sales pipeline","lead generation"],
+      topicKW:["pipeline","outbound","prospect","lead","automation"],
     },
     { name:"Becc Holland",   title:"Founder",            company:"Flip the Script", followers:"44K", signal:"amber", signalText:"Outbound & SDR",
       tags:["Outbound Sales","SDR","Cold Outreach"],
-      topicKW:["outbound sales","sdr","cold email","sales development","cold calling"],
+      topicKW:["outbound","sdr","cold email","workflow","salesforce","salesloft"],
     },
   ];
   const sigC = { green:S.green, amber:S.amber, red:S.red };
