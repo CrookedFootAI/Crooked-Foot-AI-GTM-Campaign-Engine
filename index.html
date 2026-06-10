@@ -514,27 +514,27 @@ function ChannelPulseSection() {
   const LEADERS = [
     { name:"Kyle Coleman",   title:"CMO",               company:"Copy.ai",    followers:"58K", signal:"green", signalText:"AI × Revenue",
       tags:["AI Sales Automation","Revenue Intelligence","GTM"],
-      topicKW:["sales","revenue","gtm","forecast","pipeline","crm"],
+      topicKW:["sales","revenue","gtm","forecast","pipeline","crm","ai","llm"],
     },
     { name:"Dharmesh Shah",  title:"Co-Founder & CTO",  company:"HubSpot",    followers:"430K", signal:"green", signalText:"SaaS + AI Authority",
       tags:["SaaS","AI","CRM","Inbound"],
-      topicKW:["hubspot","llm","machine learning","saas","ai agent","genai"],
+      topicKW:["hubspot","machine learning","saas","genai","gpt","llm","ai"],
     },
     { name:"Jason Lemkin",   title:"Founder",            company:"SaaStr",     followers:"74K", signal:"green", signalText:"B2B SaaS Authority",
       tags:["SaaS","ARR Growth","B2B Community"],
-      topicKW:["saastr","b2b","enterprise sales","revops","sales intelligence"],
+      topicKW:["saastr","b2b","revops","saas","enterprise","ai","llm"],
     },
     { name:"Kipp Bodnar",    title:"CMO",                company:"HubSpot",    followers:"38K", signal:"amber", signalText:"B2B Marketing Voice",
       tags:["Demand Gen","B2B Marketing","Content Strategy"],
-      topicKW:["marketing","demand gen","abm","sales enablement","hubspot"],
+      topicKW:["marketing","demand gen","abm","hubspot","automation","ai","llm"],
     },
     { name:"Adam Robinson",  title:"CEO",                company:"RB2B",       followers:"26K", signal:"amber", signalText:"Pipeline Growth",
       tags:["B2B SaaS","Pipeline","Retargeting"],
-      topicKW:["pipeline","outbound","prospect","lead","automation"],
+      topicKW:["pipeline","outbound","workflow","b2b","automation","ai","llm"],
     },
     { name:"Becc Holland",   title:"Founder",            company:"Flip the Script", followers:"44K", signal:"amber", signalText:"Outbound & SDR",
       tags:["Outbound Sales","SDR","Cold Outreach"],
-      topicKW:["outbound","sdr","cold email","workflow","salesforce","salesloft"],
+      topicKW:["outbound","sdr","cold email","salesforce","salesloft","ai","sales"],
     },
   ];
   const sigC = { green:S.green, amber:S.amber, red:S.red };
@@ -638,11 +638,18 @@ function ChannelPulseSection() {
             {/* Cards grid */}
             {!hnLoading && (
               <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(300px,1fr))",gap:16}}>
-                {LEADERS.map(l => {
-                  // Match a live HN story to this leader's topic keywords
-                  const liveStory = hnStories.find(s =>
-                    l.topicKW.some(kw => new RegExp(kw.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),"i").test(s.title))
+                {LEADERS.map((l, leaderIdx) => {
+                  const escape = kw => kw.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+                  // 1st choice: story whose title contains one of this leader's topic keywords
+                  const specificStory = hnStories.find(s =>
+                    l.topicKW.some(kw => new RegExp(escape(kw),"i").test(s.title))
                   );
+                  // 2nd choice: round-robin from fetched stories so every card shows something
+                  const fallbackStory = !specificStory && hnStories.length > 0
+                    ? hnStories[leaderIdx % hnStories.length]
+                    : null;
+                  const displayStory = specificStory || fallbackStory;
+                  const isSpecific   = !!specificStory;
                   const sc = sigC[l.signal];
                   return (
                     <div key={l.name} className="card-hover" style={{background:S.elevated,border:`1px solid ${S.border}`,borderRadius:12,padding:24,boxShadow:"0 1px 4px rgba(0,0,0,0.05)",display:"flex",flexDirection:"column"}}>
@@ -678,28 +685,28 @@ function ChannelPulseSection() {
                       {/* Live signal section */}
                       <div style={{borderTop:`1px solid ${S.border}`,paddingTop:14,marginTop:"auto"}}>
                         <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:10}}>
-                          <span style={{width:6,height:6,borderRadius:"50%",background:liveStory?S.green:"#D1D5DB",display:"inline-block",flexShrink:0}} />
-                          <span style={{fontSize:10,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",color:liveStory?S.green:S.muted}}>
-                            {liveStory ? "Live Signal — Trending Now" : "No live signal right now"}
+                          <span style={{width:6,height:6,borderRadius:"50%",background:displayStory?(isSpecific?S.green:S.amber):"#D1D5DB",display:"inline-block",flexShrink:0}} />
+                          <span style={{fontSize:10,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",color:displayStory?(isSpecific?S.green:S.amber):S.muted}}>
+                            {displayStory ? (isSpecific ? "Live Signal — Trending Now" : "Trending in B2B / AI") : "No live signal right now"}
                           </span>
                         </div>
-                        {liveStory ? (
-                          <a href={liveStory.url || `https://news.ycombinator.com/item?id=${liveStory.id}`} target="_blank" rel="noopener"
+                        {displayStory ? (
+                          <a href={displayStory.url || `https://news.ycombinator.com/item?id=${displayStory.id}`} target="_blank" rel="noopener"
                             style={{display:"block",background:S.surface,border:`1px solid ${S.border}`,borderRadius:8,padding:"10px 12px",textDecoration:"none",transition:"border-color 0.15s"}}
                             onMouseOver={e=>e.currentTarget.style.borderColor=S.cyan}
                             onMouseOut={e=>e.currentTarget.style.borderColor=S.border}>
-                            <div style={{fontSize:12,fontWeight:600,color:S.text,lineHeight:1.45,marginBottom:5}}>{liveStory.title}</div>
+                            <div style={{fontSize:12,fontWeight:600,color:S.text,lineHeight:1.45,marginBottom:5}}>{displayStory.title}</div>
                             <div style={{display:"flex",gap:8,flexWrap:"wrap",alignItems:"center"}}>
-                              <span style={{fontSize:10,fontWeight:700,color:S.cyan}}>{liveStory.score} pts</span>
+                              <span style={{fontSize:10,fontWeight:700,color:S.cyan}}>{displayStory.score} pts</span>
                               <span style={{color:S.border,fontSize:10}}>·</span>
-                              <span style={{fontSize:10,color:S.muted}}>{hnTimeAgo(liveStory.time)}</span>
+                              <span style={{fontSize:10,color:S.muted}}>{hnTimeAgo(displayStory.time)}</span>
                               <span style={{color:S.border,fontSize:10}}>·</span>
-                              <span style={{fontSize:10,color:S.muted}}>{liveStory.descendants||0} comments</span>
+                              <span style={{fontSize:10,color:S.muted}}>{displayStory.descendants||0} comments</span>
                             </div>
                           </a>
                         ) : (
                           <div style={{background:S.surface,border:`1px dashed ${S.border}`,borderRadius:8,padding:"10px 12px"}}>
-                            <div style={{fontSize:11,color:S.light,lineHeight:1.55}}>Refresh signals to find trending HN discussions in this space.</div>
+                            <div style={{fontSize:11,color:S.light,lineHeight:1.55}}>Click Refresh Signals above to load live discussions.</div>
                           </div>
                         )}
                       </div>
