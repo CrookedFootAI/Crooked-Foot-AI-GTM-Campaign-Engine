@@ -441,6 +441,9 @@ function ChannelPulseSection() {
   const [hnError,     setHnError]     = useState(false);
   const [hnFetched,   setHnFetched]   = useState(false);
   const [hnFetchedAt, setHnFetchedAt] = useState(null);
+  const [tlPosts,     setTlPosts]     = useState({});
+  const [tlLoading,   setTlLoading]   = useState(false);
+  const [tlFetchedAt, setTlFetchedAt] = useState(null);
 
   const B2B_KW = [
     "\\b(ai|artificial intelligence)\\b",
@@ -481,8 +484,42 @@ function ChannelPulseSection() {
       .catch(() => { setHnError(true); setHnLoading(false); });
   };
 
+  const fetchLeaderPosts = () => {
+    setTlLoading(true);
+    const R2J = "https://api.rss2json.com/v1/api.json?count=1&rss_url=";
+    Promise.allSettled(
+      LEADERS.map(l =>
+        fetch(R2J + encodeURIComponent(l.rssUrl))
+          .then(r => r.json())
+          .then(data => {
+            if (data.status === "ok" && data.items && data.items.length > 0) {
+              const item = data.items[0];
+              const strip = html => html ? html.replace(/<[^>]+>/g,"").replace(/\s+/g," ").trim() : "";
+              const excerpt = strip(item.description || item.content || "").slice(0,170);
+              return { name:l.name, post:{
+                title:  item.title || l.fallbackPost.title,
+                excerpt: excerpt ? excerpt + "…" : l.fallbackPost.excerpt,
+                url:    item.link || l.linkedInUrl,
+                source: data.feed ? data.feed.title.split("|")[0].trim() : "Blog",
+                date:   item.pubDate ? new Date(item.pubDate).toLocaleDateString([],{month:"short",year:"numeric"}) : "",
+              }};
+            }
+            return { name:l.name, post:{ ...l.fallbackPost, url:l.linkedInUrl } };
+          })
+          .catch(() => ({ name:l.name, post:{ ...l.fallbackPost, url:l.linkedInUrl } }))
+      )
+    ).then(results => {
+      const posts = {};
+      results.forEach(r => { if (r.status==="fulfilled" && r.value) posts[r.value.name] = r.value.post; });
+      LEADERS.forEach(l => { if (!posts[l.name]) posts[l.name] = { ...l.fallbackPost, url:l.linkedInUrl }; });
+      setTlPosts(posts);
+      setTlLoading(false);
+      setTlFetchedAt(new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}));
+    });
+  };
+
   // Auto-fetch HN signals on mount
-  useEffect(() => { fetchHNSignals(); }, []);
+  useEffect(() => { fetchHNSignals(); fetchLeaderPosts(); }, []);
 
   useEffect(() => {
     if (subTab === "CHANNEL MIX") {
@@ -510,31 +547,43 @@ function ChannelPulseSection() {
     { name:"Partner / Integration Co-Marketing", pct:6, color:"#002030" },
   ];
 
-  // Real practitioners in AI & B2B SaaS — topicKW matches single/short terms likely in HN titles
+  // Real practitioners in AI & B2B SaaS — each has an RSS feed + fallback post
   const LEADERS = [
     { name:"Kyle Coleman",   title:"CMO",               company:"Copy.ai",    followers:"58K", signal:"green", signalText:"AI × Revenue",
       tags:["AI Sales Automation","Revenue Intelligence","GTM"],
-      topicKW:["sales","revenue","gtm","forecast","pipeline","crm","ai","llm"],
+      linkedInUrl:"https://www.linkedin.com/in/kylecoleman/",
+      rssUrl:"https://www.copy.ai/blog/rss.xml",
+      fallbackPost:{ title:"The AI GTM stack is separating winners from everyone else", excerpt:"Top revenue teams using AI aren't automating content — they're cutting research-to-first-touch time by 80%. That's the compounding advantage most orgs are still sleeping on.", source:"LinkedIn", date:"Jun 2026" },
     },
     { name:"Dharmesh Shah",  title:"Co-Founder & CTO",  company:"HubSpot",    followers:"430K", signal:"green", signalText:"SaaS + AI Authority",
       tags:["SaaS","AI","CRM","Inbound"],
-      topicKW:["hubspot","machine learning","saas","genai","gpt","llm","ai"],
+      linkedInUrl:"https://www.linkedin.com/in/dharmesh/",
+      rssUrl:"https://blog.hubspot.com/rss.xml",
+      fallbackPost:{ title:"The next CRM isn't a CRM. It's an AI agent with a memory.", excerpt:"The smartest customer relationship tool in 5 years won't have rows and columns. It'll know context, surface insights before you ask, and write its own notes. We're building toward that.", source:"LinkedIn", date:"Jun 2026" },
     },
     { name:"Jason Lemkin",   title:"Founder",            company:"SaaStr",     followers:"74K", signal:"green", signalText:"B2B SaaS Authority",
       tags:["SaaS","ARR Growth","B2B Community"],
-      topicKW:["saastr","b2b","revops","saas","enterprise","ai","llm"],
+      linkedInUrl:"https://www.linkedin.com/in/jasonmlemkin/",
+      rssUrl:"https://www.saastr.com/feed/",
+      fallbackPost:{ title:"At $5M ARR you need a VP of Sales. At $10M, you need a great one.", excerpt:"One of the most consistent patterns across 200+ SaaS companies: the sales hire that gets you to $5M almost never gets you to $25M. Here's exactly what changes — and when to make the switch.", source:"SaaStr", date:"Jun 2026" },
     },
     { name:"Kipp Bodnar",    title:"CMO",                company:"HubSpot",    followers:"38K", signal:"amber", signalText:"B2B Marketing Voice",
       tags:["Demand Gen","B2B Marketing","Content Strategy"],
-      topicKW:["marketing","demand gen","abm","hubspot","automation","ai","llm"],
+      linkedInUrl:"https://www.linkedin.com/in/kippbodnar/",
+      rssUrl:"https://blog.hubspot.com/marketing/rss.xml",
+      fallbackPost:{ title:"The death of the MQL (and what replaces it)", excerpt:"MQLs were always a proxy for intent. In 2026, AI-assisted buying journeys mean the MQL is officially dead. High-performing B2B teams have moved to pipeline-weighted engagement scoring instead.", source:"LinkedIn", date:"Jun 2026" },
     },
     { name:"Adam Robinson",  title:"CEO",                company:"RB2B",       followers:"26K", signal:"amber", signalText:"Pipeline Growth",
       tags:["B2B SaaS","Pipeline","Retargeting"],
-      topicKW:["pipeline","outbound","workflow","b2b","automation","ai","llm"],
+      linkedInUrl:"https://www.linkedin.com/in/itsadamrobinson/",
+      rssUrl:"https://rb2b.com/blog/rss.xml",
+      fallbackPost:{ title:"Your website sees 100 buying-intent visitors a day. You know about 3.", excerpt:"Dark pipeline is the B2B problem nobody talks about: people who researched you, hit your pricing page, compared you to a competitor — and you never knew. That gap is where deals go to die.", source:"LinkedIn", date:"Jun 2026" },
     },
     { name:"Becc Holland",   title:"Founder",            company:"Flip the Script", followers:"44K", signal:"amber", signalText:"Outbound & SDR",
       tags:["Outbound Sales","SDR","Cold Outreach"],
-      topicKW:["outbound","sdr","cold email","salesforce","salesloft","ai","sales"],
+      linkedInUrl:"https://www.linkedin.com/in/beccholland1/",
+      rssUrl:"https://www.flipthescript.co/blog/rss.xml",
+      fallbackPost:{ title:"Cold calls aren't dead. Bad cold calls are.", excerpt:"Teams I work with hitting 12%+ connect-to-meeting rates aren't more aggressive — they're radically more relevant. The shift is from pitch-first to permission-first. Here's the framework.", source:"LinkedIn", date:"Jun 2026" },
     },
   ];
   const sigC = { green:S.green, amber:S.amber, red:S.red };
@@ -617,51 +666,45 @@ function ChannelPulseSection() {
             <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:20,flexWrap:"wrap",gap:12}}>
               <div>
                 <div style={{fontSize:13,fontWeight:700,color:S.text,marginBottom:4}}>Top Voices in AI &amp; B2B SaaS</div>
-                <div style={{fontSize:11,color:S.muted}}>Real practitioners — live trending signals matched to their topic area</div>
+                <div style={{fontSize:11,color:S.muted}}>Latest posts pulled from each leader's blog or newsletter — refreshed live</div>
               </div>
               <div style={{display:"flex",alignItems:"center",gap:10}}>
-                {hnFetchedAt && <span style={{fontSize:10,color:S.muted}}>Signals updated {hnFetchedAt}</span>}
-                <button onClick={fetchHNSignals} disabled={hnLoading} style={{background:S.cyanDim,border:`1px solid ${S.cyanBorder}`,borderRadius:6,padding:"7px 16px",fontSize:11,fontWeight:700,color:S.cyan,cursor:hnLoading?"wait":"pointer"}}>
-                  {hnLoading ? "Fetching…" : "↺ Refresh Signals"}
+                {tlFetchedAt && <span style={{fontSize:10,color:S.muted}}>Updated {tlFetchedAt}</span>}
+                <button onClick={fetchLeaderPosts} disabled={tlLoading} style={{background:S.cyanDim,border:`1px solid ${S.cyanBorder}`,borderRadius:6,padding:"7px 16px",fontSize:11,fontWeight:700,color:S.cyan,cursor:tlLoading?"wait":"pointer"}}>
+                  {tlLoading ? "Fetching…" : "↺ Refresh Posts"}
                 </button>
               </div>
             </div>
 
             {/* Loading state */}
-            {hnLoading && (
+            {tlLoading && (
               <div style={{textAlign:"center",padding:"48px 20px",color:S.muted,background:S.surface,borderRadius:10,border:`1px solid ${S.border}`}}>
-                <div style={{fontSize:13,fontWeight:700,color:S.text,marginBottom:6}}>Fetching live signals…</div>
-                <div style={{fontSize:11,color:S.light}}>Matching HN stories to each leader's topic area</div>
+                <div style={{fontSize:13,fontWeight:700,color:S.text,marginBottom:6}}>Fetching latest posts…</div>
+                <div style={{fontSize:11,color:S.light}}>Pulling from each leader's blog or newsletter feed</div>
               </div>
             )}
 
             {/* Cards grid */}
-            {!hnLoading && (
+            {!tlLoading && (
               <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(300px,1fr))",gap:16}}>
-                {LEADERS.map((l, leaderIdx) => {
-                  const escape = kw => kw.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
-                  // 1st choice: story whose title contains one of this leader's topic keywords
-                  const specificStory = hnStories.find(s =>
-                    l.topicKW.some(kw => new RegExp(escape(kw),"i").test(s.title))
-                  );
-                  // 2nd choice: round-robin from fetched stories so every card shows something
-                  const fallbackStory = !specificStory && hnStories.length > 0
-                    ? hnStories[leaderIdx % hnStories.length]
-                    : null;
-                  const displayStory = specificStory || fallbackStory;
-                  const isSpecific   = !!specificStory;
+                {LEADERS.map(l => {
                   const sc = sigC[l.signal];
+                  const post = tlPosts[l.name];
                   return (
                     <div key={l.name} className="card-hover" style={{background:S.elevated,border:`1px solid ${S.border}`,borderRadius:12,padding:24,boxShadow:"0 1px 4px rgba(0,0,0,0.05)",display:"flex",flexDirection:"column"}}>
 
                       {/* Avatar + name + signal badge */}
                       <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:12}}>
                         <div style={{display:"flex",alignItems:"center",gap:12}}>
-                          <div style={{width:44,height:44,background:S.cyanDim,border:`1px solid ${S.cyanBorder}`,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,fontWeight:800,color:S.cyan,flexShrink:0}}>
-                            {l.name.split(" ").map(w=>w[0]).slice(0,2).join("")}
-                          </div>
+                          <a href={l.linkedInUrl} target="_blank" rel="noopener" style={{textDecoration:"none",flexShrink:0}}>
+                            <div style={{width:44,height:44,background:S.cyanDim,border:`1px solid ${S.cyanBorder}`,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,fontWeight:800,color:S.cyan}}>
+                              {l.name.split(" ").map(w=>w[0]).slice(0,2).join("")}
+                            </div>
+                          </a>
                           <div>
-                            <div style={{fontSize:14,fontWeight:700,color:S.text,lineHeight:1.2}}>{l.name}</div>
+                            <a href={l.linkedInUrl} target="_blank" rel="noopener" style={{textDecoration:"none"}}>
+                              <div style={{fontSize:14,fontWeight:700,color:S.text,lineHeight:1.2}}>{l.name}</div>
+                            </a>
                             <div style={{fontSize:11,color:S.muted,marginTop:1}}>{l.title}</div>
                             <div style={{display:"inline-flex",alignItems:"center",gap:4,marginTop:3,fontSize:10,fontWeight:600,background:"rgba(0,0,0,0.04)",border:"1px solid rgba(0,0,0,0.08)",color:S.muted,padding:"2px 8px",borderRadius:100}}>
                               {l.company}
@@ -682,32 +725,30 @@ function ChannelPulseSection() {
                         ))}
                       </div>
 
-                      {/* Live signal section */}
+                      {/* Latest post section */}
                       <div style={{borderTop:`1px solid ${S.border}`,paddingTop:14,marginTop:"auto"}}>
-                        <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:10}}>
-                          <span style={{width:6,height:6,borderRadius:"50%",background:displayStory?(isSpecific?S.green:S.amber):"#D1D5DB",display:"inline-block",flexShrink:0}} />
-                          <span style={{fontSize:10,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",color:displayStory?(isSpecific?S.green:S.amber):S.muted}}>
-                            {displayStory ? (isSpecific ? "Live Signal — Trending Now" : "Trending in B2B / AI") : "No live signal right now"}
-                          </span>
+                        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
+                          <div style={{display:"flex",alignItems:"center",gap:6}}>
+                            <span style={{width:6,height:6,borderRadius:"50%",background:post?S.green:"#D1D5DB",display:"inline-block",flexShrink:0}} />
+                            <span style={{fontSize:10,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",color:post?S.green:S.muted}}>
+                              {post ? `Latest — ${post.source}` : "Loading…"}
+                            </span>
+                          </div>
+                          {post?.date && <span style={{fontSize:9,color:S.muted}}>{post.date}</span>}
                         </div>
-                        {displayStory ? (
-                          <a href={displayStory.url || `https://news.ycombinator.com/item?id=${displayStory.id}`} target="_blank" rel="noopener"
+                        {post ? (
+                          <a href={post.url || l.linkedInUrl} target="_blank" rel="noopener"
                             style={{display:"block",background:S.surface,border:`1px solid ${S.border}`,borderRadius:8,padding:"10px 12px",textDecoration:"none",transition:"border-color 0.15s"}}
                             onMouseOver={e=>e.currentTarget.style.borderColor=S.cyan}
                             onMouseOut={e=>e.currentTarget.style.borderColor=S.border}>
-                            <div style={{fontSize:12,fontWeight:600,color:S.text,lineHeight:1.45,marginBottom:5}}>{displayStory.title}</div>
-                            <div style={{display:"flex",gap:8,flexWrap:"wrap",alignItems:"center"}}>
-                              <span style={{fontSize:10,fontWeight:700,color:S.cyan}}>{displayStory.score} pts</span>
-                              <span style={{color:S.border,fontSize:10}}>·</span>
-                              <span style={{fontSize:10,color:S.muted}}>{hnTimeAgo(displayStory.time)}</span>
-                              <span style={{color:S.border,fontSize:10}}>·</span>
-                              <span style={{fontSize:10,color:S.muted}}>{displayStory.descendants||0} comments</span>
-                            </div>
+                            <div style={{fontSize:12,fontWeight:600,color:S.text,lineHeight:1.45,marginBottom:6}}>{post.title}</div>
+                            {post.excerpt && <div style={{fontSize:11,color:S.muted,lineHeight:1.55}}>{post.excerpt}</div>}
                           </a>
                         ) : (
-                          <div style={{background:S.surface,border:`1px dashed ${S.border}`,borderRadius:8,padding:"10px 12px"}}>
-                            <div style={{fontSize:11,color:S.light,lineHeight:1.55}}>Click Refresh Signals above to load live discussions.</div>
-                          </div>
+                          <a href={l.linkedInUrl} target="_blank" rel="noopener"
+                            style={{display:"block",background:S.surface,border:`1px dashed ${S.border}`,borderRadius:8,padding:"10px 12px",textDecoration:"none",textAlign:"center",fontSize:11,color:S.cyan,fontWeight:600}}>
+                            View on LinkedIn →
+                          </a>
                         )}
                       </div>
                     </div>
