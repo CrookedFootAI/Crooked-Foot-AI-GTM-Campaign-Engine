@@ -491,20 +491,29 @@ function ChannelPulseSection() {
 
   const fetchLeaderPosts = () => {
     setTlLoading(true);
-    const R2J = "https://api.rss2json.com/v1/api.json?count=1&rss_url=";
+    // Note: rss2json's `count` param requires a paid key — omit it and pick the newest item ourselves
+    const R2J = "https://api.rss2json.com/v1/api.json?rss_url=";
     Promise.allSettled(
-      LEADERS.map(l =>
-        fetch(R2J + encodeURIComponent(l.rssUrl))
+      LEADERS.map(l => !l.rssUrl
+        ? Promise.resolve({ name:l.name, post:{ url:l.linkedInUrl, ...l.fallbackPost } })
+        : fetch(R2J + encodeURIComponent(l.rssUrl))
           .then(r => r.json())
           .then(data => {
             if (data.status === "ok" && data.items && data.items.length > 0) {
-              const item = data.items[0];
-              const strip = html => html ? html.replace(/<[^>]+>/g,"").replace(/\s+/g," ").trim() : "";
-              const excerpt = strip(item.description || item.content || "").slice(0,170);
+              const item = [...data.items].sort((a,b) => new Date(b.pubDate) - new Date(a.pubDate))[0];
+              // Only use the feed item if it's newer than the curated fallback
+              if (l.fallbackPost.isoDate && new Date(item.pubDate) < new Date(l.fallbackPost.isoDate)) {
+                return { name:l.name, post:{ url:l.linkedInUrl, ...l.fallbackPost } };
+              }
+              const strip = html => html ? html.replace(/<[^>]+>/g," ").replace(/https?:\/\/\S+/g,"").replace(/&amp;/g,"&").replace(/\s+/g," ").trim() : "";
+              let text = strip(item.description || item.content || "");
+              const ep = text.search(/Ep\.? ?\d+/);
+              if (ep > -1) text = text.slice(ep).replace(/^Ep\.? ?\d+\s*/,"");
+              const excerpt = text.slice(0,170);
               return { name:l.name, post:{
-                title:  item.title || l.fallbackPost.title,
+                title:  (item.title || l.fallbackPost.title).replace(/&amp;/g,"&"),
                 excerpt: excerpt ? excerpt + "…" : l.fallbackPost.excerpt,
-                url:    item.link || l.linkedInUrl,
+                url:    item.link || l.fallbackPost.url || l.linkedInUrl,
                 source: data.feed ? data.feed.title.split("|")[0].trim() : "Blog",
                 date:   item.pubDate ? new Date(item.pubDate).toLocaleDateString([],{month:"short",year:"numeric"}) : "",
               }};
@@ -554,41 +563,41 @@ function ChannelPulseSection() {
 
   // Real practitioners in AI & B2B SaaS — each has an RSS feed + fallback post
   const LEADERS = [
-    { name:"Kyle Coleman",   title:"CMO",               company:"Copy.ai",    followers:"58K", signal:"green", signalText:"AI × Revenue",
-      tags:["AI Sales Automation","Revenue Intelligence","GTM"],
+    { name:"Kyle Coleman",   title:"Global VP, Marketing", company:"ClickUp", followers:"58K", signal:"green", signalText:"AI × Revenue",
+      tags:["AI Transformation","Marketing Ops","GTM"],
       linkedInUrl:"https://www.linkedin.com/in/kyletcoleman/",
-      rssUrl:"https://www.copy.ai/blog/rss.xml",
-      fallbackPost:{ title:"How will AI impact SDRs? Oddly accurate predictions", excerpt:"The SDR role isn't disappearing — it's being rebuilt around AI. The teams winning in 2026 point agents at research and first-touch, and free reps to run the plays only humans can.", source:"Copy.ai Blog", url:"https://www.copy.ai/blog/how-will-ai-impact-sdrs-oddly-accurate-predictions-by-kyle-coleman", date:"Jul 2026" },
+      rssUrl:null,
+      fallbackPost:{ title:"From Mandate to Machine: How we built 230 AI workflows in 8 months", excerpt:"ClickUp's marketing org shipped 230 AI workflows across 13 teams in 8 months — a 20x jump in AI usage in six weeks and 675 hours a month saved on SEO alone. Start with a low-friction weekly mandate.", source:"ClickUp Blog", url:"https://clickup.com/blog/ai-transformation-playbook-marketing-team/", date:"Apr 2026", isoDate:"2026-04-16" },
     },
     { name:"Dharmesh Shah",  title:"Co-Founder & CTO",  company:"HubSpot",    followers:"430K", signal:"green", signalText:"SaaS + AI Authority",
       tags:["SaaS","AI","CRM","Inbound"],
       linkedInUrl:"https://www.linkedin.com/in/dharmesh/",
-      rssUrl:"https://blog.hubspot.com/rss.xml",
-      fallbackPost:{ title:"Rise of the Agentic Customer Platform", excerpt:"The next CRM transformation isn't about AI — it's about context. Every GTM agent will need an agentic customer platform underneath it, and eventually every customer platform becomes one.", source:"simple.ai", url:"https://simple.ai/p/rise-of-the-agentic-customer-platform", date:"Jul 2026" },
+      rssUrl:null,
+      fallbackPost:{ title:"Why fortune favors the focused in the age of AI", excerpt:"AI made adding features almost free — for you. It didn't make complexity any cheaper for your customers to absorb. With the technical barrier gone, focus now has to be a deliberate choice.", source:"simple.ai", url:"https://simple.ai/p/why-fortune-favors-the-focused-in-the-age-of-ai", date:"Sep 2026", isoDate:"2026-09-02" },
     },
     { name:"Jason Lemkin",   title:"Founder",            company:"SaaStr",     followers:"74K", signal:"green", signalText:"B2B SaaS Authority",
       tags:["SaaS","ARR Growth","B2B Community"],
       linkedInUrl:"https://www.linkedin.com/in/jasonmlemkin/",
       rssUrl:"https://www.saastr.com/feed/",
-      fallbackPost:{ title:"We replaced our sales team with 20 AI agents — here's what happened", excerpt:"After my last salesperson quit, I replaced our entire go-to-market team with 20+ AI agents. SaaStr now runs as an 8-figure B2B business on 3 humans and 21 agents. Here's what actually happened.", source:"Lenny's Newsletter", url:"https://www.lennysnewsletter.com/p/we-replaced-our-sales-team-with-20-ai-agents", date:"Jul 2026" },
+      fallbackPost:{ title:"Being a system of record helps with retention. But alone, it won't equal growth", excerpt:"ServiceTitan just shut off Podium's integration for ~1,000 shared customers after a nine-year partnership. It's less a breakup than a case study in what owning the record can — and can't — do for you.", source:"SaaStr", url:"https://www.saastr.com/being-a-system-of-record-helps-with-retention-but-alone-it-wont-equal-growth/", date:"Sep 2026", isoDate:"2026-09-22" },
     },
     { name:"Kipp Bodnar",    title:"CMO",                company:"HubSpot",    followers:"38K", signal:"amber", signalText:"B2B Marketing Voice",
       tags:["Demand Gen","B2B Marketing","Content Strategy"],
       linkedInUrl:"https://www.linkedin.com/in/kippbodnar/",
-      rssUrl:"https://blog.hubspot.com/marketing/rss.xml",
-      fallbackPost:{ title:"5 AI tools the smartest marketers are using in 2026", excerpt:"When every marketer has the same AI tools, the tools stop being the edge. Context is the new moat — your brand voice, POV, and strategy are what make AI output worth reading.", source:"Marketing Against the Grain", url:"https://pod.wave.co/podcast/marketing-against-the-grain/5-ai-tools-the-smartest-marketers-are-using-in-2026", date:"Jul 2026" },
+      rssUrl:"https://feeds.megaphone.fm/marketingagainstthegrain",
+      fallbackPost:{ title:"Give us 30 minutes & we'll rebuild your marketing", excerpt:"HubSpot lost 140 million visits in a year and still grew demand gen 20%. Kipp and Kieran break down why the old marketing rules no longer work — and the new playbooks that do.", source:"Marketing Against the Grain", url:"https://marketingagainstthegrain.com/", date:"Sep 2026", isoDate:"2026-09-22" },
     },
     { name:"Adam Robinson",  title:"CEO",                company:"RB2B",       followers:"26K", signal:"amber", signalText:"Pipeline Growth",
-      tags:["B2B SaaS","Pipeline","Retargeting"],
-      linkedInUrl:"https://www.linkedin.com/in/itsadamrobinson/",
-      rssUrl:"https://rb2b.com/blog/rss.xml",
-      fallbackPost:{ title:"The cold email system behind 42% of our revenue", excerpt:"Inbound-led outbound converts up to 10x better than cold email. The 2026 move: fire personalized outreach the moment an ICP account hits your pricing or demo page — warm signal first, sequence second.", source:"The RB2B Newsletter", url:"https://newsletter.rb2b.com/p/the-cold-email-system-behind-42-of-our-revenue", date:"Jul 2026" },
+      tags:["B2B SaaS","Pipeline","Bootstrapping"],
+      linkedInUrl:"https://www.linkedin.com/in/retentionadam/",
+      rssUrl:null,
+      fallbackPost:{ title:"Something really bad just happened", excerpt:"Two weeks before a planned $10M acquisition, our entire codebase got deleted — and the backups weren't there to save us. What happened, and why boring ops safeguards are what protect the deal.", source:"The RB2B Newsletter", url:"https://newsletter.rb2b.com/p/something-really-bad-just-happened", date:"Sep 2026", isoDate:"2026-09-20" },
     },
-    { name:"Becc Holland",   title:"Founder",            company:"Flip the Script", followers:"44K", signal:"amber", signalText:"Outbound & SDR",
-      tags:["Outbound Sales","SDR","Cold Outreach"],
+    { name:"Becc Holland",   title:"Founder & CEO",      company:"Flip the Script", followers:"44K", signal:"amber", signalText:"Outbound & SDR",
+      tags:["Outbound Sales","Discovery","Cold Outreach"],
       linkedInUrl:"https://www.linkedin.com/in/beccholland-flipthescript/",
-      rssUrl:"https://www.flipthescript.com/blog/rss.xml",
-      fallbackPost:{ title:"Revamp outbound: lead with the unknown problem", excerpt:"In 2026, personalization isn't a luxury — it's signal-to-noise triage. Stop leading with 'I saw you.' Lead with the unknown problem, and route every play through the right trigger: inbound, postbound, or bridgebound.", source:"Flip the Script", url:"https://www.chilipiper.com/post/becc-holland-how-to-outbound", date:"Jul 2026" },
+      rssUrl:null,
+      fallbackPost:{ title:"Let's boost your sales discovery game", excerpt:"Discovery starts before the call. Do the prep, uncover the problems buyers don't know they have yet, and earn trust with sharper questions — then use your KPIs as a differentiator.", source:"The Sales Hunter Podcast", url:"https://www.listennotes.com/podcasts/the-sales-hunter/lets-boost-your-sales-EZW-j1tNiF6/", date:"Aug 2026", isoDate:"2026-08-27" },
     },
   ];
   const sigC = { green:S.green, amber:S.amber, red:S.red };
